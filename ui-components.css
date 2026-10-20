@@ -1,0 +1,318 @@
+/* Canonical page/component rules. See docs/UI_Guidelines.md.
+   Keep scientific document/table content separate from app chrome. */
+.ui-page-head,.wf-bar{display:grid;grid-template-columns:auto minmax(12ch,1fr);align-items:center;gap:var(--s2);min-width:0}
+.ui-page-title,.wf-bar>.wf-title{min-width:0;max-width:100%;margin:0;white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:normal;word-break:normal}
+.ui-page-head>.ui-page-title:first-child{grid-column:1 / -1}
+.ui-page-actions,.wf-bar>.wf-bar-actions{grid-column:1 / -1;display:flex;flex-wrap:wrap;justify-content:flex-start;gap:var(--s2);margin:0;min-width:0;max-width:100%}
+.ui-page-actions>button,.wf-bar-actions>button{flex:none;max-width:100%;white-space:nowrap}
+.wf-back{max-width:100%;white-space:normal;height:auto;min-height:var(--ctl-h)}
+.ui-page-meta{grid-column:1 / -1;white-space:normal}
+@container view (min-width:850px){
+  .ui-page-head,.wf-bar{display:flex;flex-wrap:wrap}
+  .ui-page-title,.wf-bar>.wf-title{flex:1 1 16ch}
+  .ui-page-actions,.wf-bar>.wf-bar-actions{flex:0 1 auto;margin-left:auto}
+}
+.ui-disclosure{min-width:0;max-width:100%}
+.ui-disclosure>summary{box-sizing:border-box;display:flex;align-items:baseline;gap:var(--s2);min-height:var(--ctl-h);padding:var(--s2) var(--s3);list-style:none;cursor:default;border-radius:var(--radius-sm);color:var(--ink);font-size:var(--fs);line-height:1.5;outline:none}
+.ui-disclosure>summary::-webkit-details-marker{display:none}
+.ui-disclosure>summary::marker{content:''}
+/* the title, its count and its meta share the title's first baseline (a 12px meta laid from the top sat 2px high); the mark has no baseline and is placed on the first line by its margin */
+.ui-disclosure>summary::before{content:'';display:block;flex:none;align-self:flex-start;width:6px;height:6px;margin:calc((1.4em - 6px) / 2) var(--s1) 0 2px;border:0;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(-45deg);transition:transform .12s}
+.ui-disclosure[open]>summary::before{transform:rotate(45deg)}
+.ui-disclosure>summary:hover{background:var(--panel-2)}
+.ui-disclosure>summary:focus-visible{box-shadow:inset 0 0 0 2px var(--ring)}
+.ui-disclosure>summary>.ico[data-icon="chevron-right"],.ui-disclosure>summary>.ico[data-icon="chevron-down"]{display:none}
+/* One row: the title keeps its words, the count stays beside it, the meta takes what is left and is clipped (never a second row). */
+.ui-disclosure-title{flex:0 1 auto;min-width:min-content;white-space:normal;overflow-wrap:break-word}
+.ui-disclosure-count{flex:none;color:var(--ink-2);font-variant-numeric:tabular-nums;white-space:nowrap}
+.ui-disclosure-meta{flex:1 1 0;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.ui-disclosure-body{min-width:0;padding:0 var(--s3) var(--s3)}
+.ui-table-region{max-width:100%;min-width:0;overflow-x:auto;overscroll-behavior-x:contain}
+.ui-table-region:focus-visible{outline:2px solid var(--ring);outline-offset:-2px}
+.ui-table-region table{width:100%;border-collapse:collapse}
+.ui-table-region th,.ui-table-region td{vertical-align:top}
+/* Analysis forms (.an-settings, every view; W3-A4). One grid: as many 200px columns as the pane holds and never fewer than two, so a
+   field declared wide (data-span="2": a select whose longest option needs it, a list typed as text) always fits (a span past a single
+   column would open an implicit column that auto-placement then fills: measured, 2026-10-11); empty tracks stay
+   (auto-fill), so a short form does not stretch its fields across a wide pane. One rhythm: --s3 between fields both ways, --s1 between
+   a label and its control. A field is two rows of the form's grid (subgrid), so the labels of one row share their first line and the
+   controls share theirs, whichever label wraps; anything else in the form spans the same two rows and sits on the controls' line. */
+.an-settings{--an-track:min(calc(50% - var(--s3)),200px);grid-template-columns:repeat(auto-fill,minmax(var(--an-track),1fr));gap:var(--s3);align-items:start}
+/* data-fit (formFit() in lib/ui-components.mjs, from the number of cells) keeps the column counts that leave at most one empty cell in
+   the last row and never one field alone in a row of three or more: "4" two to four columns, "3" two or three, "2" two, "2-4" two or
+   four (four from 4 × 200px and its gaps, else two: a step of the pane's width written as arithmetic, not a query). Each sets only the
+   track's least width; the grid is the rule above. A fitted form packs densely, so a wide field never leaves a hole before it. */
+.an-settings[data-fit]{grid-auto-flow:row dense}
+.an-settings[data-fit="4"]{--an-track:max(min(calc(50% - var(--s3)),200px),calc(25% - var(--s3)))}
+.an-settings[data-fit="3"]{--an-track:max(min(calc(50% - var(--s3)),200px),calc(33.333% - var(--s3)))}
+.an-settings[data-fit="2"]{--an-track:calc(50% - var(--s3))}
+.an-settings[data-fit="2-4"]{--an-track:max(calc(25% - var(--s3)),min(calc(50% - var(--s3)),calc((4 * 200px + 3 * var(--s3) - 100%) * 1000)))}
+/* A form of plain fields that declares no fit is fitted from its number of fields, by the same table as formFit(n). */
+.an-settings:not([data-fit]):not(:has(>:not(label.field))):has(>:is(:nth-child(4),:nth-child(7)):last-child){--an-track:max(calc(25% - var(--s3)),min(calc(50% - var(--s3)),calc((4 * 200px + 3 * var(--s3) - 100%) * 1000)))}
+.an-settings:not([data-fit]):not(:has(>:not(label.field))):has(>:is(:nth-child(5),:nth-child(6),:nth-child(9)):last-child){--an-track:max(min(calc(50% - var(--s3)),200px),calc(33.333% - var(--s3)))}
+.an-settings:not([data-fit]):not(:has(>:not(label.field))):has(>:nth-child(10):last-child){--an-track:calc(50% - var(--s3))}
+.an-settings:not([data-fit]):not(:has(>:not(label.field))):has(>:is(:nth-child(8),:nth-child(11),:nth-child(12)):last-child){--an-track:max(min(calc(50% - var(--s3)),200px),calc(25% - var(--s3)))}
+.an-settings>*{grid-row-end:span 2;min-width:0}
+.an-settings>:not(label.field){align-self:end}
+.an-settings>label.field:has(>span:first-child+:is(input:not([type=checkbox]):not([type=radio]),select,textarea,.date-field,.record-picker):last-child){display:grid;grid-template-rows:subgrid;row-gap:var(--s1);align-self:stretch}
+.an-settings>label.field>span:first-child:has(+:is(input:not([type=checkbox]):not([type=radio]),select,textarea,.date-field,.record-picker):last-child){align-self:start}
+.an-settings>label.field>span:first-child+:is(input:not([type=checkbox]):not([type=radio]),select,textarea,.date-field,.record-picker):last-child{align-self:start}
+.an-settings>[data-span="2"]{grid-column-end:span 2}
+.an-settings>.an-checks{grid-column:1/-1}
+.an-settings>.cr-check{display:flex;align-items:center;gap:var(--s2);min-block-size:var(--ctl-h);font-size:var(--fs)}
+.insp-body .an-settings>[data-span]{grid-column-end:auto}
+/* A typed value starts at the field's inset like the text beside it, so a number reads under its label, in tabular figures and with no
+   spinner: the same rule for a number box and a text box that takes a number (inputmode="decimal"). */
+.an-settings label.field input:not([type=checkbox]):not([type=radio]){text-align:start;font-variant-numeric:tabular-nums}
+.an-settings input[type=number]{-moz-appearance:textfield;appearance:textfield}
+.an-settings input[type=number]::-webkit-inner-spin-button,.an-settings input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;appearance:none;margin:0}
+/* A group of checkboxes is equal columns of check rows (filled down, then across) (the chrome row height), its name on a line of its own. */
+.an-settings .an-checks{display:block;columns:160px;column-gap:var(--s3);min-height:var(--ctl-h)}
+.an-settings .an-checks>span:first-child{display:block;column-span:all;margin-block-end:var(--s1);font-size:var(--fs-sm);color:var(--ink-2)}
+.an-settings .an-checks>label{display:flex;align-items:center;gap:var(--s2);min-width:0;min-block-size:var(--ctl-h-dense);font-size:var(--fs);break-inside:avoid}
+.an-settings .an-checks>label>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* A long form is sections: a heading (14/600) over its own grid, a hairline between sections. */
+.an-section{min-width:0;margin:0}
+.an-section+.an-section{margin-block-start:var(--s3);padding-block-start:var(--s3);border-top:1px solid var(--line-2)}
+.an-section>h3{margin:0 0 var(--s3);font-size:var(--fs);font-weight:600;color:var(--ink);line-height:1.5}
+.an-section>.an-settings{margin-bottom:0}
+.an-section>[data-ui-help]{margin:var(--s2) 0 0;font-size:var(--fs-sm);color:var(--ink-2)}   /* guidance under the section it explains, quiet */
+.an-settings label.field{min-width:0}
+.an-settings label.field>span,.advanced-config label.field>.meta{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:break-word}
+.an-settings label.field input[type=checkbox]{flex:none}
+label.field.ui-field{display:flex;flex-direction:column;align-items:stretch;gap:var(--s1);min-width:0;min-height:0;margin:0}
+label.field.ui-field>span:first-child{flex:none;width:auto;line-height:1.5;padding:0;font-size:var(--fs-sm);white-space:normal;overflow:visible;overflow-wrap:break-word;text-align:left}
+label.field.ui-field>:is(input:not([type=checkbox]):not([type=radio]),select){flex:none;box-sizing:border-box;width:100%;min-width:0;max-width:none;height:var(--ctl-h);min-height:var(--ctl-h);padding-block:0;text-align:left}
+label.field.ui-field>textarea{flex:none;box-sizing:border-box;width:100%;min-width:0;max-width:none;min-height:calc(var(--ctl-h)*2);resize:vertical}
+label.field.ui-field>.date-field{flex:none;inline-size:100%;min-inline-size:0;max-inline-size:none}
+label.field.ui-field>.record-picker{display:flex}
+label.field.ui-field>.record-picker>button{flex:1 1 auto;box-sizing:border-box;block-size:var(--ctl-h);justify-content:flex-start;border:1px solid var(--line-strong);background:var(--panel);font-weight:400;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prisma{grid-template-columns:minmax(0,1fr);gap:var(--s3)}
+.prisma>#rp-note:empty{display:none}
+.prisma>[data-rp]{grid-column:1 / -1;min-width:0}
+.prisma>.prisma-fig{max-width:none;width:100%;justify-self:stretch}
+.panel-head{min-width:0}
+.panel-head>h2{word-break:normal;overflow-wrap:normal}
+.panel-head>.meta{white-space:normal}
+.split.single #plist[data-title-duplicate] #plist-title{display:none}
+.split.single #plist[data-title-duplicate][data-no-acts] .plist-head{display:none}
+.split.single #plist[data-title-duplicate][data-no-acts] .plist-filter{padding-top:var(--s2)}   /* the head is gone: the search keeps its distance from the title bar */
+#plist[data-no-head][data-no-acts] .plist-head{display:none}   /* the page's one collection: the title bar names and counts it, at every width */
+#plist[data-no-head][data-no-acts] .plist-filter{padding-top:var(--s4)}   /* its tools row starts where a page's first row does */
+@media(prefers-reduced-motion:reduce){.ui-disclosure>summary::before{transition:none}}
+
+.sp-tp-fields{display:flex;flex-direction:column;min-width:112px;gap:var(--s1)}
+.sp-tp-fields input{display:block}
+.sp-tp-fields input+input{margin:0}
+
+/* Activity is indeterminate until an operation provides measured counts. */
+.ui-progress-ring,.assist-live-dot{content:'';box-sizing:border-box;display:inline-block;flex:none;width:14px;height:14px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:ui-spin .85s linear infinite;background:transparent}
+@keyframes ui-spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.ui-progress-ring,.assist-live-dot{animation:none;border-style:dotted}}
+
+.split>.view{min-width:0}
+.panel-head>h2:not(.spacer){min-width:min(100%,12ch);overflow-wrap:normal;word-break:normal}
+/* Counted section titles remain one item in a panel or board header. */
+.panel-head>h2.ui-count-heading,.tk-col>div>h2.ui-count-heading{display:inline-flex;align-items:baseline;gap:var(--s2);flex:0 1 auto;min-width:0;max-width:100%;white-space:normal;overflow:visible;text-overflow:clip;line-height:1.5}
+.ui-count-heading>.ui-count-title{min-width:0;white-space:normal;overflow-wrap:break-word}
+.ui-count-heading>.ui-heading-count{flex:none;margin:0;font-size:var(--fs);font-weight:400;color:var(--ink-2);font-variant-numeric:tabular-nums;white-space:nowrap}
+.ui-page-actions button,.wf-bar-actions button{height:var(--ctl-h);min-height:var(--ctl-h)}
+
+.desc-block+.desc-block tr:first-child>*{border-top:1px solid var(--line-strong)}
+.desc-level th{font-weight:400}
+.desc-level th .lv{display:block;padding-left:var(--s3)}
+.desc-variable th{font-weight:600}
+.desc-variable .meta{white-space:normal}
+
+.ui-disclosure>summary::after{content:none}
+
+/* Short workflow overviews fill the available pane before adding rows. */
+.ov-study{max-width:none}
+.ui-stage-summary{display:grid;grid-template-columns:minmax(0,1fr);gap:1px;background:var(--line-2);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.ui-stage-summary>button{all:unset;box-sizing:border-box;display:grid;grid-template-columns:18px minmax(0,1fr) 16px;align-items:center;gap:var(--s3);padding:var(--s2) var(--s3);min-height:calc(var(--ctl-h) + var(--s3));background:var(--panel);color:var(--ink);cursor:default;font:inherit}
+.ui-stage-summary>button:hover{background:var(--panel-2)}
+.ui-stage-summary>button:focus-visible{background:var(--panel-2);outline:2px solid var(--ring);outline-offset:-2px}
+.ui-stage-summary>button>.ico{color:var(--ink-2)}
+.ui-stage-text{min-width:0;display:grid;gap:2px;line-height:1.5}
+.ui-stage-text strong{font-weight:500;white-space:normal;overflow-wrap:break-word}
+.ui-stage-text>.meta{white-space:normal;overflow-wrap:break-word}
+@container view (min-width:450px){.ui-stage-summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@container view (min-width:800px){.ui-stage-summary{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+.chat-survival-figure{min-width:0;max-width:100%}
+.chat-survival-figure svg{display:block;width:100%;height:auto;min-width:420px}
+
+/* A schedule is a matrix: its columns scroll, while activity names stay in
+   view. Controls use the ordinary form, menu and checkbox components. */
+.setl-body{scrollbar-gutter:stable;padding-right:var(--s3)}
+.setl:has([data-part=spirit]){max-width:none}
+.setl:has([data-part=spirit])>.setl-body{max-width:none}
+#sp-note:empty,#sp-issues:empty{display:none}
+#sp-issues{margin:0 0 var(--s2);gap:var(--s1)}
+#sp-issues .gov-issue{margin:0}
+.sp-wrap.ui-table-region{margin:0;position:relative}
+.sp-wrap.ui-table-region>.sp-grid{table-layout:fixed;width:calc(224px + 144px * var(--sp-column-count));min-width:100%}
+.sp-activity-col{width:224px}
+.sp-timepoint-col{width:144px}
+.sp-grid .sp-row{min-width:0;width:224px;background:var(--panel);position:sticky;left:0;z-index:1}
+.sp-grid .sp-corner{vertical-align:bottom;background:var(--panel-2);position:sticky;left:0;z-index:2}
+.sp-grid .sp-tp{min-width:0;width:144px}
+.sp-tp-fields{min-width:0}
+.sp-row-in{min-width:0}
+.sp-row-in>input{flex:1 1 0;overflow:hidden}
+.sp-row-in>button{flex:none}
+.sp-grid .sp-cell{display:flex;align-items:center;justify-content:center;min-width:0;min-height:var(--ctl-h);width:100%;margin:0;border:0;background:transparent;cursor:default}
+.sp-cell input[type=checkbox]{flex:none;margin:0}
+.sp-grid .sp-sec th{padding:var(--s1);text-align:left}
+.sp-sec th>span{display:inline-block;position:sticky;left:var(--s2)}
+.sp-sec th>button{position:sticky;left:calc(120px + var(--s2))}
+@container view (max-width:850px){
+  .setl:has([data-part=spirit]){grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);gap:var(--s3)}
+  .setl:has([data-part=spirit])>.setl-nav{border-right:0;padding:0;overflow:visible}
+  .setl:has([data-part=spirit]) .setl-categories{display:none}
+  .setl:has([data-part=spirit]) .setl-mobile{display:flex;align-items:center;gap:var(--s3);--select-max:none}
+  .setl:has([data-part=spirit]) .setl-mobile select{flex:1}
+  .setl:has([data-part=spirit])>.setl-body{padding-right:var(--s3);max-width:none}
+}
+@container view (max-width:500px){
+  .sp-grid .sp-row,.sp-grid .sp-corner,.sp-sec th>span,.sp-sec th>button{position:static}
+}
+
+/* The one dialog recipe (DIALOGS §3, lib/dialog.mjs): a width tier, the title alone in its head, a body that scrolls while the
+   head and foot stay, one foot bar. Tiers: S 340 (a confirm, one field), text 380 (a note), M 520 (two or three fields, a plan, a
+   checklist), L 600 (a picker). No other width; a narrow window takes the dialog to its edges less 16px each side. */
+dialog.ask{border:none;padding:0;background:transparent;max-width:none;max-height:none}
+dialog.ask::backdrop{background:var(--scrim)}
+.ask-body{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:var(--s4);width:340px;max-width:calc(100vw - 32px);max-height:min(600px,calc(100dvh - 48px));
+  overflow:auto;display:flex;flex-direction:column;gap:var(--s3);
+  box-shadow:var(--shadow-pop)}
+.ask-body[data-tier="text"]{width:380px}
+.ask-body[data-tier="M"]{width:520px}
+.ask-body[data-tier="L"]{width:600px}
+.ask-head{font-size:var(--fs-lg);font-weight:600}
+.ask-detail{color:var(--ink-2);margin-top:calc(var(--s2) * -1)}
+.ask-scroll{overflow:auto;min-height:0;flex:1}
+.ask-body .pager{background:none;border:0;padding:0}   /* a pager in a dialog is the dialog's own surface, not the grey band of a list page */
+.ask-table{width:100%;border-collapse:collapse;margin:var(--s2) 0}
+.ask-table th{width:132px;text-align:left;vertical-align:top;color:var(--ink-2);font-weight:500;padding:var(--s2) var(--s2) var(--s2) 0}
+.ask-table td{vertical-align:top;padding:var(--s2) 0;line-height:1.5;white-space:normal}
+.ask-table tr + tr th,.ask-table tr + tr td{border-top:1px solid var(--line-2)}
+/* A note: a quiet frame and an inset writing area. */
+.ask-text-form .ask-text{height:104px;min-height:104px;margin:0;padding:var(--s3);line-height:1.5;white-space:pre-wrap;background:var(--bg)}
+.ask-text-form .ask-text:focus,.ask-text-form .ask-text:focus-visible{outline:none;box-shadow:none;border-color:var(--ink-3);background:var(--bg)}
+.ask-text-form .ask-foot{padding-top:var(--s3);border-top:1px solid var(--line)}
+
+/* Explanations are readable paragraphs, rather than truncating toolbar meta. */
+[data-ui-help],p.meta { white-space:normal; overflow:visible; text-overflow:clip; overflow-wrap:break-word; max-width:100%; }
+.ui-metadata-line { font-size:var(--fs-sm); line-height:1.5; white-space:normal; overflow:visible; text-overflow:clip; overflow-wrap:break-word; }
+.scientific-exclusions { table-layout:fixed; }
+.scientific-exclusions th:first-child { width:35%; }
+.scientific-exclusions th,.scientific-exclusions td { white-space:normal; overflow-wrap:anywhere; vertical-align:top; }
+
+.aid-done { display:grid; grid-template-columns:auto minmax(0,1fr); align-items:start; gap:var(--s1); min-width:0; max-width:100%; padding:0 0 var(--s1); font-size:var(--fs-sm); color:var(--ink-2); white-space:normal; }
+.aid-done>svg { margin-top:var(--s1); }
+.aid-done>span { min-width:0; overflow-wrap:break-word; }
+
+/* ---- Wave 1 shared primitives (S1, S2, S5, S7) ---------------------------------------------------------------------- */
+
+/* S1: a region with a sticky first column. The cell paints over what scrolls under it; a hairline marks its edge at rest and a
+   soft shadow joins it once the region has scrolled (ui-components.mjs sets data-scrolled from the region's own scroll). */
+.ui-table-region[data-sticky]>table>:is(thead,tbody,tfoot)>tr>:first-child{position:sticky;inset-inline-start:0;z-index:1;background:transparent}   /* at rest the kept column is the table's own: no fill, no edge, the row's own rule */
+.ui-table-region[data-sticky]>table>thead>tr>:first-child{z-index:3;background:var(--panel-2)}
+.ui-table-region[data-sticky]>table>tbody>tr:hover>:first-child{background:var(--panel-2)}
+.ui-table-region[data-sticky][data-scrolled]>table>:is(thead,tbody,tfoot)>tr>:first-child{background:var(--panel);box-shadow:inset -1px 0 0 var(--line-strong),inset 0 -1px 0 var(--line-2)}   /* scrolled: it covers what passes under it, with its edge */
+.ui-table-region[data-sticky][data-scrolled]>table>:is(thead,tbody,tfoot)>tr>:first-child::after{content:'';position:absolute;inset-block:0;inset-inline-start:100%;inline-size:var(--s2);pointer-events:none;background:linear-gradient(to right,color-mix(in srgb,var(--ink) 20%,transparent),transparent)}
+.ui-table-region[data-sticky]>table{min-width:max-content}
+/* Columns lie beyond the right edge: the region fades out there until it is scrolled to its end (ui-components.mjs sets data-cue). */
+.ui-table-region[data-sticky][data-cue]{-webkit-mask-image:linear-gradient(to right,#000 calc(100% - var(--s5)),transparent);mask-image:linear-gradient(to right,#000 calc(100% - var(--s5)),transparent)}
+
+/* S2: one record open in place. The opener leads the first cell; the editor is the row beneath its record and spans the table. */
+.ui-edit-rows{min-width:0;display:flex;flex-direction:column;gap:var(--s2)}
+.ui-edit-lead{display:flex;align-items:center;gap:var(--s2);min-width:0}
+.ui-edit-lead-text{min-width:0;flex:1 1 auto;max-inline-size:min(32ch,45cqi);white-space:normal}
+.ui-edit-line>td{vertical-align:middle;padding-block:var(--s1)}
+.ui-edit-line[data-edit-open]>td{background:var(--panel-2)}
+.ui-table-region[data-sticky] .ui-edit-line[data-edit-open]>td:first-child{background:var(--panel-2)}
+.ui-edit-body>td{padding:var(--s3);white-space:normal;background:var(--panel)}
+.ui-edit-panel{min-width:0;max-width:min(100%,64ch)}
+.ui-table-region[data-sticky] .ui-edit-body>td{position:static;box-shadow:none}
+
+/* S5: a link has no underline (UI_Guidelines, Pressable words); the legacy button.link takes the same look. State is a fill. */
+.ui-link,button.link{display:inline-flex;align-items:center;justify-content:flex-start;gap:var(--s1);height:auto;min-height:0;padding:1px var(--s1);margin:-1px calc(var(--s1) * -1);border:0;border-radius:var(--radius-sm);background:transparent;box-shadow:none;color:var(--ink);font:inherit;font-weight:500;line-height:inherit;text-align:start;text-decoration:none;white-space:nowrap;transition:background-color .12s}
+.ui-link:hover:not(:disabled),button.link:hover:not(:disabled){background:var(--panel-3)}
+.ui-link:focus-visible,button.link:focus-visible{outline:2px solid var(--ring);outline-offset:1px}
+.ui-link:disabled,button.link:disabled{color:var(--ink-3);text-decoration:none;background:transparent}
+.ui-link>.ico,button.link>.ico{flex:none;width:14px;height:14px}
+.ui-link-label{min-width:0}
+@media (hover:none){.ui-link,button.link{padding-block:5px;margin-block:-5px}}   /* a touch hit area of the dense size; the margin takes it back, so nothing moves */
+
+/* S7: the selected item of a segmented control is a neutral fill and a hairline edge drawn inside the button (an outline, so no sibling changes size): nothing lifts, nothing moves. */
+.segmented button.on,.segmented button.on:hover{background:var(--panel);box-shadow:none;outline:1px solid var(--line-strong);outline-offset:-1px}
+
+/* Settings > Keyboard: the keys are the quiet first column of a read table. */
+.sc-table td:first-child{white-space:nowrap;color:var(--ink-2)}
+
+/* Settings > Teams: a member is a quiet frame around its own fields. */
+.team-member{border:1px solid var(--line);border-radius:var(--radius);padding:var(--s3);margin-block-start:var(--s3)}
+
+/* The text box lib/clipboard.mjs fills to copy with the old command: in the page, out of sight and out of reach. */
+.copy-sink{position:fixed;inset-block-start:0;inset-inline-start:0;opacity:0;pointer-events:none;block-size:1px;inline-size:1px}
+
+/* A button that chooses a value in a form (a model from a list): the look of the select beside it, the chosen value left, the chevron right. */
+.field-pick{display:flex;align-items:center;gap:var(--s2);min-block-size:var(--ctl-h);padding-inline:var(--s3);text-align:start;font-weight:var(--fw-text);background:var(--bg);border:1px solid var(--line-strong)}
+.field-pick>span{flex:1;min-inline-size:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.field-pick>.ico{flex:none;color:var(--ink-2)}
+.team-edit{margin-block-start:var(--s4)}
+
+/* Nested rows: the depth is data (style="--depth:N"), the step is one token. --ui-indent-base is the row's own start padding.
+   Doubled class so it wins over a list's own `li{padding}` whatever the stylesheet order. */
+.ui-indent.ui-indent{padding-inline-start:calc(var(--ui-indent-base,0px) + var(--depth,0)*var(--s4))}
+
+/* Cell field: an input or select that lives in a table cell. It fills the cell and starts at the cell's start edge; a table
+   that needs a floor, a ceiling or a fixed width sets --cell-min, --cell-max or --cell-w on itself (never a width on the control). */
+.ui-cell-field{box-sizing:border-box;inline-size:var(--cell-w,100%);min-inline-size:var(--cell-min,0);max-inline-size:var(--cell-max,none);text-align:var(--cell-align,start)}
+
+/* Column guide: a header label with its details button, and the popover it opens (lib/menu.mjs showPopover, lib/field-guide.mjs). The label truncates, the button never does. */
+.ui-head-cell{display:flex;align-items:center;gap:var(--s1);min-width:0}
+.ui-head-cell[data-align="end"]{justify-content:flex-end}
+.ui-head-label{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.ui-guide-btn{flex:none;box-sizing:border-box;width:20px;height:20px;min-height:0;padding:0;border:0;border-radius:var(--radius-sm);background:transparent;color:var(--ink-3)}
+.ui-guide-btn:hover:not(:disabled),.ui-guide-btn[aria-expanded="true"]{background:var(--panel-3);color:var(--ink)}
+.ui-guide-btn:focus-visible{outline:none;box-shadow:inset 0 0 0 1.5px var(--ring)}
+.ui-pop{position:fixed;z-index:1200;box-sizing:border-box;width:320px;max-width:calc(100vw - 16px);max-height:calc(100vh - 16px);overflow:auto;padding:var(--s3) var(--s4);
+  background:var(--panel);border:1px solid var(--line-strong);border-radius:var(--radius);box-shadow:var(--shadow-pop);white-space:normal;font-size:var(--fs);font-weight:400;line-height:var(--lh);color:var(--ink)}
+.ui-pop:focus-visible{outline:none;box-shadow:var(--shadow-pop),inset 0 0 0 1.5px var(--ring)}
+.ui-pop-title{font-weight:600}
+.ui-pop-text{margin:var(--s1) 0 0}
+.ui-pop-terms{display:grid;grid-template-columns:auto 1fr;gap:var(--s1) var(--s3);margin:var(--s2) 0 0}
+.ui-pop-terms:empty{display:none}
+.ui-pop-terms dt{font-size:var(--fs-sm);color:var(--ink-3)}
+.ui-pop-terms dd{margin:0;overflow-wrap:anywhere}
+
+/* The connect wizard (views/settings-connect.mjs): its choices are the setup screen's descriptive tiles in one column, and a test's
+   answer has a place of its own that holds three lines of the small size, so an answer arriving moves nothing; a longer one grows it. */
+.connect-tiles{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--s2);border:0;padding:0;margin:0;min-width:0}
+.connect-tiles .setup-type:has(input:disabled){opacity:.6}
+.connect-result{min-height:calc(3 * var(--lh));overflow-wrap:anywhere}
+.connect-result p{margin:0}
+.connect-result .ui-disclosure{margin-top:var(--s1)}
+
+/* ---- imports and uploads in progress (lib/transfers.mjs): one card above the status bar, a head bar and a list row per transfer --- */
+.xfer-card{position:fixed;inset-inline-end:var(--s4);inset-block-end:calc(var(--ctl-h-dense) + var(--s1) + var(--s3));z-index:400;   /* over the start page (300), under menus and dialogs (1000 and up) */
+  inline-size:min(360px, calc(100vw - 2 * var(--s4)));box-sizing:border-box;padding:var(--s1) var(--s2) var(--s2);
+  max-block-size:320px;overflow-y:auto;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-pop)}
+.xfer-state{display:inline-flex;align-items:center;gap:var(--s2);white-space:nowrap}
+.xfer-count{min-inline-size:9ch;text-align:end;font-size:var(--fs-sm);line-height:var(--lh-sm);color:var(--ink-2);font-variant-numeric:tabular-nums}   /* a check lines up under a ring */
+.xfer-ring{display:block}
+.xfer-ring-track{fill:none;stroke:var(--line-2);stroke-width:2.5}
+.xfer-ring-arc{fill:none;stroke:var(--ink-2);stroke-width:2.5;stroke-linecap:round}
+.xfer-why{color:var(--bad)}
+/* the desktop app offered on the site (lib/get-app.mjs): the same corner card: icon, title and version, Download, then the install steps */
+.get-app{display:flex;flex-direction:column;gap:var(--s3);inline-size:min(340px, calc(100vw - 2 * var(--s4)));padding:var(--s4)}
+.get-app-top{display:flex;align-items:center;gap:var(--s3)}
+.get-app-icon{display:block;flex:none;inline-size:48px;block-size:48px;border-radius:var(--radius-sm)}
+.get-app-main{flex:1;min-inline-size:0}
+.get-app-title{margin:0;font-size:var(--fs);line-height:var(--lh);font-weight:600;color:var(--ink)}
+.get-app-meta{margin:0;font-size:var(--fs-sm);line-height:var(--lh-sm);color:var(--ink-2)}
+.get-app-steps{margin:0;padding-inline-start:var(--s4);display:grid;row-gap:var(--s1);font-size:var(--fs);line-height:var(--lh);color:var(--ink)}

@@ -1,0 +1,208 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lykos</title>
+<link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./assets/app/icon.svg" type="image/svg+xml"><link rel="icon" href="./assets/app/icon-32.png" type="image/png" sizes="32x32"><link rel="apple-touch-icon" href="./assets/app/apple-touch-icon.png">
+<script src="./theme-boot.js"></script>
+<link rel="stylesheet" href="./styles.css"></head>
+<body>
+<aside>
+  <div class="chrome" data-tauri-drag-region></div>
+  <div class="brand" data-tauri-drag-region>
+    <button class="proj" id="proj" aria-haspopup="menu"><span class="word" id="proj-name">Lykos</span>
+      <svg class="ico" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+    <button class="icon side-toggle" id="side-toggle" title="Collapse sidebar (⌘\)" aria-label="Collapse sidebar">
+      <svg class="ico" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M4 5h16v14H4z M9 5v14"/></svg></button></div>
+  <button id="global-search" class="global-search" aria-label="Search workspace"><svg class="ico" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M21 21l-5-5 M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0"/></svg><span>Search</span><kbd>⌘K</kbd></button>
+  <div class="side-tabs" id="side-tabs" role="tablist" aria-label="Sidebar">
+    <button role="tab" class="side-tab-workspace" data-side-mode="review" aria-selected="true"><span>Workspace</span></button>
+    <button role="tab" class="side-tab-files" data-side-mode="files" aria-selected="false" title="Files (⌘⇧E)" aria-label="Files"><span>Files</span></button></div>
+  <nav id="nav"></nav>
+  <div class="tree" id="tree" hidden></div>
+  <div class="side-base">
+    <nav id="foot"></nav>
+  </div>
+</aside>
+<div class="side-grip" id="side-grip" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Resize sidebar"></div>
+<main>
+  <div class="topbar" id="topbar-slot"></div>
+  <div class="split" id="split">
+    <section class="plist" id="plist" hidden aria-label="Items">
+      <div class="plist-head" id="plist-head"></div>
+      <div class="plist-filter" id="plist-filter"></div>
+      <div class="plist-body" id="plist-body" role="listbox" tabindex="0" aria-label="Items"><div class="plist-space" id="plist-space"></div></div>
+    </section>
+    <div class="plist-grip" id="plist-grip" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Resize list" hidden></div>
+    <div class="view" id="view"></div>
+    <div class="divider" id="divider" role="separator" aria-orientation="vertical"
+         tabindex="0" aria-label="Resize document pane" hidden></div>
+    <aside class="docpane" id="docpane" hidden></aside>
+    <aside class="assist" id="assist" hidden aria-label="Inspector">
+      <div class="assist-head"><span class="segmented" id="assist-tabs" role="tablist" aria-label="Inspector"><button role="tab" data-tab="details">Details</button><button role="tab" data-tab="proposals">Proposals <span class="meta" id="aid-count"></span></button><button role="tab" data-tab="chat">Chat</button></span>
+        <button type="button" class="icon" id="assist-expand" title="Expand" aria-label="Expand chat" aria-expanded="false"><svg class="ico" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+        <button class="icon" id="assist-close" title="Close (⌘J)" aria-label="Close"><svg class="ico" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+      <div class="assist-body"><div id="assist-history-dock" hidden></div><div class="assist-conversation">
+      <div id="assist-find-host"></div>
+      <div class="assist-log" id="assist-log"></div>
+      <div class="assist-foot">
+        <div class="assist-attach" id="assist-attach"></div>
+        <div id="assist-composer-host"></div>
+        <div class="meta assist-note" id="assist-note" role="status"></div>
+      </div></div></div>
+    </aside>
+  </div>
+  <footer class="statusbar" id="status"></footer>
+</main>
+<script type="module" src="./lib/bar-boot.mjs"></script>
+<link rel="modulepreload" href="./app.mjs">
+<link rel="modulepreload" href="./lib/ui-actions.mjs">
+<link rel="modulepreload" href="./lib/bar-fit.mjs">
+<link rel="modulepreload" href="./lib/arrive.mjs">
+<link rel="modulepreload" href="./lib/assist-tools.mjs">
+<link rel="modulepreload" href="./lib/research-ledger.mjs">
+<link rel="modulepreload" href="./lib/ui-components.mjs">
+<link rel="modulepreload" href="./lib/tooltips.mjs">
+<link rel="modulepreload" href="./lib/ai-menu.mjs">
+<link rel="modulepreload" href="./lib/assist-menu.mjs">
+<link rel="modulepreload" href="./lib/chat-attach-menu.mjs">
+<link rel="modulepreload" href="./lib/status-cost.mjs">
+<link rel="modulepreload" href="./lib/chat-conversation.mjs">
+<link rel="modulepreload" href="./lib/model-controls.mjs">
+<link rel="modulepreload" href="./lib/model-effort.mjs">
+<link rel="modulepreload" href="./lib/sidebar-reveal.mjs">
+<link rel="modulepreload" href="./lib/team-editor.mjs">
+<link rel="modulepreload" href="./lib/chatgpt-usage.mjs">
+<link rel="modulepreload" href="./lib/library-records.mjs">
+<link rel="modulepreload" href="./store.mjs">
+<link rel="modulepreload" href="./lib/navigation.mjs">
+<link rel="modulepreload" href="./lib/palette.mjs">
+<link rel="modulepreload" href="./lib/listpane.mjs">
+<link rel="modulepreload" href="./lib/aid-core.mjs">
+<link rel="modulepreload" href="./lib/jobs.mjs">
+<link rel="modulepreload" href="./lib/progress.mjs">
+<link rel="modulepreload" href="./lib/projects.mjs">
+<link rel="modulepreload" href="./lib/theme.mjs">
+<link rel="modulepreload" href="./lib/menu.mjs">
+<link rel="modulepreload" href="./lib/topbar.mjs">
+<link rel="modulepreload" href="./lib/dialog.mjs">
+<link rel="modulepreload" href="./lib/shell-notice.mjs">
+<link rel="modulepreload" href="./lib/error-surface.mjs">
+<link rel="modulepreload" href="./lib/download-progress.mjs">
+<link rel="modulepreload" href="./lib/icons.mjs">
+<link rel="modulepreload" href="./lib/identify-pending.mjs">
+<link rel="modulepreload" href="./lib/fsys.mjs">
+<link rel="modulepreload" href="./lib/native.mjs">
+<link rel="modulepreload" href="./lib/screen.mjs">
+<link rel="modulepreload" href="./lib/fields.mjs">
+<link rel="modulepreload" href="./lib/bib.mjs">
+<link rel="modulepreload" href="./lib/limiter.mjs">
+<link rel="modulepreload" href="./lib/assistant.mjs">
+<link rel="modulepreload" href="./lib/assistant-status.mjs">
+<link rel="modulepreload" href="./lib/ai.mjs">
+<link rel="modulepreload" href="./lib/agent-load.mjs">
+<link rel="modulepreload" href="./lib/html.mjs">
+<link rel="modulepreload" href="./lib/actions.mjs">
+<link rel="modulepreload" href="./lib/dates.mjs">
+<link rel="modulepreload" href="./lib/manuscript.mjs">
+<link rel="modulepreload" href="./lib/app-menu.mjs">
+<link rel="modulepreload" href="./lib/chat-cites.mjs">
+<link rel="modulepreload" href="./lib/figure-draw.mjs">
+<link rel="modulepreload" href="./lib/save.mjs">
+<link rel="modulepreload" href="./lib/chat-content.mjs">
+<link rel="modulepreload" href="./lib/search-library.mjs">
+<link rel="modulepreload" href="./lib/select.mjs">
+<link rel="modulepreload" href="./lib/responsive-switches.mjs">
+<link rel="modulepreload" href="./lib/workflow.mjs">
+<link rel="modulepreload" href="./views/registry.mjs">
+<link rel="modulepreload" href="./lib/batch-present.mjs">
+<link rel="modulepreload" href="./lib/model-settings.mjs">
+<link rel="modulepreload" href="./lib/explorer-mount.mjs">
+<link rel="modulepreload" href="./lib/flow-load.mjs">
+<link rel="modulepreload" href="./lib/figure-watch.mjs">
+<link rel="modulepreload" href="./lib/lazy.mjs">
+<link rel="modulepreload" href="./lib/progress-gate.mjs">
+<link rel="modulepreload" href="./lib/notifications.mjs">
+<link rel="modulepreload" href="./lib/chatgpt.mjs">
+<link rel="modulepreload" href="./lib/app-settings.mjs">
+<link rel="modulepreload" href="./lib/palette-hits.mjs">
+<link rel="modulepreload" href="./lib/date-picker.mjs">
+<link rel="modulepreload" href="./lib/record-picker.mjs">
+<link rel="modulepreload" href="./lib/bar-modes.mjs">
+<link rel="modulepreload" href="./lib/allocation.mjs">
+<link rel="modulepreload" href="./lib/paging.mjs">
+<link rel="modulepreload" href="./lib/chat-sessions.mjs">
+<link rel="modulepreload" href="./lib/model-picker.mjs">
+<link rel="modulepreload" href="./lib/model-team-list.mjs">
+<link rel="modulepreload" href="./lib/project-trim.mjs">
+<link rel="modulepreload" href="./lib/gzip.mjs">
+<link rel="modulepreload" href="./lib/rules-key.mjs">
+<link rel="modulepreload" href="./lib/datasets.mjs">
+<link rel="modulepreload" href="./lib/evidence.mjs">
+<link rel="modulepreload" href="./lib/arms.mjs">
+<link rel="modulepreload" href="./lib/evidence-state.mjs">
+<link rel="modulepreload" href="./lib/extraction-summary-state.mjs">
+<link rel="modulepreload" href="./lib/screen-labels.mjs">
+<link rel="modulepreload" href="./lib/screen-assign.mjs">
+<link rel="modulepreload" href="./lib/declarations.mjs">
+<link rel="modulepreload" href="./lib/journal-profile-state.mjs">
+<link rel="modulepreload" href="./lib/submissions.mjs">
+<link rel="modulepreload" href="./lib/governance-state.mjs">
+<link rel="modulepreload" href="./schema.mjs">
+<link rel="modulepreload" href="./lib/appraisal-custom.mjs">
+<link rel="modulepreload" href="./lib/swim-normalize.mjs">
+<link rel="modulepreload" href="./lib/qual.mjs">
+<link rel="modulepreload" href="./lib/workspace-records.mjs">
+<link rel="modulepreload" href="./lib/figures.mjs">
+<link rel="modulepreload" href="./lib/search-ranking.mjs">
+<link rel="modulepreload" href="./lib/context.mjs">
+<link rel="modulepreload" href="./lib/integrity-level.mjs">
+<link rel="modulepreload" href="./lib/ipd.mjs">
+<link rel="modulepreload" href="./lib/dataset-analysis-core.mjs">
+<link rel="modulepreload" href="./lib/research-types.mjs">
+<link rel="modulepreload" href="./lib/outcomes.mjs">
+<link rel="modulepreload" href="./lib/library-broken.mjs">
+<link rel="modulepreload" href="./lib/overview-model.mjs">
+<link rel="modulepreload" href="./lib/new-project.mjs">
+<link rel="modulepreload" href="./lib/files.mjs">
+<link rel="modulepreload" href="./lib/serialize-project.mjs">
+<link rel="modulepreload" href="./lib/backup-rule.mjs">
+<link rel="modulepreload" href="./lib/effect-measures.mjs">
+<link rel="modulepreload" href="./lib/multi-arm.mjs">
+<link rel="modulepreload" href="./lib/xml.mjs">
+<link rel="modulepreload" href="./lib/languages.mjs">
+<link rel="modulepreload" href="./lib/ref-import-extra.mjs">
+<link rel="modulepreload" href="./lib/citation-intake.mjs">
+<link rel="modulepreload" href="./lib/prompts.mjs">
+<link rel="modulepreload" href="./lib/agent-runtime.mjs">
+<link rel="modulepreload" href="./lib/model-catalog-cache.mjs">
+<link rel="modulepreload" href="./lib/anthropic.mjs">
+<link rel="modulepreload" href="./lib/ai-usage.mjs">
+<link rel="modulepreload" href="./lib/chat-math.mjs">
+<link rel="modulepreload" href="./lib/markdown.mjs">
+<link rel="modulepreload" href="./lib/textwidth.mjs">
+<link rel="modulepreload" href="./lib/png-meta.mjs">
+<link rel="modulepreload" href="./lib/figure-style.mjs">
+<link rel="modulepreload" href="./lib/import-watch.mjs">
+<link rel="modulepreload" href="./lib/tasks.mjs">
+<link rel="modulepreload" href="./lib/qes.mjs">
+<link rel="modulepreload" href="./lib/cerqual.mjs">
+<link rel="modulepreload" href="./lib/figure-lexicon.mjs">
+<link rel="modulepreload" href="./lib/trial-tools.mjs">
+<link rel="modulepreload" href="./lib/trial-operations.mjs">
+<link rel="modulepreload" href="./lib/data-rules.mjs">
+<link rel="modulepreload" href="./lib/rob-review.mjs">
+<link rel="modulepreload" href="./lib/cache-budget.mjs">
+<link rel="modulepreload" href="./lib/journal-profiles.mjs">
+<link rel="modulepreload" href="./lib/custom-instrument.mjs">
+<link rel="modulepreload" href="./lib/appraisal-extra.mjs">
+<link rel="modulepreload" href="./lib/swim-core.mjs">
+<link rel="modulepreload" href="./lib/qual-text.mjs">
+<link rel="modulepreload" href="./lib/reading.mjs">
+<link rel="modulepreload" href="./lib/journal.mjs">
+<link rel="modulepreload" href="./lib/note-templates.mjs">
+<link rel="modulepreload" href="./lib/timeline.mjs">
+<link rel="modulepreload" href="./lib/preview-cache.mjs">
+<link rel="modulepreload" href="./lib/figure-presets.mjs">
+<link rel="modulepreload" href="./lib/figure-kit.mjs">
+<link rel="modulepreload" href="./lib/dist.mjs">
+<script type="module" src="./app.mjs"></script>
+</body></html>
