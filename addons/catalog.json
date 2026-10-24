@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "addons": [
+    {
+      "id": "neuro",
+      "name": "Neurosurgery figures",
+      "version": "0.4.2",
+      "entry": "neuro/index.mjs",
+      "gives": [
+        "charts"
+      ],
+      "about": "Spine level map, sagittal alignment (SRS-Schwab), cranial location map, outcome scales",
+      "files": [
+        "neuro/index.mjs",
+        "neuro/art.mjs"
+      ],
+      "credits": [
+        "Spine: Servier Medical Art (smart.servier.com), CC BY 4.0, recoloured",
+        "Brain: \"Mid-sagittal plane of the brain\", DataBase Center for Life Science (DBCLS), CC BY 4.0"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,716 @@
+/* ui-actions.css: the only file where control placement is written (action-system design, sections 4, 6, 8, 9, 12).
+   No flex-wrap:wrap, no width @media, no hue, no !important, one `order` reset, two `margin-inline-start:auto`
+   declarations (the `end` rule and the `foot start` rule), one `contain`, selectors only under .ui-* and [data-ui-*].
+   lint-actions enforces this file absolutely (rule A0) and ui-actions-css.test.mjs checks it in npm test.
+
+   The shape of a bar is one of four names, written by the engine as data-ui-bar-mode:
+     full, compact (labels leave, view switches become dropdowns), folded (controls move into the trailing More),
+     stacked (bands of equal columns). The first three are one nowrap row; there is no wrapping rule anywhere. */
+
+/* ---- the bar ---------------------------------------------------------------------------------------------------- */
+.ui-bar[data-ui-bar]{--ui-h:var(--ctl-h-dense);--ui-label:var(--fs);position:relative;box-sizing:border-box;display:flex;flex-wrap:nowrap;align-items:center;gap:var(--s2);
+  inline-size:100%;min-inline-size:0;min-block-size:var(--ui-h);contain:inline-size;font-size:var(--fs)}
+.ui-bar[data-ui-bar][data-ui-density=dense]{font-size:var(--fs-sm);--ui-label:var(--fs-sm)}                                  /* dense means small text; the height of every bar is the dense control */
+.ui-bar.ui-dialog-foot[data-ui-bar],.ui-bar[data-ui-bar][data-ui-form]{--ui-h:var(--ctl-h)}        /* a dialog foot and a form bar take the field height, so a button beside a field is as high as the field */
+/* fail-safe before the engine mounts: one full-width control per row, nothing unreachable */
+.ui-bar[data-ui-bar]:not([data-ui-bar-mode]){display:grid;grid-template-columns:minmax(0,1fr);contain:none}
+/* the first three modes are one nowrap row: full, compact (labels off, dropdown views) and folded (items in More) differ only in the attributes the engine writes */
+.ui-bar[data-ui-bar][data-ui-bar-mode=full],.ui-bar[data-ui-bar][data-ui-bar-mode=compact],.ui-bar[data-ui-bar][data-ui-bar-mode=folded]{display:flex;flex-wrap:nowrap}
+.ui-bar[data-ui-bar]>*{margin:0;order:0}
+.ui-bar[data-ui-bar] .spacer{display:none}
+.ui-bar[data-ui-bar]>[data-ui-slot]:not([data-ui-slot=status],[data-ui-slot=message]){display:contents}
+
+.ui-bar[data-ui-bar]>[data-ui-slot=lead]>:is(.ui-bar-title){flex:0 1 auto;min-inline-size:0;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;overflow-wrap:normal;font-size:var(--fs);font-weight:600}
+.ui-bar[data-ui-bar]>[data-ui-slot=lead]>h1.ui-bar-title{font-size:var(--fs-lg);line-height:calc(1em + var(--s1));padding-block-end:var(--s1);align-self:baseline;margin-block-start:calc(var(--ui-h)/2 + .36*var(--ui-label) - .95*var(--fs-lg))}   /* the title shares the baseline of the labels beside it (a label centred in the bar sits half the bar plus .36em of its size down, 13px or 12px in a dense bar; the large line puts its baseline .95em below its top) */
+.ui-bar[data-ui-bar]>[data-ui-slot=lead]>h1.ui-bar-title:has(.ui-title-pick){display:flex;margin-block-start:0;padding-block-end:0}
+.ui-bar[data-ui-bar]>[data-ui-slot=lead]>h1.ui-bar-title .ui-title-pick{box-sizing:border-box;border-bottom-width:calc(1px + .72*(var(--fs-lg) - var(--ui-label)))}   /* a menu title is a control as high as the bar: its transparent bottom border is twice the difference of the two half-heights, so the letters, centred in what is left, sit on the baseline of the labels beside it (13px, or 12px in a dense bar); the fill still covers the whole box */
+.ui-bar[data-ui-bar]>[data-ui-slot=lead][data-ui-slot]:has(>h1.ui-bar-title),.ui-bar[data-ui-bar]>[data-ui-slot=lead]:has(>h1.ui-bar-title)~[data-ui-slot=status]{align-self:baseline}   /* a count beside the large title sits on its baseline (centred, 12px letters stand about 1px above the 13px labels the title meets) */
+.ui-bar[data-ui-bar]>[data-ui-slot=lead]>.ui-bar-title-input{flex:1 1 0;min-inline-size:160px;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:var(--fs);font-weight:600}
+.ui-bar[data-ui-bar] .ui-title-pick{display:inline-flex;align-items:center;gap:var(--s1);max-inline-size:100%;block-size:var(--ui-h);padding-inline:0;border:1px solid transparent;background:transparent;color:inherit;font:inherit;font-weight:600;white-space:nowrap}
+.ui-bar[data-ui-bar] .ui-title-pick>span{min-inline-size:0;overflow:hidden;text-overflow:ellipsis}
+.ui-bar[data-ui-bar]>[data-ui-slot=message]{flex:0 100000 auto;min-inline-size:var(--message-min);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;overflow-wrap:normal;font-size:var(--fs-sm);color:var(--ink-2)}
+.ui-bar[data-ui-bar]>[data-ui-slot=message]:empty,.ui-bar[data-ui-bar][data-ui-message=hidden]>[data-ui-slot=message]{display:none}
+.ui-bar[data-ui-bar]>[data-ui-slot=status]{flex:none;inline-size:calc(var(--ch,12)*1ch);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  font-size:var(--fs-sm);color:var(--ink-3);font-variant-numeric:tabular-nums}
+.ui-bar[data-ui-bar]>[data-ui-slot=filters] :is(.ui-select,.date-field){inline-size:auto;max-inline-size:none;min-inline-size:0;flex:none}
+.ui-bar[data-ui-bar]>[data-ui-slot=filters] .ui-search{flex:1 1 var(--search-min,128px);min-inline-size:var(--search-min,128px);max-inline-size:320px}
+.ui-bar[data-ui-bar]>[data-ui-slot=filters] .ui-search[data-ui-w=flex]{max-inline-size:none}   /* a search declared width 'flex' takes the row */
+.ui-bar[data-ui-bar] .ui-bar-field{flex:none}
+.ui-bar[data-ui-bar] .ui-bar-field[data-ui-w=sm]{inline-size:8ch}
+.ui-bar[data-ui-bar] .ui-bar-field[data-ui-w=md]{inline-size:14ch}
+.ui-bar[data-ui-bar] .ui-bar-field[data-ui-w=lg]{inline-size:22ch}
+.ui-bar[data-ui-bar] .ui-bar-field[data-ui-w=flex]{flex:1 1 var(--search-min,128px);min-inline-size:var(--search-min,128px)}
+.ui-bar[data-ui-bar]>[data-ui-slot=filters] .ui-filter{display:inline-flex;flex:none}
+.ui-bar[data-ui-bar] .ui-check{display:inline-flex;flex:none;align-items:center;gap:var(--s2);block-size:var(--ui-h);white-space:nowrap}
+.ui-bar[data-ui-bar] .ui-check>span{min-inline-size:0;overflow:hidden;text-overflow:ellipsis;line-height:calc(1em + var(--s1))}   /* the line of a button label, so a check's text and a button's share one baseline */
+.ui-bar[data-ui-bar] .ui-check>input{margin:0;flex:none}   /* the box starts at the check's edge and the gap to its words is the bar's gap, not the browser's margins */
+.ui-bar[data-ui-bar] .record-picker{display:contents}
+
+/* every control of a bar is as high as the bar's control; the end cluster is placed by role, never by a view */
+.ui-bar[data-ui-bar] :is(.ui-search,.ui-select,.ui-bar-field,.ui-bar-title-input,.date-trigger,.record-picker>button,.ui-view-pick){box-sizing:border-box;block-size:var(--ui-h);min-block-size:var(--ui-h);font-size:inherit}
+.ui-bar[data-ui-bar] [data-ui-slot]>*,.ui-bar[data-ui-bar] :is(.ui-view,.ui-view-set,.ui-group,.ui-swap)>*,.ui-bar[data-ui-bar] .ui-view-set{margin:0}
+/* the trailing cluster starts at the end rule: the end element pushes it, and in a head the whole cluster (secondary, then primary, then More) sits at the trailing edge, so the first visible action carries the push and an end element after a visible sibling does not */
+.ui-bar[data-ui-bar] [data-ui-end],.ui-bar[data-ui-bar=head]>[data-ui-slot=actions]>:not([data-ui-folded],[hidden]):not(:not([data-ui-folded],[hidden])~*){margin-inline-start:auto}
+.ui-bar[data-ui-bar=head]>[data-ui-slot=actions]>:not([data-ui-folded],[hidden])~[data-ui-end]{margin-inline-start:0}
+.ui-bar[data-ui-bar=foot]{justify-content:flex-end;justify-content:safe flex-end}   /* safe: a row wider than its bar overflows on the right, where the actions are folded, never on the left over the quote */
+.ui-bar[data-ui-bar=foot] [data-ui-end],.ui-bar[data-ui-bar=strip] [data-ui-end]{margin-inline-start:0}
+.ui-bar[data-ui-bar=foot] [data-ui-slot=start]~[data-ui-slot=actions]>:first-child{margin-inline-start:auto}
+.ui-bar[data-ui-bar]>[data-ui-slot=start]>.ui-bar-message{flex:0 1 auto;min-inline-size:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink-2);font-size:var(--fs-sm)}
+.ui-bar[data-ui-bar][data-ui-align=center]{justify-content:center}
+.ui-bar[data-ui-bar][data-ui-equal]:not([data-ui-measure]) [data-ui-slot=actions]>:is(button,.ui-swap,.ui-group,.ui-reserve):not([data-ui-more]){flex:1 1 0;min-inline-size:0}
+
+/* ---- one chrome: a state changes fill or colour only (1px border always, transparent at rest) ------------------------ */
+.ui-bar[data-ui-bar] :is(button[data-ui-role],[data-ui-more],.ui-view-pick,.ui-picker){box-sizing:border-box;flex:none;block-size:var(--ui-h);min-block-size:var(--ui-h);
+  padding-inline:var(--s3);border:1px solid transparent;background:var(--panel-2);color:var(--ink);font-size:inherit;white-space:nowrap}
+.ui-bar[data-ui-bar] :is(button[data-ui-role],[data-ui-more],.ui-view-pick,.ui-picker):hover:not(:disabled){background:var(--panel-3)}
+.ui-bar[data-ui-bar] :is(button[data-ui-role][aria-pressed=true],[data-ui-more][data-ui-active]){background:var(--panel-3);border-color:var(--ink-2)}
+.ui-bar[data-ui-bar] button[data-ui-role]:disabled{background:var(--panel-2);border-color:transparent;color:var(--ink-3)}
+.ui-bar[data-ui-bar] button[data-ui-role=quiet][data-ui-plain]:not([aria-pressed=true],[aria-expanded=true]):not(:hover){background:transparent;color:var(--ink-2)}   /* act plain: a toggle on a list has no fill until it is pointed at or pressed */
+.ui-bar[data-ui-bar] button[data-ui-plain]:is([aria-pressed=true],[aria-expanded=true]){background:var(--panel-3);border-color:transparent}   /* a plain act pressed, or its menu open: a fill, never an outline */
+/* the title bar's More is plain like its two panel toggles (topbar.mjs): no tile at rest, a fill when pointed at or open. A view's sort and show
+   choices live in it and one of them is always on, so an entry that is on does not fill it (its hidden description still names them) */
+.ui-bar[data-ui-bar]:is(.topbar,[data-ui-plain-more]) [data-ui-more]:not([aria-expanded=true]):not(:hover){background:transparent;border-color:transparent;color:var(--ink-2)}
+.ui-bar[data-ui-bar]:is(.topbar,[data-ui-plain-more]) [data-ui-more][aria-expanded=true]{background:var(--panel-3);border-color:transparent}
+/* a picker that grows (the chat's name in the inspector) takes the width its row has to spare once the engine has measured it; its words clip with an
+   ellipsis and its chevron stays at its end. When the engine takes its label off it is the compact picker again. It is a title menu, not a field: in
+   a wide row (the chat as the whole page: grow 'cap') it stops at 280px, room for the longest name it shows, and the row's other controls stay beside it;
+   in the inspector it takes all the spare width, so the row ends on the pane's edge with New chat and More under Expand and Close */
+.ui-bar[data-ui-bar]:not([data-ui-measure]) .ui-picker[data-ui-grow]:not([data-ui-label-off]){flex:1 1 auto;min-inline-size:0}
+.ui-bar[data-ui-bar]:not([data-ui-measure]) .ui-picker[data-ui-grow=cap]:not([data-ui-label-off]){max-inline-size:280px}
+.ui-bar[data-ui-bar]:not([data-ui-measure]) .ui-picker[data-ui-grow]:not([data-ui-label-off])>.ui-picker-value{flex:1 1 auto;min-inline-size:0;max-inline-size:none;text-align:start}
+.ui-bar[data-ui-bar] button[data-ui-role=secondary]{background:var(--panel);border-color:var(--line)}   /* a secondary act is outlined on the surface, as the references draw them; a quiet one keeps its fill */
+.ui-bar[data-ui-bar] button[data-ui-role=secondary]:hover:not(:disabled){background:var(--panel-2)}
+.ui-bar[data-ui-bar] button[data-ui-role=secondary]:disabled{background:transparent;border-color:var(--line-2)}
+.ui-bar[data-ui-bar] button[data-ui-role=primary]{background:var(--accent);color:var(--accent-ink)}
+.ui-bar[data-ui-bar] button[data-ui-role=primary]:hover:not(:disabled){background:var(--accent-2)}
+.ui-bar[data-ui-bar] button[data-ui-role=primary][data-ui-danger]{background:var(--bad);color:var(--on-bad)}
+.ui-bar[data-ui-bar] button[data-ui-role=primary]:disabled{background:var(--panel-2);color:var(--ink-3)}
+.ui-bar[data-ui-bar=strip] :is(button[data-ui-role],[data-ui-more]){background:transparent}
+.ui-bar[data-ui-bar=strip] :is(button[data-ui-role],[data-ui-more]):hover:not(:disabled){background:var(--panel-3)}
+.ui-bar[data-ui-bar=strip] button[data-ui-role][aria-pressed=true]{border-color:transparent}                                       /* in a strip a pressed control is a fill, never an outline */
+.ui-bar[data-ui-bar=strip] .ui-bar-field{background:var(--panel-2);border-color:transparent}                                    /* a field in a strip is a plain field: an outline only while it has focus (the ring) */
+.ui-bar[data-ui-bar=strip] .ui-bar-field:hover{background:var(--panel-3)}
+.ui-bar[data-ui-bar=strip] .ui-bar-field:focus{background:var(--panel);border-color:var(--line-strong)}
+.ui-bar[data-ui-bar] :is(button[data-ui-role],[data-ui-more])[data-ui-display=icon]{inline-size:var(--ui-h);padding-inline:0}
+.ui-bar[data-ui-bar] .ui-group{display:inline-flex;align-items:center;gap:var(--s1);flex:none}
+.ui-bar[data-ui-bar] .ui-group[data-ui-display=icon]>button{inline-size:var(--ui-h);padding-inline:0}
+.ui-bar[data-ui-bar] .ui-readout{flex:none;font-variant-numeric:tabular-nums;color:var(--ink-2);font-size:var(--fs-sm)}
+.ui-bar[data-ui-bar] .ui-act-label[data-ui-ch]{display:inline-block;inline-size:calc(var(--ch)*1ch);overflow:hidden;text-overflow:ellipsis;text-align:center}   /* a reserved label width splits its slack both sides, on every role: 'Normalise' in an 8ch slot read as a trailing gap (owner, 2026-10-23) */
+.ui-count{display:inline-block;text-align:end;font-variant-numeric:tabular-nums;min-inline-size:calc(var(--digits,0)*1ch)}   /* its digits and one more: a slot rounded up to a ch step left a hole after "0" (owner, 2026-10-23: "Not checked 0") */
+.ui-count[data-ui-digits="2"]{--digits:2}.ui-count[data-ui-digits="3"]{--digits:3}.ui-count[data-ui-digits="4"]{--digits:4}.ui-count[data-ui-digits="5"]{--digits:5}
+.ui-count[data-ui-digits="6"]{--digits:6}.ui-count[data-ui-digits="7"]{--digits:7}.ui-count[data-ui-digits="8"]{--digits:8}
+.ui-view-set .ui-count{text-align:start;color:var(--ink-3)}   /* a switch's count follows its words: the spare digit's room is after it */
+/* an act's label that swaps (labels): the other labels are drawn hidden and flat in the same column, so the label is as wide as the widest of them */
+.ui-act-label:is([data-ui-alt],[data-ui-alt-b]){display:inline-flex;flex-direction:column;align-items:center;white-space:nowrap}
+.ui-act-label:is([data-ui-alt],[data-ui-alt-b])::before,.ui-act-label[data-ui-alt-b]::after{visibility:hidden;block-size:0;overflow:hidden}
+.ui-act-label[data-ui-alt]::before{content:attr(data-ui-alt) / ""}
+.ui-act-label[data-ui-alt-b]::after{content:attr(data-ui-alt-b) / ""}
+.ui-view-set [aria-pressed=true] .ui-count,.ui-view-set [aria-selected=true] .ui-count{color:var(--ink-2)}
+.ui-picker-value{display:inline-block;max-inline-size:24ch;overflow:hidden;text-overflow:ellipsis;vertical-align:bottom}
+.ui-picker-value[data-ui-ch]{max-inline-size:calc(var(--ch)*1ch)}
+.ui-view-pick>.ui-picker-value[data-pick-values]{display:inline-grid}.ui-view-pick>.ui-picker-value[data-pick-values]>[data-pick-value]{grid-area:1/1;min-inline-size:0;text-align:start;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ui-view-pick>.ui-picker-value[data-pick-values]>[data-pick-value]:not([data-pick-current]){visibility:hidden}   /* a switch's dropdown form is as wide as its widest value: choosing another moves nothing (switch-moves) */             /* a picker that declares valueCh holds its value to that many characters (its share of the row) */
+.ui-picker[data-ui-label-off] .ui-picker-value{max-inline-size:12ch}
+.ui-picker-steady{display:inline-grid;min-inline-size:0}.ui-picker-steady>.ui-picker-value{grid-area:1/1;min-inline-size:0;text-align:start;white-space:nowrap}.ui-picker-steady>[data-pick-sizer]{visibility:hidden}   /* steady: as wide as the widest option, so choosing moves nothing */
+
+/* ---- view switches ------------------------------------------------------------------------------------------------ */
+.ui-bar[data-ui-bar] .ui-view{display:inline-flex;flex:none;min-inline-size:0}
+.ui-bar[data-ui-bar] .ui-view-set{display:inline-flex;box-sizing:border-box;block-size:var(--ui-h);overflow:visible;gap:var(--s1);padding:2px}
+.ui-bar[data-ui-bar] .ui-view-set>button{box-sizing:border-box;block-size:calc(var(--ui-h) - 4px);min-block-size:0;padding-inline:var(--s3);font-size:inherit;gap:var(--s1);box-shadow:none}
+.ui-bar[data-ui-bar] .ui-view-set>button:hover:not(:disabled){background:var(--panel-3)}
+.ui-bar[data-ui-bar] .ui-view-set>:is(.on,[aria-pressed=true],[aria-selected=true]){background:var(--panel);border-color:var(--line-strong);color:var(--ink);box-shadow:none}
+.ui-bar[data-ui-bar] .ui-view[data-ui-as=dropdown]>.ui-view-set,.ui-bar[data-ui-bar] .ui-view:not([data-ui-as=dropdown])>.ui-view-pick{display:none}
+
+/* ---- presence: state never moves another control. The slot is held by an invisible copy of every alternative ------------ */
+.ui-swap{display:inline-grid;flex:none}
+.ui-swap>*{grid-area:1/1;min-inline-size:0}
+.ui-swap-sizer{display:grid;visibility:hidden;pointer-events:none}
+.ui-swap-ghost{grid-area:1/1;display:inline-flex;align-items:center;justify-content:center;gap:var(--s2);box-sizing:border-box;padding-inline:var(--s3);border:1px solid transparent;
+  white-space:nowrap;font-weight:500}
+.ui-reserve{display:inline-flex;flex:none;inline-size:var(--ui-h);block-size:var(--ui-h)}
+.ui-reserve>button{inline-size:100%;padding-inline:0}
+.ui-region{display:grid}
+.ui-region>*{grid-area:1/1;min-inline-size:0}
+.ui-region>[data-ui-inactive]{visibility:hidden;pointer-events:none}                       /* an inactive bar keeps the cell height: nothing is pushed */
+
+/* ---- modes: attributes written by the engine ------------------------------------------------------------------------ */
+.ui-bar[data-ui-bar] [data-ui-label-off]:not(.ui-picker)>:not(svg,.ico){display:none}
+.ui-bar[data-ui-bar] [data-ui-label-off]:not(.ui-picker){inline-size:var(--ui-h);padding-inline:0}
+.ui-bar[data-ui-bar]:not([data-ui-measure]) [data-ui-label-off]:not(.ui-picker){gap:0}      /* while measured the label is shown and the gap is the button's own */
+/* an icon-only MENU act (its label left, or drawn as an icon) is its icon and its chevron, centred with the bar's s2 inset each side and a hairline of
+   air between them: one control high and s4 wider than a square (bar-fit reads the same two tokens); a plain icon act stays a square */
+.ui-bar[data-ui-bar] [data-ui-label-off].ui-act-menu,.ui-bar[data-ui-bar] button.ui-act-menu[data-ui-display=icon]{inline-size:calc(var(--ui-h) + var(--s4));padding-inline:0;justify-content:center}
+.ui-bar[data-ui-bar]:not([data-ui-measure]) [data-ui-label-off].ui-act-menu,.ui-bar[data-ui-bar] button.ui-act-menu[data-ui-display=icon]{gap:calc(var(--s1) / 2)}
+.ui-bar[data-ui-bar] [data-ui-folded]{position:absolute;inset-inline-end:0;inline-size:0;block-size:0;min-block-size:0;padding:0;border:0;overflow:hidden;visibility:hidden;pointer-events:none}
+.ui-bar[data-ui-bar] [data-ui-more][data-ui-empty],.ui-bar[data-ui-bar] [data-ui-overflow]{display:none}
+.ui-bar[data-ui-bar] [data-ui-more]>.ui-act-label{display:none}
+.ui-bar[data-ui-bar] [data-ui-more]{inline-size:var(--ui-h);padding-inline:0}   /* More is one square icon button at every width and in every mode, as an icon-only act is (amended 2026-10-11) */
+.ui-bar[data-ui-bar][data-ui-measure]{display:flex;flex:none;contain:none;inline-size:max-content}                      /* natural widths; set, read and removed inside one task */
+.ui-bar[data-ui-bar][data-ui-measure] [data-ui-folded]{position:static;inline-size:auto;block-size:var(--ui-h);padding-inline:var(--s3);border-width:1px;overflow:visible;visibility:visible}
+.ui-bar[data-ui-bar][data-ui-measure] :is(.ui-group,.ui-check)[data-ui-folded]{padding-inline:0;border-width:0}                          /* a folded group or check is measured at its own width: the button padding above is for a button */
+.ui-bar[data-ui-bar][data-ui-measure] [data-ui-label-off]{inline-size:auto;padding-inline:var(--s3)}
+.ui-bar[data-ui-bar][data-ui-measure] [data-ui-label-off]:not(.ui-picker)>:not(svg,.ico){display:revert}
+.ui-bar[data-ui-bar][data-ui-measure] .ui-view>:is(.ui-view-set,.ui-view-pick){display:inline-flex}   /* same specificity as the two hiding rules above and later in the file: both forms are measured */
+
+/* ---- stacked: bands are full width; items in a band are equal columns; actions order is [secondary..., quiet..., primary, More] ---- */
+.ui-bar[data-ui-bar][data-ui-bar-mode=stacked]{display:grid;grid-template-columns:minmax(0,1fr) auto;row-gap:var(--s2);justify-content:stretch}
+.ui-bar[data-ui-bar][data-ui-bar-mode=stacked]>[data-ui-slot]{display:grid;grid-column:1/-1;grid-template-columns:repeat(var(--cols,1),minmax(0,1fr));gap:var(--s2)}
+.ui-bar[data-ui-bar][data-ui-bar-mode=stacked]>[data-ui-slot=lead]{display:flex;grid-column:1}
+.ui-bar[data-ui-bar][data-ui-bar-mode=stacked]>[data-ui-slot=lead]:not(:has(~[data-ui-slot=status])){grid-column:1/-1}
+.ui-bar[data-ui-bar][data-ui-bar-mode=stacked]>[data-ui-slot=lead]>.ui-bar-title{flex:1 1 0}
+.ui-bar[data-ui-bar][data-ui-bar-mode=stacked]>[data-ui-slot=status]{grid-column:2;grid-row:1}
+.ui-bar[data-ui-bar][data-ui-bar-mode=stacked] :is([data-ui-slot=actions],[data-ui-slot=filters],[data-ui-slot=start])>*{inline-size:100%;max-inline-size:none;margin:0}
+.ui-bar[data-ui-bar][data-ui-bar-mode=stacked] [data-ui-slot=filters]>:is(.ui-search,.ui-bar-field){grid-column:1/-1;max-inline-size:none}
+/* a picker wrapped in a filter (date, record) fills its column, as a bare select does: equal columns, no ragged right edge */
+.ui-bar[data-ui-bar][data-ui-bar-mode=stacked] [data-ui-slot=filters]>.ui-filter>:is(.date-field,.record-picker){flex:1 1 auto;inline-size:100%;max-inline-size:none}
+.ui-bar[data-ui-bar][data-ui-bar-mode=stacked] [data-ui-slot=actions]>.ui-group>*{flex:1 1 0}
+.ui-bar[data-ui-bar][data-ui-bar-mode=stacked] [data-ui-slot=view]>.ui-view,.ui-bar[data-ui-bar][data-ui-bar-mode=stacked] .ui-view-set{inline-size:100%}
+.ui-bar[data-ui-bar][data-ui-bar-mode=stacked] .ui-view-set>button{flex:1 1 0;min-inline-size:0}
+.ui-bar[data-ui-bar][data-ui-bar-mode=stacked] :is(.ui-view-pick,.ui-picker){inline-size:100%;justify-content:center}
+/* stacked keeps More the icon it is at every width (amended 2026-10-11): a track of its own after the items' equal columns, on the last row of a one-column band
+   (the first row of a wider one); alone, the end of the band before it */
+.ui-bar[data-ui-bar][data-ui-bar-mode=stacked]>[data-ui-slot=actions]:not([data-ui-cols="0"]):has(>[data-ui-more]:not([data-ui-empty])){grid-template-columns:repeat(var(--cols,1),minmax(0,1fr)) var(--ui-h)}
+.ui-bar[data-ui-bar][data-ui-bar-mode=stacked]>[data-ui-slot=actions]>[data-ui-more]{grid-column:-2/-1;grid-row:1;inline-size:var(--ui-h)}
+.ui-bar[data-ui-bar][data-ui-bar-mode=stacked]>[data-ui-slot=actions][data-ui-cols="1"]>:not([data-ui-more]){grid-column:1}
+.ui-bar[data-ui-bar][data-ui-bar-mode=stacked]>[data-ui-slot=actions][data-ui-cols="1"]>[data-ui-more]{grid-row:auto}
+.ui-bar[data-ui-bar][data-ui-bar-mode=stacked]>[data-ui-slot=actions][data-ui-cols="0"]{grid-column:2;grid-template-columns:var(--ui-h);justify-content:end;align-self:end}
+.ui-bar[data-ui-bar][data-ui-bar-mode=stacked]>[data-ui-slot=status]:not([data-ui-slot=lead]~*):has(~[data-ui-slot=actions][data-ui-cols="0"]){grid-column:1/-1;justify-self:end}   /* no title to sit beside: the status takes the first row, so More shares a row with the band before it */
+.ui-bar[data-ui-bar][data-ui-bar-mode=stacked]>[data-ui-slot]:not([data-ui-slot=status]):has(+[data-ui-slot=actions][data-ui-cols="0"]){grid-column:1}
+.ui-bar[data-ui-bar][data-ui-bar-mode=stacked] [data-ui-slot=message]{white-space:normal}
+[data-ui-cols="1"]{--cols:1}[data-ui-cols="2"]{--cols:2}[data-ui-cols="3"]{--cols:3}[data-ui-cols="4"]{--cols:4}[data-ui-cols="5"]{--cols:5}[data-ui-cols="6"]{--cols:6}
+[data-ui-ch="3"]{--ch:3}[data-ui-ch="4"]{--ch:4}[data-ui-ch="6"]{--ch:6}[data-ui-ch="8"]{--ch:8}[data-ui-ch="12"]{--ch:12}[data-ui-ch="14"]{--ch:14}
+[data-ui-ch="16"]{--ch:16}[data-ui-ch="18"]{--ch:18}[data-ui-ch="20"]{--ch:20}[data-ui-ch="24"]{--ch:24}
+
+/* ---- float: a bar over content gets a host with a definite width; the bar is its content, never its definition ---- */
+.ui-float{position:absolute;inset-inline:var(--s3) var(--float-end,var(--s3));inset-block-end:var(--s3);pointer-events:none;z-index:1}
+.ui-float>.ui-bar{justify-content:flex-end;background:transparent}
+.ui-float>.ui-bar :is(button,input,select,[data-ui-more]){pointer-events:auto}
+/* the shell's notices (lib/shell-notice.mjs): a column at the window's corner above the status line, each a box of its own, newest on top */
+/* the corner (lib/agent-card.mjs shellCorner): the agent card over the notices; the notices stay their own live region, the card announces itself */
+.ui-shell-corner,.ui-shell-notices{position:fixed;inset:0 var(--s3) calc(var(--ctl-h-dense) + var(--s3)) var(--s3);display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-end;gap:var(--s2);pointer-events:none;z-index:40}
+.ui-shell-corner>.ui-shell-notices{position:static;inset:auto;inline-size:100%}
+.ui-shell-corner>.ui-shell-notices:empty{display:none}
+.ui-shell-notices>.ui-float{position:static;inset:auto;inline-size:min(640px,100%)}
+.ui-shell-notices>.ui-float>.ui-bar{padding-inline:var(--s3);border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--panel)}
+.ui-bar[data-ui-float=popover]{contain:none;inline-size:auto;min-inline-size:max-content}                       /* popover heads: constant full mode, at most 3 controls, no engine */
+.ui-bar[data-ui-reveal=hover]:not(:hover,:focus-within){opacity:0}                                              /* hover-revealed strips take their space always */
+@media (hover:none){.ui-bar[data-ui-reveal=hover]{opacity:1}}
+
+/* ---- a notice is a head bar: text left, at most two actions in the trailing position ---------------------------------- */
+.ui-notice[data-ui-bar]{padding-block:var(--s1)}
+.ui-notice[data-ui-bar]>[data-ui-slot=lead]>.ui-bar-title{flex:1 1 0;min-inline-size:0;white-space:normal;font-weight:400;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-height:1.5}
+
+/* ---- status line: one line of text, parts drop by measurement, the trail (run pipeline) is pinned -------------------------- */
+.ui-statusline{display:flex;justify-content:space-between;align-items:center;gap:var(--s2);white-space:nowrap;overflow:hidden;font-size:var(--fs-sm);color:var(--ink-2)}
+.ui-statusline-parts{display:flex;align-items:center;gap:var(--sep,var(--s2));min-inline-size:0;overflow:hidden}
+.ui-statusline-trail{flex:none}
+.ui-statusline [data-ui-folded],.ui-statusline [data-ui-part][hidden]{display:none}
+.ui-statusline [data-ui-ch]{display:inline-block;inline-size:calc(var(--ch)*1ch);overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.ui-statusline-part:not([data-ui-folded],[hidden])~.ui-statusline-part:not([data-ui-folded],[hidden])::before{content:"";display:inline-block;inline-size:1px;block-size:12px;background:var(--line-2);vertical-align:-1px;margin-inline-end:var(--s2)}   /* parts are divided by a rule, never a dot */
+.ui-statusline button.ui-statusline-part{block-size:auto;min-block-size:0;padding:0;border:0;background:transparent;color:inherit;font:inherit;gap:0}   /* a part is words: its separator (::before) is its only other item, so a button's icon gap would double the space after the dot */
+.ui-statusbar[data-ui-bar]{justify-content:space-between}
+.ui-statusbar-slot{flex:none;font-size:var(--fs-sm);color:var(--ink-2);white-space:nowrap}
+.ui-statusbar-slot[data-ui-ch]{inline-size:calc(var(--ch)*1ch);overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+
+/* ---- settings row: a label column of one width (the form's label column, as settings and filter forms on Mobbin), the controls beside it as a foot bar that
+   starts at the column's edge: a control never floats to the far side of a wide pane, away from its label (owner, 2026-10-23: "check width usage"); beneath the
+   text when narrow ---------------- */
+.ui-settings-row{display:grid;grid-template-columns:minmax(9rem,12rem) minmax(0,1fr);align-items:center;column-gap:var(--s4);row-gap:var(--s2);padding-block:var(--s3);border-block-end:1px solid var(--line-2)}
+.ui-settings-row[data-ui-mode=narrow]{grid-template-columns:minmax(0,1fr)}
+.ui-settings-row:not([data-ui-mode=narrow]):has(>.ui-settings-text>.meta[data-ui-line]){grid-template-columns:minmax(0,1fr) 224px}   /* a value that is one line (a path with More, Choose): the value takes the width, its acts sit at the row's edge; every other row keeps the label column with its controls beside it */
+.ui-settings-text{display:flex;flex-direction:column;gap:var(--s1);min-inline-size:0}
+.ui-settings-label{font-weight:500}
+.ui-settings-text>.meta{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;line-height:1.5}   /* a description is read whole: it wraps */
+.ui-settings-text>.meta[data-ui-line]{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}                  /* a path or other single value: one line, the full text in the tooltip */
+.ui-settings-row>.ui-bar[data-ui-bar=foot]{justify-content:flex-start}                                 /* the controls start beside the label column; a field fills its column, an action follows its field */
+
+/* Settings lists (lists inside a .ui-flush page body, the Settings body): one left edge and one right edge with the section title and the settings rows, so a list's rows and head take no inset and no hover fill that would need one.
+   Projects: its two lists share one grid (date, then an end slot wide enough for Open or Add to list) so their dates and More line up. */
+.ui-flush .ui-list>.ui-row{padding-inline:0}
+.ui-flush .ui-list>.ui-row:hover{background:transparent}
+.ui-list[data-picker]>.ui-row:has([data-pick][aria-pressed=true]){background:var(--panel-3)}   /* the chosen row of a picker is a fill, like a chosen row anywhere */
+.ui-flush .ui-list>.ui-bar[data-ui-bar=head]{padding-inline:0}
+.ui-list[data-pm-list]:not([data-ui-mode=narrow]){grid-template-columns:minmax(0,1fr) 12ch 128px}
+.ui-list[data-pm-list] .ui-row-main .tk-text{block-size:auto;line-height:var(--lh);font-weight:500}
+.ui-list[data-pm-list]>.ui-row{min-block-size:calc(var(--ctl-h) + var(--s3))}
+/* uiList({ plain }): a short list of things to pick, rows without rules at the chrome height (the chat home, 2026-10-22) */
+.ui-list[data-ui-plain]>.ui-row{border-top:0;min-block-size:var(--ctl-h-dense);padding-block:0}
+
+/* ---- composer: Send and Stop share one fixed trailing slot; swapping changes no size ---------------------------------------- */
+.ui-composer{display:flex;align-items:flex-end;gap:var(--s2)}
+.ui-composer>textarea{flex:1 1 0;min-inline-size:0;box-sizing:border-box}
+.ui-composer>.ui-swap{flex:none;block-size:var(--ctl-h)}
+.ui-composer .ui-swap>button{box-sizing:border-box;block-size:var(--ctl-h);padding-inline:var(--s3);border:1px solid transparent}
+.ui-composer .ui-swap>button[data-ui-role=primary]{background:var(--accent);color:var(--accent-ink)}
+/* With tools the composer is one box (as every chat composer the owner compared on Mobbin): the text over a row of quiet tools, Send an
+   icon at its end; the box, not the field, shows focus. Its height grows with the text; the row stays one row. */
+.ui-composer[data-ui-box]{flex-direction:column;align-items:stretch;gap:0;box-sizing:border-box;padding:var(--s1);border:1px solid var(--line);border-radius:var(--radius);background:var(--panel)}
+.ui-composer[data-ui-box]:focus-within{border-color:var(--line-strong)}
+.ui-composer[data-ui-box]>textarea{flex:none;border:0;border-radius:0;background:transparent;box-shadow:none;outline:none;padding:var(--s1) var(--s2) 0;font-size:var(--fs)}
+.ui-composer-under{display:flex;align-items:center;gap:var(--s2);min-inline-size:0}
+.ui-composer-under>.ui-bar{flex:1 1 0;min-inline-size:0}
+.ui-composer[data-ui-box] .ui-swap{block-size:var(--ctl-h-dense)}
+.ui-composer[data-ui-box] .ui-swap>button{inline-size:var(--ctl-h-dense);block-size:var(--ctl-h-dense);padding:0;justify-content:center;border-radius:var(--radius-sm)}
+.ui-composer[data-ui-box] .ui-swap>button:disabled{background:var(--panel-3);color:var(--ink-3)}
+.ui-composer[data-ui-box] .ui-swap :is(.ui-act-label,.ui-swap-sizer){display:none}
+
+/* ---- lists and rows (CASE 1): one grid per list; rows are subgrids; one mode per list ---------------------------------------- */
+.ui-list{display:grid;column-gap:var(--s2);grid-template-columns:minmax(var(--ui-main-min,0px),1fr) max-content}
+.ui-list[data-ui-ncols="1"]{grid-template-columns:minmax(var(--ui-main-min,0px),var(--ui-g0,1fr)) minmax(var(--ui-cmin-1,max-content),var(--ui-g1,max-content)) max-content}
+.ui-list[data-ui-ncols="2"]{grid-template-columns:minmax(var(--ui-main-min,0px),var(--ui-g0,1fr)) minmax(var(--ui-cmin-1,max-content),var(--ui-g1,max-content)) minmax(var(--ui-cmin-2,max-content),var(--ui-g2,max-content)) max-content}
+.ui-list[data-ui-ncols="3"]{grid-template-columns:minmax(var(--ui-main-min,0px),var(--ui-g0,1fr)) minmax(var(--ui-cmin-1,max-content),var(--ui-g1,max-content)) minmax(var(--ui-cmin-2,max-content),var(--ui-g2,max-content)) minmax(var(--ui-cmin-3,max-content),var(--ui-g3,max-content)) max-content}
+.ui-list>:not(.ui-row){grid-column:1/-1}                                                                       /* head, editor, pager: one full-width cell */
+.ui-row{grid-column:1/-1;display:grid;grid-template-columns:subgrid;align-items:center;min-block-size:calc(var(--ctl-h-dense) + var(--s2));padding-block:var(--s1);padding-inline:var(--s3);border-top:1px solid var(--line-2)}
+.ui-row:hover{background:var(--panel-2)}
+.ui-row>[data-ui-slot=lead]{display:flex;align-items:flex-start;gap:var(--s2);min-inline-size:0;padding-inline-start:calc(min(var(--depth,0),var(--max-depth,3))*var(--s4))}
+.ui-row>[data-ui-slot=cells]{display:contents}
+.ui-row>[data-ui-slot=cells]>:nth-child(1){grid-column:2}
+.ui-row>[data-ui-slot=cells]>:nth-child(2){grid-column:3}
+.ui-row>[data-ui-slot=cells]>:nth-child(3){grid-column:4}
+.ui-row>[data-ui-slot=cells] :is(select,input){inline-size:100%;background-color:transparent;border-color:transparent}
+.ui-row>[data-ui-slot=cells] :is(select,input):is(:hover,:focus-visible){background-color:var(--panel-3)}
+.ui-row-end{display:flex;justify-content:flex-end;gap:var(--s1)}
+.ui-row>[data-ui-slot=end]{grid-column:-2/-1}
+.ui-row-end button{box-sizing:border-box;block-size:var(--ctl-h-dense);min-inline-size:var(--ctl-h-dense);background:transparent;border:1px solid transparent}
+.ui-row-end button:hover:not(:disabled){background:var(--panel-3)}
+.ui-row>:where([data-ui-slot]):has(>:is(.ui-row-cell,.ui-row-main)>:is(select,input))~.ui-row-end button{block-size:var(--ctl-h)}   /* a button beside a field is as high as the field (UI_Guidelines, Heights) */
+.ui-row-main{display:flex;flex-direction:column;gap:var(--s1);min-inline-size:0;flex:1 1 auto;padding-block:var(--s1)}
+.ui-row-detail{font-size:var(--fs-sm);color:var(--ink-2);overflow-wrap:anywhere}
+.ui-row-detail[data-ui-wrap]{white-space:normal;overflow:visible;text-overflow:clip}   /* a meta line that runs over as many lines as it needs (main.wrap) */
+/* Otherwise a detail wraps to a second line and ends there instead of ending in an ellipsis on its first (owner, 2026-10-17: "words became
+   disaligned and cut"); the row grows by that line and the detail's title holds it whole. A list that is one line high by design keeps its own rule. */
+.ui-row-detail:not([data-ui-wrap]){white-space:normal;text-overflow:clip;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden}
+.ui-row-sep::before{content:"";display:inline-block;inline-size:1px;block-size:.9em;background:var(--line-2);vertical-align:-.1em;margin-inline:var(--s2)}
+.ui-row-check{display:inline-flex;align-items:center;flex:none;block-size:var(--ctl-h-dense)}
+@media (hover:none){.ui-row-check{padding-inline:4px;margin-inline:-4px}}   /* a touch hit area as wide as the row is tall; the margin takes it back */
+.ui-row-cell{min-inline-size:0}
+/* a head that heads a list (inside it, or with the list, or a box that opens with the list, as its next sibling) holds its text where the rows hold theirs:
+   one left edge at the row inset, and the head spans the rows' width, so its rule and theirs are one span (A1, sweep kind head-row-edge) */
+.ui-list>.ui-bar[data-ui-bar=head],.ui-bar[data-ui-bar=head]:not(.topbar):is(:has(+.ui-list),:has(+*>.ui-list:first-child)){padding-inline:var(--s3)}
+.ui-list>.ui-bar[data-ui-bar=head]:has([data-ui-slot=actions]>.ui-act:not([data-ui-more])){padding-block-end:var(--s2)}   /* a list head holding a button keeps room under it: the rule below the head does not touch the button */
+/* a region that heads a list (a head and the bar that replaces it in one cell, uiRegion as uiList's head) holds its bars at the same inset */
+.ui-list>.ui-region>.ui-region-pane>.ui-bar[data-ui-bar]{padding-inline:var(--s3)}
+/* Manuscript > Cite (views/manuscript.mjs insertBody): every reference row is as high as a title of two lines and one line of who and where;
+   its number, its first title line and its More share one line (content from the top: the More at the row's --s1 is centred on the first
+   line under the main's --s1). The whole row cites, so the fill of a picked row and the keyboard ring are the row's, More included. */
+.ui-list:is([data-ms-refs],[data-cite-pop])>.ui-row{align-items:start}
+.ui-list[data-ms-refs]>.ui-region{padding-block:var(--s1)}   /* the list head holds a filled picker: --s1 of air between it and the rules above and below */
+.ui-list[data-ms-refs]>.ui-row[data-picked]{background:var(--panel-3)}
+.ui-list:is([data-ms-refs],[data-ms-results],[data-cite-pop])>.ui-row:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--ring)}   /* a row that is the target (it cites or inserts) carries the one keyboard ring */
+/* a row whose main is a control (a select or a field that names the row) is as high as a row of a text and a control cell: the control has its own box, so the main adds no padding around it */
+.ui-row-main:has(>:is(select,input):first-child){padding-block:0}
+[data-ui-depth="1"]{--depth:1}[data-ui-depth="2"]{--depth:2}[data-ui-depth="3"]{--depth:3}
+.ui-list[data-ui-mode=narrow]{grid-template-columns:minmax(0,1fr) max-content;--max-depth:1}
+.ui-list[data-ui-mode=narrow] .ui-row>[data-ui-slot=lead]{grid-column:1/-1;grid-row:1}
+.ui-list[data-ui-mode=narrow] .ui-row>[data-ui-slot=cells]{display:grid;grid-column:1;grid-row:2;grid-template-columns:repeat(var(--cols,1),minmax(0,1fr));gap:var(--s2);
+  padding-inline-start:calc(var(--ui-check-pad,0px) + min(var(--depth,0),var(--max-depth,3))*var(--s4))}
+.ui-list[data-ui-mode=narrow] .ui-row>[data-ui-slot=cells]>*{grid-column:auto}
+.ui-list[data-ui-mode=narrow] .ui-row>[data-ui-slot=end]{grid-column:2;grid-row:2}
+/* uiList reveal: a row's end shows only while the row is pointed at or focused (History, Dependencies, Files). Wide, the end holds no track, so
+   the last column ends on the rule's edge as in a list without ends (owner, 2026-10-23: the counts stopped 300px short of their heading's rule);
+   while it shows, it stands at the end of the row's first column, over what its text leaves, so no value is covered (a task's due date stays
+   readable while its row is selected). Narrow, it keeps its own track on the first line. A tap focuses the row.
+   A list whose rows have no end at all has no end track either: its last column ends on the edge, not a gutter short of it. */
+.ui-list[data-ui-reveal=end]>.ui-row>[data-ui-slot=end]{opacity:0}
+.ui-list[data-ui-reveal=end]>.ui-row:is(:hover,:focus-within)>[data-ui-slot=end]{opacity:1}
+.ui-list:not([data-ui-mode=narrow]):is([data-ui-reveal=end],:not(:has(>.ui-row>[data-ui-slot=end])))[data-ui-ncols="0"]{grid-template-columns:minmax(var(--ui-main-min,0px),1fr)}
+.ui-list:not([data-ui-mode=narrow]):is([data-ui-reveal=end],:not(:has(>.ui-row>[data-ui-slot=end])))[data-ui-ncols="1"]{grid-template-columns:minmax(var(--ui-main-min,0px),var(--ui-g0,1fr)) minmax(var(--ui-cmin-1,max-content),var(--ui-g1,max-content))}
+.ui-list:not([data-ui-mode=narrow]):is([data-ui-reveal=end],:not(:has(>.ui-row>[data-ui-slot=end])))[data-ui-ncols="2"]{grid-template-columns:minmax(var(--ui-main-min,0px),var(--ui-g0,1fr)) minmax(var(--ui-cmin-1,max-content),var(--ui-g1,max-content)) minmax(var(--ui-cmin-2,max-content),var(--ui-g2,max-content))}
+.ui-list:not([data-ui-mode=narrow]):is([data-ui-reveal=end],:not(:has(>.ui-row>[data-ui-slot=end])))[data-ui-ncols="3"]{grid-template-columns:minmax(var(--ui-main-min,0px),var(--ui-g0,1fr)) minmax(var(--ui-cmin-1,max-content),var(--ui-g1,max-content)) minmax(var(--ui-cmin-2,max-content),var(--ui-g2,max-content)) minmax(var(--ui-cmin-3,max-content),var(--ui-g3,max-content))}
+.ui-list[data-ui-reveal=end]:not([data-ui-mode=narrow])>.ui-row{position:relative}
+.ui-list[data-ui-reveal=end]:not([data-ui-mode=narrow])>.ui-row>[data-ui-slot=end]{grid-column:1/2;position:absolute;inset-block:0;inset-inline-end:0;align-items:center}   /* over the end of the row's first column, where its text leaves room: never over a value */
+.ui-list[data-ui-reveal=end]:not([data-ui-mode=narrow])>.ui-row>[data-ui-slot=end][data-ui-reserved]{display:none}   /* with no track to hold, a reserved end has nothing to do, and must not lie over the last column */
+
+/* ---- review items (CASE 3): a two-line row; Apply and Dismiss in a fixed end track, collapsed and expanded, at every width -------- */
+.ui-review-list{display:block}
+.ui-review{display:grid;grid-template-columns:minmax(0,1fr) var(--review-end-w);align-items:start;column-gap:var(--s2);box-sizing:border-box;padding-block:var(--s1);padding-inline:0;
+  border-top:1px solid var(--line-2);min-inline-size:0}
+.ui-review-head{grid-column:1;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:start;column-gap:var(--s1);box-sizing:border-box;inline-size:100%;min-inline-size:0;
+  block-size:auto;min-block-size:var(--ctl-h-dense);padding:var(--s1) 0;border:0;border-radius:var(--radius-sm);background:transparent;color:var(--ink);text-align:start;
+  white-space:normal;font-size:var(--fs-sm);font-weight:400;line-height:1.5}
+.ui-review-head:hover:not(:disabled){background:transparent}
+.ui-review-head>.ico{block-size:calc(var(--ctl-h-dense) - var(--s1) * 2)}   /* the chevron is one line of the kind high, so it centres on the letters beside it, not by a margin */
+.ui-review-head[aria-expanded=true]>.ico{transform:rotate(90deg)}
+.ui-review-text{display:flex;flex-direction:column;min-inline-size:0}
+.ui-review-kind{font-size:var(--fs-sm);font-weight:500;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2}
+.ui-review-where{font-size:var(--fs-sm);color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-transform:none}
+.ui-review-head[aria-expanded=true] .ui-review-kind{-webkit-line-clamp:unset}
+.ui-review-head[aria-expanded=true] .ui-review-where{white-space:normal;overflow-wrap:anywhere}
+.ui-review>[data-ui-slot=end]{grid-column:2;grid-row:1;display:flex;justify-content:flex-end;align-items:center;gap:var(--s1)}
+.ui-review [data-ui-slot=end] button{box-sizing:border-box;block-size:var(--ctl-h-dense);min-block-size:var(--ctl-h-dense);padding-inline:var(--s2);font-size:var(--fs-sm);background:transparent;
+  border:1px solid transparent;gap:var(--s1);color:var(--ink)}
+.ui-review [data-ui-slot=end] button:hover:not(:disabled){background:var(--panel-3)}
+.ui-review [data-ui-slot=end] button:disabled{background:var(--panel-2);color:var(--ink-3)}
+.ui-review [data-ui-slot=end] .ui-review-dismiss{inline-size:var(--ctl-h-dense);padding-inline:0}
+.ui-review-body{grid-column:1/-1;display:block;min-inline-size:0;padding:0 0 var(--s2) var(--s4);font-size:var(--fs-sm)}
+.ui-review-done{grid-column:1/-1}
+.ui-review[data-state=declined] .ui-review-head,.ui-review[data-state=accepted] .ui-review-head{color:var(--ink-2)}
+.ui-decision{grid-template-columns:minmax(0,1fr)}
+.ui-decision>.ui-bar{grid-column:1}
+.ui-batch-item{grid-template-columns:auto minmax(0,1fr);column-gap:var(--s2);align-items:start}
+.ui-batch-item>.ui-review-text{grid-column:2}
+.ui-batch>.ui-bar{padding-block-start:var(--s2)}
+
+/* ---- the tracked-change preview: a fill, never a hue, a side bar or a tinted card ------------------------------------------ */
+.ui-diff{display:flex;flex-direction:column;gap:var(--s1);min-inline-size:0}
+.ui-diff-context{margin:0;color:var(--ink-2);overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2}
+.ui-diff-block{margin:0;overflow-wrap:anywhere}
+.ui-diff ins{background:var(--panel-3);text-decoration:none;color:inherit}
+.ui-diff del{text-decoration:line-through;color:var(--ink-2)}
+.ui-diff-count{margin:0;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.ui-diff-cue{position:absolute;inline-size:1px;block-size:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+/* ---- tasks: a row's state is a weight, a tone or a strike, and a chosen row is a fill; the count line sits clear of the bar above it ---- */
+.ui-row[data-tk-state~=high] .tk-text{font-weight:600}
+.ui-row[data-tk-state~=blocked] .tk-text{color:var(--ink-3)}
+.ui-row[data-tk-state~=done] .tk-text{color:var(--ink-3);text-decoration:line-through}
+.ui-row-detail .tk-due{color:inherit}
+.ui-list[data-tk-selecting] .ui-row:has(.ui-row-check input:checked){background:var(--panel-3)}
+.ui-region+.ui-statusline{padding-block:var(--s2)}
+.ui-list[data-ui-ncols="0"][data-ui-mode=narrow] .ui-row>[data-ui-slot=lead]{grid-column:1}
+.ui-list[data-ui-ncols="0"][data-ui-mode=narrow] .ui-row>[data-ui-slot=end]{grid-row:1}
+.ui-region{--search-min:96px}
+
+/* ---- a count line under a bar: the bar's own gap (below) is the space above it; the line keeps --s2 under it, as the Tasks count line does under its region ---- */
+.ui-bar+.ui-statusline{padding-block:0 var(--s2)}
+
+/* ---- a folded fixed-width status part leaves the line (the [data-ui-ch] inline-block rule above ties with the folded rule and won); a second float in one host sits above the first (the canvas strip and a feedback toast) ---- */
+.ui-statusline [data-ui-part][data-ui-folded]{display:none}
+.ui-float+.ui-float{inset-block-end:calc(var(--s3) + var(--ctl-h-dense) + var(--s2))}
+
+/* ---- review rows: the second line runs the full row width; only the kind line keeps clear of the fixed end track (P1-ledger) ---- */
+.ui-review-head{grid-column:1/-1;grid-row:1}
+/* the kind's line is the dense control less its two --s1 paddings, so with the head's --s1 above it the first line centres where Apply and Dismiss centre: one baseline */
+.ui-review-kind{padding-inline-end:calc(var(--review-end-w) + var(--s2));min-block-size:calc(var(--ctl-h-dense) - var(--s1));line-height:calc(var(--ctl-h-dense) - var(--s1) * 2)}
+.ui-review[data-state=accepted] .ui-review-kind,.ui-review[data-state=declined] .ui-review-kind,.ui-review[data-state=failed] .ui-review-kind{padding-inline-end:0}
+.ui-review-body{padding-block-start:var(--s1)}
+.ui-review-body>*+*{margin-block-start:var(--s2)}
+.ui-diff-heading{font-weight:600}
+/* a row with nothing to open keeps its text column and shows no chevron; an open row's status line is plain text (the check belongs to an accepted row) */
+.ui-review:has(>.ui-review-body:empty):not([data-expandable])>.ui-review-head>.ui-review-chev{visibility:hidden}
+.ui-review[data-state=open]>.ui-review-done{padding-inline-start:var(--s4)}
+.ui-review[data-state=open]>.ui-review-done>.ico{display:none}
+.ui-diff-block.aid-preview>*+*{margin-block-start:var(--s2)}
+.ui-diff-block.aid-preview p{margin:0}
+
+/* ---- a head with only a title and its actions (no count, view, filters or message): the title takes the free width, so the actions sit at the trailing edge with or without a primary ---- */
+.ui-bar[data-ui-bar=head]:not(:has(>[data-ui-slot=status],>[data-ui-slot=message],>[data-ui-slot=view],>[data-ui-slot=filters]))>[data-ui-slot=lead]>.ui-bar-title{flex:1 1 auto}
+
+/* ---- the space between a bar and the block it heads is the bar's, once (VALIGN-INVENTORY, bar-to-content): --s3 under a head and under a view switch's
+   tab panel, --s2 under a tools bar, a strip or another bar, --s3 above a foot. The block never adds its own: a panel body gives its top padding back. Bars
+   that replace each other in a region, a list's heads and rows, a settings row, a review, a dialog foot and the pager are spaced by their own recipes,
+   and the inspector body spaces its sections by its gap; the title bar and the status bar are the window's. A view's column spaces its blocks with margins,
+   not gap, so the space under a bar is never this plus a gap. */
+.ui-bar[data-ui-bar=head]:where(:not(.topbar,:is(.ui-region,.ui-list,.ui-settings-row,.ui-review,.ui-decision,.ui-batch,.insp-body)>*))+:where(:not([hidden],script,style,template,datalist)),
+.ui-bar[data-ui-bar]:where(:not(.topbar,.ui-statusbar,:is(.ui-region,.ui-list,.ui-settings-row,.ui-review,.ui-decision,.ui-batch,.insp-body)>*))+[role=tabpanel]{margin-block-start:var(--s3)}
+.ui-bar[data-ui-bar=tools]:where(:not(:is(.ui-region,.ui-list,.ui-settings-row,.ui-review,.ui-decision,.ui-batch,.insp-body)>*))+:where(:not([hidden],script,style,template,datalist)),
+.ui-bar[data-ui-bar=strip]:where(:not(.ui-statusbar,:is(.ui-region,.ui-list,.ui-settings-row,.ui-review,.ui-decision,.ui-batch,.insp-body)>*))+:where(:not([hidden],script,style,template,datalist)),
+.ui-bar[data-ui-bar]:where(:not(.topbar,.ui-statusbar,:is(.ui-region,.ui-list,.ui-settings-row,.ui-review,.ui-decision,.ui-batch,.insp-body)>*))+.ui-bar[data-ui-bar]:where(:not([data-ui-bar=foot])){margin-block-start:var(--s2)}
+.ui-bar[data-ui-bar=foot]:where(:not(:first-child,.ui-dialog-foot,.ui-pager,:is(.ui-region,.ui-list,.ui-settings-row,.ui-review,.ui-decision,.ui-batch,.insp-body)>*)){margin-block-start:var(--s3)}
+.ui-bar[data-ui-bar]:where(:not(.topbar,.ui-statusbar))+.panel-body{padding-block-start:0}
+
+/* ---- text cells: a quiet fixed column for a value (a due date, a project); it clips and never wraps; in a narrow row the columns stay equal and start-aligned under the title ---- */
+.ui-row-cell[data-ui-cell=text]{font-size:var(--fs-sm);color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:end;font-variant-numeric:tabular-nums;max-inline-size:calc(var(--ch,14)*1ch)}
+.ui-list[data-ui-mode=narrow] .ui-row-cell[data-ui-cell=text]{text-align:start;max-inline-size:none}
+
+/* Notifications share the workflow row rhythm: controls and the time sit on the first line, with the unread dot inside the row's inset. */
+.ui-list[data-nf-list]>.ui-row{align-items:start;padding-block:var(--s1) var(--s2);padding-inline-start:var(--s5)}
+.ui-list[data-nf-list]>.ui-bar[data-ui-bar=head]{padding-inline-start:var(--s5)}
+.ui-list[data-nf-list] .ui-row-main{padding-block:0;gap:0}
+.ui-list[data-nf-list] .tk-text{display:block;line-height:1.5;padding-block:var(--s1)}
+.ui-list[data-nf-list] .ui-row-cell[data-ui-cell=text]{line-height:var(--ctl-h-dense)}
+
+/* ---- task rows (the hub and the Tasks page): a round control, one line of title, a quiet end that shows on hover or focus, a quiet text column for the date ---- */
+.ui-list[data-tk-list]{--check:18px}
+.ui-list[data-tk-list] .ui-row{min-block-size:calc(var(--ctl-h-dense) + var(--s2))}
+.ui-list[data-tk-list] .ui-row>[data-ui-slot=lead]{align-items:center}
+.ui-list[data-tk-list] .ui-row-main{padding-block:0}
+.ui-list[data-flow-list] .ui-row-main{padding-block:0}                                    /* the workflow editor's pane lists: a row's title is a button one control high, so the row is one control and its padding high, as a task row is */
+/* the Workflows list: the row's title (its title button, one control high) and one detail line under it; the strip, the state, the row's action and More stand on the title's line, not on the middle of the two */
+.ui-list[data-wf-list]>.ui-row{align-items:start;padding-block:var(--s1) var(--s2)}   /* the title's own control box adds its air above, so the two lines sit evenly between the rules (about 60px) */
+.ui-list[data-wf-list] .ui-row-main{padding-block:0;gap:var(--s1)}
+.ui-list[data-wf-list] .ui-row-detail{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}   /* one line: the strip, then the meta, ending in an ellipsis when the row is narrow */
+.ui-list[data-wf-list] .ui-row-cell[data-ui-cell=text]{line-height:var(--ctl-h-dense)}
+.ui-list[data-tk-list] .ui-row-check input{appearance:none;-webkit-appearance:none;inline-size:var(--check);block-size:var(--check);margin:0;border:1.5px solid var(--line-strong);border-radius:50%;
+  background:var(--panel);box-sizing:border-box;display:grid;place-items:center}
+.ui-list[data-tk-list] .ui-row-check input:hover:not(:disabled){border-color:var(--ink-2)}
+.ui-list[data-tk-list] .ui-row-check input:checked{background:var(--ink);border-color:var(--ink)}
+.ui-list[data-tk-list] .ui-row-check input:checked::after{content:"";inline-size:9px;block-size:5px;border:2px solid var(--panel);border-top:0;border-right:0;transform:translateY(-1px) rotate(-45deg)}
+.ui-list[data-tk-list] .ui-row-check input:disabled{border-color:var(--line-strong);background:var(--panel-2)}
+.ui-list[data-tk-list] .ui-row-check input:disabled:checked{background:var(--ink-3);border-color:var(--ink-3)}
+.ui-list[data-tk-list] .ui-row-check input:focus-visible{outline:2px solid var(--ring);outline-offset:1px}
+.ui-row-check input[data-row-blank]{visibility:hidden}
+.ui-list[data-tk-list][data-tk-selecting] .ui-row-check input{border-radius:4px}
+.ui-list:is([data-tk-list],[data-hub-projects],[data-wf-list],[data-pm-list]) .tk-text{display:block;max-inline-size:100%;block-size:var(--ctl-h-dense);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:var(--ctl-h-dense);overflow-wrap:normal}
+.ui-list[data-tk-list] .ui-row-cell[data-ui-cell=text] .tk-due.today{color:var(--ink)}
+.ui-list[data-tk-list] .ui-row-cell[data-ui-cell=text] .tk-due.overdue{color:var(--ink);font-weight:600}
+.ui-list[data-tk-list] .ui-row[aria-selected=true]{background:var(--panel-3)}
+.ui-list[data-tk-list] .ui-row[aria-selected=true]>[data-ui-slot=end]{opacity:1}   /* the end is revealed (uiList reveal) on hover or focus, and on the selected row */
+.ui-list[data-tk-list] .ui-row:focus-visible{outline:2px solid var(--ring);outline-offset:-2px}
+/* the Tasks board (views/tasks.mjs): a card's title runs to three lines (its full text is in title= and the editor), its meta is one line,
+   and the round check and More sit on the first line of the title, however many lines it has */
+.ui-list[data-tk-board] .ui-row{align-items:start}
+/* the Overview's Where the paper stands (views/overview.mjs): a fact's track and the work left sit on the line of its name, not at the middle of its words */
+.ui-list[data-tk-board] .ui-row>[data-ui-slot=lead]{align-items:flex-start}
+.ui-list[data-tk-board] .ui-row-main{padding-block:var(--s1)}
+.ui-list[data-tk-board] .tk-text{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;line-clamp:3;block-size:auto;white-space:normal;line-height:1.5;overflow:hidden;overflow-wrap:anywhere}
+.ui-list[data-tk-board] .ui-row-detail{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* the hub's groups: a quiet head with its count, the first rule heavier than the rest; the portfolio's detail line is one line */
+.ui-list[data-hub-group]{margin-block-start:var(--s4)}
+.ui-list[data-hub-group]>[data-ui-bar=head]{padding-inline:var(--s3);min-block-size:var(--ctl-h-dense)}
+.ui-list[data-hub-group]>[data-ui-bar=head] .ui-bar-title{font-size:var(--fs);font-weight:600}
+.ui-list[data-hub-group]>[data-ui-bar=head]>[data-ui-slot=status]{color:var(--ink-3)}
+.ui-list[data-hub-group]>[data-ui-bar=head]+.ui-row{border-top-color:var(--line);margin-block-start:var(--s1)}   /* the rule under a group head keeps --s2 from the first row's text: --s1 here and the row's own --s1 */
+.ui-list:is([data-hub-projects],[data-pm-list]) .ui-row{min-block-size:calc(var(--ctl-h-dense) + var(--s3))}
+.ui-list:is([data-hub-projects],[data-pm-list]) .ui-row-detail{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ---- stacked: the lead band's items share one centre line (a back button beside a title that is shorter than the button) ---- */
+.ui-bar[data-ui-bar][data-ui-bar-mode=stacked]>[data-ui-slot=lead]{align-items:center}
+
+/* ---- status-line counts that are shortcuts: every button part keeps room around its text, so a pressed one only gains a fill; the line keeps the text where it was (library list) ---- */
+.ui-statusline button.ui-statusline-part{padding-inline:var(--s1);margin-inline:calc(var(--s1) * -1);border-radius:var(--radius-sm)}
+.ui-statusline button.ui-statusline-part[aria-pressed=true]{background:var(--panel-3);color:var(--ink)}
+.ui-statusline .ui-statusline-parts button.ui-statusline-part[aria-pressed=true]::before{background:transparent}   /* the fill is the separator: the rule stays in place, unseen, so nothing after it moves */
+.ui-statusline button.ui-statusline-part[data-ui-ch]{text-align:start;inline-size:calc(var(--ch)*1ch + var(--s1)*2)}   /* a fixed slot holds its text at the start: no hole before the next part; the padding sits outside the character count */
+.ui-statusline-parts:has(button.ui-statusline-part){padding-inline:var(--s1);margin-inline:calc(var(--s1) * -1)}
+
+/* a reserved part (a count that changes): its slot is as wide as the widest text it will hold, drawn from data-ui-reserve by an invisible zero-height copy under the text, and the text holds the end of the slot. A short number leaves its gap before the number, not between the number and the next separator, and nothing after it moves */
+/* the text at the slot's start (2026-10-17, was end): a short count left a hole before its number mid-line ("234 unresolved ·   0 not checked"); now the
+   slot's spare room follows the text, and at a line's end it is not seen. The slot's width is unchanged, so nothing moves when a count changes. */
+.ui-statusline .ui-statusline-part[data-ui-reserve]:not([data-ui-folded],[hidden]){display:inline-block;box-sizing:border-box;position:relative;text-align:start;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ui-statusline button.ui-statusline-part{block-size:var(--ctl-h-dense)}   /* a count that is a button is as high as the dense control, so its fill is a target and not a hairline */
+/* a count line under a region that holds a button part (Select all, Clear selection) is that control's height whether the button shows or not, and its
+   padding gives the difference back: the line keeps its 34px and nothing under it moves when the button comes and goes (tasks-select.browser.test.mjs) */
+.ui-region+.ui-statusline:has(>.ui-statusline-parts>button.ui-statusline-part){padding-block:calc(var(--s2) - (var(--ctl-h-dense) - 1lh) / 2)}
+.ui-region+.ui-statusline>.ui-statusline-parts:has(>button.ui-statusline-part){min-block-size:var(--ctl-h-dense)}
+.ui-statusline .ui-statusline-part[data-ui-reserve]::after{content:attr(data-ui-reserve);display:block;block-size:0;overflow:hidden;visibility:hidden}
+.ui-statusline-parts:has([data-ui-reserve]){--sep:var(--s3)}
+.ui-statusline-parts>.ui-statusline-part[data-ui-reserve]:not([data-ui-folded],[hidden])::before{position:absolute;inset-block:0;inset-inline-start:calc(var(--sep) / -2);display:flex;align-items:center;margin:0;translate:-50% 0}   /* the separator sits midway between the text of two parts */
+.ui-statusline-parts>button.ui-statusline-part[data-ui-reserve]:not([data-ui-folded],[hidden])::before{inset-inline-start:calc(var(--s1) - var(--sep) / 2)}   /* a button part holds its text s1 inside its edge, and its edge overlaps the gap by s1 */
+
+/* ---- case timeline (views/case.mjs): a list with no check column. The event is a tall, growing text box, so a row aligns to its first line and the narrow second band starts at the row's own edge, date narrower than category ---- */
+.ui-list[data-case-tl] .ui-row{align-items:start}
+.ui-list[data-case-tl][data-ui-mode=narrow] .ui-row>[data-ui-slot=cells]{padding-inline-start:0;grid-template-columns:minmax(0,2fr) minmax(0,3fr)}
+.ui-list[data-case-tl][data-ui-ncols="3"][data-ui-mode=narrow] .ui-row>[data-ui-slot=cells]{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1.1fr)}
+.ui-list[data-case-tl][data-ui-mode=narrow] .ui-row:not(.case-colhead){row-gap:var(--s1);padding-block:var(--s2)}
+.ui-list[data-case-tl] .ui-row>[data-ui-slot=lead] input{inline-size:100%;background-color:transparent;border-color:transparent}
+.ui-list[data-case-tl] .ui-row>[data-ui-slot=lead] input:is(:hover,:focus-visible){background-color:var(--panel-3)}
+.ui-list[data-case-tl] .ui-row>[data-ui-slot=lead] input:focus-visible{border-color:var(--ink-2)}
+.ui-list[data-case-tl] .case-colhead .ui-row-cell[data-ui-cell=text]{text-align:start;padding-inline-start:var(--s3);max-inline-size:none}   /* the names start where the typed text does */
+.ui-list[data-case-tl] .case-colhead [data-ui-slot=lead] span{padding-inline-start:var(--s3)}
+.ui-list[data-case-tl] .ui-row:not(.case-colhead) .ui-row-cell[data-ui-cell=text]{text-align:start;line-height:var(--ctl-h-dense);padding-block-start:var(--s1);padding-inline-start:var(--s3)}   /* a text column reads like the fields beside it */
+.ui-list[data-case-tl] .case-colhead{align-items:center}
+.ui-list[data-case-tl] .case-colhead .ui-row-cell[data-ui-cell=text],.ui-list[data-case-tl] .case-colhead [data-ui-slot=lead] span{line-height:var(--ctl-h-dense)}   /* the names sit on the baseline of the values under them */
+.ui-list[data-case-tl][data-case-list=investigations][data-ui-ncols="3"][data-ui-mode=narrow] .ui-row>[data-ui-slot=cells]{grid-template-columns:minmax(0,.9fr) minmax(0,1.5fr) minmax(0,1.6fr)}   /* narrow: the widest text of each list gets the widest column */
+.ui-list[data-case-tl][data-case-list=treatments][data-ui-ncols="3"][data-ui-mode=narrow] .ui-row>[data-ui-slot=cells]{grid-template-columns:minmax(0,1fr) minmax(0,.9fr) minmax(0,1.5fr)}
+.ui-list[data-case-tl][data-case-list=imaging][data-ui-ncols="3"][data-ui-mode=narrow] .ui-row>[data-ui-slot=cells]{grid-template-columns:minmax(0,1fr) minmax(0,.9fr) minmax(0,1.3fr)}
+.ui-list[data-case-tl][data-ui-mode=narrow] .case-colhead{display:none}   /* narrow: the cells sit under the entry, so a header over them would name nothing */
+.ui-list[data-case-tl][data-ui-ncols="3"][data-ui-mode=narrow] .ui-row>[data-ui-slot=cells] :is(input,select){inline-size:100%;min-inline-size:0}
+
+/* ---- status line trail: real controls pinned at the end of the line (the shell's status bar). Quiet at rest, a fill on hover and while open; an icon-only control is as wide as it is high ---- */
+.ui-statusline-trail{display:flex;align-items:center;gap:var(--s1)}
+.ui-statusline-trail>button.ui-act{box-sizing:border-box;flex:none;block-size:var(--ctl-h-dense);min-block-size:var(--ctl-h-dense);padding-inline:var(--s2);border:1px solid transparent;border-radius:var(--radius-sm);
+  background:transparent;color:var(--ink-2);font-size:inherit;white-space:nowrap}
+.ui-statusline-trail>button.ui-act:hover:not(:disabled),.ui-statusline-trail>button.ui-act[aria-expanded=true],.ui-statusline-trail>button.ui-act[aria-pressed=true]{background:var(--panel-3);color:var(--ink)}
+.ui-statusline-trail>button.ui-act[data-ui-display=icon]{inline-size:var(--ctl-h-dense);padding-inline:0}
+.ui-statusline-trail>button.ui-act[hidden]{display:none}
+
+/* ---- Wave 1 engine additions (S8 to S11) ------------------------------------------------------------------------------- */
+
+/* S9: a picker keeps its value and chevron together at every width (stacked included); one that declares an icon folds to it at the compact step, and a picker
+   without one clips its value to 12 characters there (ladder: after the view switches have become dropdowns, so the clip is the last label to go) */
+.ui-picker-mark{display:none;flex:none}
+.ui-bar[data-ui-bar] .ui-picker{justify-content:center}
+.ui-bar[data-ui-bar] .ui-picker[data-ui-label-off]>.ui-picker-mark{display:inline-flex}
+.ui-bar[data-ui-bar] .ui-picker[data-ui-label-off]:has(>.ui-picker-mark)>.ui-picker-value{display:none}
+
+/* S8: a readout with a character slot (a page count, a zoom) is as wide as its widest text, so a digit changing moves nothing after it */
+.ui-bar[data-ui-bar] .ui-readout[data-ui-ch]{display:inline-block;inline-size:calc(var(--ch)*1ch);overflow:hidden;text-overflow:ellipsis;text-align:center;white-space:nowrap}
+
+/* S10: while a list is measured for its minimum, a visual cell (a meter and its count) takes the width it can shrink to */
+.ui-list[data-ui-measure] .ui-row>[data-ui-slot=cells]>[data-ui-cell=visual]{inline-size:min-content}
+.ui-list[data-ui-mode=wide]{--ui-main-min:calc(160px + var(--s3))}                /* LIST_MAIN_MIN of text, plus the row's padding that a subgrid adds to the first track */
+.ui-list[data-ui-text=short][data-ui-mode=wide]{--ui-main-min:calc(80px + var(--s3))}   /* LIST_MAIN_SHORT: a list of one or two words per row (uiList text:'short') */
+.ui-list[data-ui-grow]{--ui-g0:max-content}                                       /* uiList grow: the named control column takes the spare width, the text column is as wide as its text */
+.ui-list[data-ui-grow="1"]{--ui-g1:1fr}.ui-list[data-ui-grow="2"]{--ui-g2:1fr}.ui-list[data-ui-grow="3"]{--ui-g3:1fr}
+.ui-row-end[data-ui-reserved]{min-inline-size:calc(2 * var(--s3) + 16px)}               /* uiRowEnd reserve: a row with no More ends where the rows with one end: as wide as a More (its padding, a 14px icon and its border), so a list of reserved rows ends where a list with Mores ends */
+
+
+/* ---- document tabs (uiDocTabs): a strip of open documents, not a bar. The shape is written by fitDocTabs as data-ui-mode: full (every tab at its natural
+   width), compact (n + 1 equal columns, the active tab two of them) or picker (one dropdown, n of N, previous and next; its list closes each tab).
+   The close slot is 24px in every tab and never appears or goes: a state changes a fill or a colour, never a size. Every tab shows its close mark,
+   quiet (ink-3) on a tab that is not the active one, so any tab can be closed without choosing it first; an edited tab shows its dot there instead,
+   and the mark when the tab is pointed at or focused. */
+.ui-tabs{box-sizing:border-box;position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:stretch;inline-size:100%;min-inline-size:0;block-size:var(--ctl-h-dense);contain:inline-size;
+  background:var(--bg);border-block-end:1px solid var(--line);font-size:var(--fs-sm);color:var(--ink-2)}
+.ui-tabs-set,.ui-tabs-pick{grid-row:1;grid-column:1;display:flex;align-items:stretch;min-inline-size:0;overflow:hidden}
+.ui-tabs[data-ui-mode=picker]>.ui-tabs-set,.ui-tabs:not([data-ui-mode=picker])>.ui-tabs-pick{display:none}
+.ui-tabs[data-ui-mode=compact]>.ui-tabs-set{display:grid;grid-template-columns:repeat(var(--ui-tab-cols,1),minmax(0,1fr))}
+.ui-tab{position:relative;display:flex;flex:none;align-items:center;min-inline-size:0;border-inline-end:1px solid var(--line-2);background:var(--bg);color:var(--ink-2)}
+.ui-tab:hover{background:var(--panel-2)}
+.ui-tab[data-ui-active]{background:var(--panel);color:var(--ink)}
+.ui-tabs:not([data-ui-focused]) .ui-tab[data-ui-active]{color:var(--ink-2)}
+.ui-tab[data-ui-preview] .ui-tab-name{color:var(--ink-3)}
+.ui-tab.drop{box-shadow:inset 0 0 0 1.5px var(--ring)}
+.ui-tab-main,.ui-tabs-menu{box-sizing:border-box;display:flex;flex:1 1 auto;align-items:center;gap:var(--s2);min-inline-size:0;block-size:100%;min-block-size:0;margin:0;padding-block:0;padding-inline:var(--s3) 0;
+  border:0;border-radius:0;background:transparent;box-shadow:none;color:inherit;font:inherit;text-align:start;white-space:nowrap}
+.ui-tab-main>.ico,.ui-tabs-menu>.ico{flex:none}
+.ui-tab-main:focus-visible,.ui-tab-close:focus-visible,.ui-tabs-menu:focus-visible,.ui-tabs-more:focus-visible,.ui-tabs-prev:focus-visible,.ui-tabs-next:focus-visible{outline:none;box-shadow:inset 0 0 0 1.5px var(--ring)}
+.ui-tab-name{min-inline-size:0;max-inline-size:28ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ui-tab-close,.ui-tabs-prev,.ui-tabs-next,.ui-tabs-more{box-sizing:border-box;display:grid;flex:none;place-items:center;inline-size:var(--ctl-h-dense);block-size:var(--ctl-h-dense);min-block-size:0;margin:0 var(--s1);padding:0;
+  border:0;border-radius:var(--radius-sm);background:transparent;box-shadow:none;color:var(--ink-3)}
+.ui-tab-close{inline-size:24px;block-size:24px;margin-inline:var(--s1) var(--s2)}   /* the close mark is the ghost slot's size (24px), not the full control height: the tab's own padding stays visible above and below it, and the name keeps a gap before it */
+.ui-tab-close:hover,.ui-tabs-prev:hover,.ui-tabs-next:hover,.ui-tabs-more:hover{background:var(--panel-3);color:var(--ink)}
+.ui-tabs-prev:disabled,.ui-tabs-next:disabled{background:transparent;color:var(--ink-3);opacity:.5}
+.ui-tab-close>:is(.ico,.ui-tab-dot){grid-area:1/1}
+.ui-tab[data-ui-active] .ui-tab-close:not(:hover),.ui-tabs-pick-close:not(:hover){color:var(--ink-2)}
+.ui-tab-dot{visibility:hidden;inline-size:8px;block-size:8px;border-radius:50%;background:var(--ink-2)}
+.ui-tab[data-ui-dirty] .ui-tab-dot,.ui-tabs-pick[data-ui-dirty] .ui-tab-dot{visibility:visible}
+.ui-tab[data-ui-dirty] .ui-tab-close>.ico,.ui-tabs-pick[data-ui-dirty] .ui-tabs-pick-close>.ico{visibility:hidden}
+.ui-tab[data-ui-dirty]:is(:hover,:focus-within) .ui-tab-close>.ico{visibility:visible}
+.ui-tab[data-ui-dirty]:is(:hover,:focus-within) .ui-tab-close>.ui-tab-dot{visibility:hidden}
+.ui-tabs[data-ui-mode=compact] .ui-tab{flex:1 1 0}
+.ui-tabs[data-ui-mode=compact] .ui-tab[data-ui-active]{grid-column:span 2}
+.ui-tabs[data-ui-mode=compact] .ui-tab-close{margin-inline:0 var(--s1)}   /* a shared column keeps its close slot (24px) and gives up the gap before it, so a name keeps about eight characters at TAB_MIN */
+.ui-tabs-pick{align-items:center;gap:var(--s1);padding-inline:var(--s1) 0}
+.ui-tabs-pick :is(.ui-tab-close,.ui-tabs-prev,.ui-tabs-next){margin-inline:0}   /* the picker's gap already separates them: the name keeps its width at the narrowest strip */
+.ui-tabs-pick .ui-tabs-menu{flex:1 1 0;justify-content:flex-start;block-size:var(--ctl-h-dense);border-radius:var(--radius-sm);padding-inline:var(--s2)}
+.ui-tabs-pick .ui-tabs-menu:hover{background:var(--panel-2)}
+.ui-tabs-menu>.ui-tab-name{flex:0 1 auto}
+.ui-tabs-count{flex:none;inline-size:8ch;overflow:hidden;text-align:center;white-space:nowrap;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.ui-tabs-end{grid-row:1;grid-column:2;display:flex;align-items:center}
+.ui-tabs-sizer{position:absolute;inset-block-start:0;inset-inline-start:0;display:flex;block-size:0;overflow:hidden;visibility:hidden;pointer-events:none;white-space:nowrap}
+.ui-tab-ghost{display:flex;flex:none;align-items:center;gap:var(--s2);padding-inline-start:var(--s3);border-inline-end:1px solid var(--line-2)}
+.ui-tab-slot{flex:none;inline-size:24px;margin-inline:var(--s1)}
+.ui-tabs-list .menu-aside{visibility:visible}   /* the picker's list: each document's close is drawn on its row at rest, as it is on its tab */
+
+/* a title bar's More is an icon as square as the panel toggles beside it, its label the tooltip (every title bar; the Files view's asked first) */
+.ui-bar[data-ui-bar]:is(.topbar,.topbar-more-icon) [data-ui-more]{inline-size:var(--ui-h);padding-inline:0}
+.ui-bar[data-ui-bar]:is(.topbar,.topbar-more-icon) [data-ui-more]>.ui-act-label{display:none}
+/* the title bar is the page's head (TOPBAR R2): its title is the page's one h1, set as a section head is (14/600) and centred in the bar with the
+   labels beside it, a picker title and a path's last part alike; the status beside it is centred too (12/400 ink-3, its reserved slot) */
+.ui-bar[data-ui-bar].topbar>[data-ui-slot=lead]>h1.ui-bar-title,.ui-bar[data-ui-bar].topbar>[data-ui-slot=lead]>.ui-crumbs>h1.ui-crumb-last{font-size:var(--fs);line-height:calc(1em + var(--s1));padding-block-end:0;margin-block-start:0;align-self:center}
+.ui-bar[data-ui-bar].topbar>[data-ui-slot=lead]>h1.ui-bar-title .ui-title-pick{border-bottom-width:1px}
+/* a title that is a menu is the bar's standard picker (owner, 2026-10-11: plain bold text with a chevron did not read as a button): the same filled
+   control as every picker, its label at the title's weight, the fill one step darker when pointed at, pressed or open; a plain title stays text */
+.ui-bar[data-ui-bar].topbar .ui-title-pick{gap:var(--s2);padding-inline:var(--s3);background:var(--panel-2);color:var(--ink)}
+.ui-bar[data-ui-bar].topbar .ui-title-pick:is(:hover,[aria-expanded=true]){background:var(--panel-3)}
+.ui-bar[data-ui-bar][data-ui-reserve-more] [data-ui-more][data-ui-empty]{display:inline-flex;visibility:hidden}
+.ui-bar[data-ui-bar][data-ui-switch-short]:not([data-ui-measure]) .ui-view-pick{inline-size:var(--ui-h);padding-inline:0;justify-content:center}.ui-bar[data-ui-bar][data-ui-switch-short]:not([data-ui-measure]) .ui-view-pick>.ui-picker-value{display:none}   /* the title bar's very last rung: the switch is its chevron (its value stays its name and tooltip) */   /* moreReserve: an empty More keeps its place, so the switch before the end group never moves */
+.ui-bar[data-ui-bar].topbar>[data-ui-slot=lead]:has(>h1.ui-bar-title)~[data-ui-slot=status]{align-self:center}
+.ui-bar[data-ui-bar][data-ui-status=hidden]:not([data-ui-measure])>[data-ui-slot=status]{display:none}   /* a non-stacking head's last rungs give up the status (bar-modes ladder); it is measured all the same */
+
+/* ---- a path in a head's lead: each folder a quiet 28px button (a fill when pointed at), one chevron between parts with equal gaps, the last part the
+   page title (whole; a picker when it is the path popover); the middle folds into "…" and the first folder shortens with an ellipsis by measurement
+   (fitCrumbs); no part is ever cut without an ellipsis ---- */
+.ui-bar[data-ui-bar]>[data-ui-slot=lead]>.ui-crumbs{display:flex;flex:0 1 auto;align-items:center;min-inline-size:0;overflow:hidden;gap:var(--s1)}
+.ui-crumb{box-sizing:border-box;display:inline-flex;align-items:center;flex:0 1000 auto;min-inline-size:min(6ch,100%);max-inline-size:20ch;block-size:var(--ui-h);min-block-size:0;margin:0;padding-inline:var(--s1);border:1px solid transparent;border-radius:var(--radius-sm);
+  background:transparent;color:var(--ink-2);font:inherit;font-weight:400;white-space:nowrap}
+.ui-crumb-text{display:block;min-inline-size:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ui-crumb.ui-crumb-more{flex:none;min-inline-size:var(--ui-h);justify-content:center}
+.ui-crumb:hover{background:var(--panel-3);color:var(--ink)}
+.ui-crumb-sep{display:inline-flex;flex:none;align-items:center;color:var(--ink-3)}
+.ui-crumb[hidden],.ui-crumb-sep[hidden]{display:none}
+.ui-crumbs>.ui-crumb-last{flex:0 1 auto;min-inline-size:0;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ui-crumbs>.ui-crumb-last:not(.ui-crumb-pick){padding-inline-start:var(--s1)}   /* a plain title keeps the parents' inset, so the gaps either side of a chevron are equal */
+.ui-crumbs>.ui-crumb-pick{display:flex;align-items:center}
+.ui-crumbs>.ui-crumb-pick>.ui-title-pick{min-inline-size:0}
+.ui-crumbs[data-ui-measure]>:is(.ui-crumb,.ui-crumb-last){flex:none}   /* fitCrumbs reads every part whole before it folds */
+.ui-bar[data-ui-bar]>[data-ui-slot=lead]>.ui-crumbs>h1.ui-crumb-last{font-size:var(--fs-lg);font-weight:600;line-height:calc(1em + var(--s1));padding-block-end:var(--s1);align-self:flex-start;margin-block-start:calc(var(--ui-h)/2 + .36*var(--fs) - .95*var(--fs-lg))}   /* the path's last folder is the page title, drawn as a lone title is, on the baseline of the folders before it */
+
+/* a pinned tab (the folder page) keeps the close slot's width and has nothing in it */
+.ui-tab-fixed,.ui-tab-fixed:hover{background:transparent;pointer-events:none}
+.ui-tab[data-ui-pinned]>.ui-tab-main{padding-inline-end:0}
+
+/* ---- the Files page's file table (views/file-browser.mjs): one line per file under a sticky header that sorts; a row's end slot shows on hover, focus or selection; the fill is the state ---- */
+/* History (views/history-tool.mjs): a file and a commit are one line each; the row's More shows when the row is pointed at or focused (uiList reveal); the columns end on the rule's edge */
+.ui-list:is([data-hist-list],[data-dep-list])>.ui-row:is([data-file],[data-node],[data-change],[data-place],[data-auto],[data-tree],[data-tree-more]){padding-block:0;min-block-size:var(--ctl-h-dense);border-top:0}
+.ui-list:is([data-hist-list],[data-dep-list])>.ui-row:is([data-file],[data-node],[data-change],[data-place],[data-auto],[data-tree],[data-tree-more]) .ui-row-main{flex-direction:row;align-items:center;padding-block:0}
+/* A row that runs to a second line (a need, a version's note) keeps its columns and More on its first line. */
+.ui-list[data-hist-list]>.ui-row:is([data-need],[data-commit],[data-run]):not([data-file]){align-items:start;padding-block:var(--s1) var(--s2)}
+.ui-list[data-hist-list]>.ui-row:is([data-commit],[data-run]):not([data-file]):not(:has(.ui-row-detail)){padding-block:var(--s1)}   /* a commit is one line, its message and its columns (who and when, files, lines); a second line only for a version's note */
+.ui-list[data-hist-list]>.ui-row:is([data-need],[data-commit],[data-run]):not([data-file]) .ui-row-main{padding-block:0}
+.ui-list[data-hist-list]>.ui-row:is([data-need],[data-commit],[data-run]):not([data-file]) .ui-row-cell[data-ui-cell=text]{line-height:var(--ctl-h-dense)}
+.ui-list:is([data-hist-list],[data-dep-list])>.ui-row>[data-ui-slot=lead]{align-items:center}
+.ui-list:is([data-hist-list],[data-dep-list])>[data-ui-bar=head]:not(:first-child){margin-block-start:var(--s4)}
+.ui-list:is([data-hist-list],[data-dep-list]) .ui-row-cell[data-ui-cell=text]{text-align:end}
+.ui-list:is([data-hist-list],[data-dep-list]) .ui-row-detail{padding-inline-start:var(--s5)}   /* the second line of a commit stands under its message, past the chevron */
+.ui-list[data-hist-list]>.ui-row[data-commit]:not([data-file],[data-version]) .ui-row-detail{padding-inline-start:0}   /* a commit opens its page: no chevron, so its second line starts under its message */
+.ui-list:is([data-hist-list],[data-dep-list])[data-ui-mode=narrow] .ui-row>[data-ui-slot=cells]{grid-template-columns:repeat(var(--cols,1),max-content);padding-inline-start:var(--s5)}   /* narrow: kind and count on the second line, from the name's edge */
+.ui-list:is([data-hist-list],[data-dep-list])[data-ui-mode=narrow] .ui-row-cell[data-ui-cell=text]{text-align:start}
+.ui-list[data-dep-list][data-ui-mode=narrow] .ui-row>[data-ui-slot=cells]{grid-template-columns:12ch max-content}   /* narrow: the kind has one column width, so how a link is known starts at one edge in every row */
+.ui-list:is([data-hist-list],[data-dep-list])[data-ui-mode=narrow] .ui-row>[data-ui-slot=lead]{grid-column:1}   /* narrow: the name and the row's More share the first line; kind and count are the second */
+.ui-list:is([data-hist-list],[data-dep-list])[data-ui-mode=narrow] .ui-row>[data-ui-slot=end]{grid-column:2;grid-row:1}
+.ui-list:is([data-hist-list],[data-dep-list])[data-ui-mode=narrow] .ui-row>[data-ui-slot=cells]{grid-column:1/-1}
+.ui-list:is([data-hist-list],[data-dep-list])[data-ui-mode=narrow] .ui-row-cell:empty{display:none}
+.ui-list:is([data-hist-list],[data-dep-list])[data-ui-mode=narrow] .ui-row>[data-ui-slot=cells]:not(:has(.ui-row-cell:not(:empty))){display:none}   /* a row with nothing counted has no second line */
+/* History's timeline (Linear, Framer, Plane): an entry is its summary over its time and author, its counts on the list's edge; the selected
+   entry is a fill; an entry with no icon starts its second line under its summary */
+.ui-list[data-hist-timeline]{margin-block-start:0}   /* its pane's own inset is its air */
+.ui-bar[data-ui-bar=head]:is([data-hist-preview]>*){padding-inline:var(--s3)}   /* the preview's head starts where its rows and notes start */
+.ui-list[data-hist-timeline]>.ui-row[data-entry]{align-items:start;padding-block:var(--s1)}
+.ui-list[data-hist-timeline]>.ui-row[data-entry] .ui-row-main{padding-block:0;gap:0}
+.ui-list[data-hist-timeline]>.ui-row[data-entry] .hist-pick{block-size:var(--ctl-h-dense)}
+.ui-list[data-hist-timeline]>.ui-row[data-entry]:not([data-hist-kind=sync],[data-hist-kind=run]) .ui-row-detail{padding-inline-start:0}
+.ui-list[data-hist-timeline]>.ui-row[data-entry] .ui-row-cell[data-ui-cell=text]{line-height:var(--ctl-h-dense)}
+.ui-list[data-hist-timeline]>.ui-row[aria-selected=true]{background:var(--panel-3)}
+/* narrow, an entry keeps its counts on its first line, beside its summary: two lines, as wide */
+.ui-list[data-hist-timeline][data-ui-mode=narrow]>.ui-row>[data-ui-slot=lead]{grid-column:1}
+.ui-list[data-hist-timeline][data-ui-mode=narrow]>.ui-row>[data-ui-slot=cells]{grid-column:2;grid-row:1;padding-inline-start:0}
+.ui-list[data-hist-timeline][data-ui-mode=narrow] .ui-row-cell[data-ui-col=facts]{justify-content:flex-end}
+.ui-list[data-hist-timeline]>.ui-row[data-entry]:hover:not([aria-selected=true]){background:var(--panel-2)}
+/* a row's facts (who and when, files, the change, the lines): one column on the rule's edge; each fact a slot of one width, so the last ends on the
+   edge and the same fact of two rows lines up; narrow, they start the second line */
+.ui-list[data-hist-list] .ui-row-cell[data-ui-col=facts]{display:flex;justify-content:flex-end;gap:var(--s3);max-inline-size:none}
+.ui-list[data-hist-list][data-ui-mode=narrow] .ui-row-cell[data-ui-col=facts]{justify-content:flex-start}
+.ui-row-cell>[data-hist-fact]{flex:none;white-space:nowrap;text-align:end}
+.ui-row-cell>[data-hist-fact=files]{min-inline-size:8ch}.ui-row-cell>[data-hist-fact=change]{min-inline-size:8ch}.ui-row-cell>[data-hist-fact=delta]{min-inline-size:10ch}
+.ui-list[data-hist-list][data-ui-mode=narrow] [data-hist-fact]{min-inline-size:0}
+.ui-list[data-dep-tree]>.ui-row[data-on]{background:var(--panel-2)}   /* Dependencies: the path down to the focused node of the tree, a fill, never a hue */
+.ui-list[data-dep-tree]>.ui-row[data-on=self]{background:var(--panel-3)}
+.ui-list[data-dep-tree]>.ui-row .ui-row-main{position:relative}   /* Dependencies: the tree's connectors are laid over a row's indent, from the start of its main */
+.ui-bar[data-ui-bar=head]+.ui-list[data-dep-tree]{margin-block-start:var(--s1)}
+.ui-bar[data-ui-bar=head]+.ui-list[data-ov-list]{margin-block-start:var(--s1)}   /* Overview: a list card's first row starts as a chart card's content does, 12 px under the head's row (research-views.css, Overview cards) */
+.ui-bar[data-ui-bar=head]+.ui-list[data-ov-list]>.ui-row:first-child{border-top:0}   /* Overview: the head's rule is the first row's, one line not two (owner, 2026-10-18) */
+.ui-list[data-ov-list]>.ui-row{align-items:first baseline}   /* a row that wraps keeps its time on its first line */   /* Dependencies: a layer's head sits close above its tree; the layer before is a clear step away (research-views.css) */
+.ui-bar[data-ui-bar=head][data-dep-layer-head]{padding-inline:var(--s3)}   /* Dependencies: a layer's head keeps the inset of a head over its list when the layer is closed and no list follows */
+.ui-list[data-fv-list]{user-select:none;-webkit-user-select:none}
+.ui-list[data-fv-list]>.ui-row{padding-block:0;min-block-size:var(--ctl-h-dense);border-top:0}
+.ui-list[data-fv-list]>.ui-row>[data-ui-slot=lead]{align-items:center}
+.ui-list[data-fv-list] .ui-row-main{flex-direction:row;align-items:center;padding-block:0}
+.ui-list[data-tf-list] .ui-row-main{padding-block:0}                                         /* Tables and figures: a row is its title (a 28px opener) and its values on one line */
+/* Tables and figures: a row led by its preview (research-views.css .tf-thumb) holds it in a first column, the title and its line beside it, centred on it */
+.ui-list[data-tf-list] .ui-row-main:has(>.tf-thumb){display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto;column-gap:var(--s3);row-gap:0;padding-block:var(--s1);overflow-wrap:normal}
+.ui-list[data-tf-list] .ui-row-main>.tf-thumb{grid-column:1;grid-row:1/-1}
+.ui-list[data-tf-list] .ui-row-cell[data-ui-col=kind]{color:var(--ink-3)}   /* the row's type, a quiet column (views/outputs.mjs kindCell) */
+.ui-list[data-tf-list] .ui-row-main:has(>.tf-thumb)>.out-title{grid-column:2;grid-row:1;align-self:end}
+.ui-list[data-tf-list] .ui-row-main:has(>.tf-thumb)>.ui-row-detail{grid-column:2;grid-row:2;align-self:start}
+/* beside a preview a row is as high as the preview, so its line (type and origin) may take two lines rather than end in an ellipsis; the name stays a one-line opener */
+.ui-list[data-tf-list] .ui-row-main:has(>.tf-thumb)>.ui-row-detail{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}   /* one line of at most three parts: never wraps (owner, 2026-10-23) */
+.ui-list[data-fv-list]>.ui-row.fv-sel{background:var(--panel-3)}
+.ui-list[data-fv-list]>.ui-row:has(.fv-entry:focus-visible){box-shadow:inset 0 0 0 1.5px var(--ring)}
+.ui-list[data-fv-list]>.ui-row.drop{background:var(--panel-3);box-shadow:inset 0 0 0 1.5px var(--ink-3)}
+.ui-list[data-fv-list]>.ui-row.fv-sel>[data-ui-slot=end]{opacity:1}   /* the end is revealed (uiList reveal) on hover or focus, and on the selected row */
+.ui-list[data-fv-list]>.ui-row.fv-colhead{position:sticky;inset-block-start:0;z-index:1;background:var(--panel);border-block-end:1px solid var(--line)}
+.ui-list[data-fv-list]>.ui-row.fv-colhead>[data-ui-slot=end]{opacity:0}
+.ui-list[data-fv-list]>.ui-row.fv-colhead [data-ui-cell=control]{display:flex;justify-content:flex-end}
+
+/* ---- the Proposals pane (lib/aid.mjs checklistHtml): a checklist entry's controls and its end text sit on the row's first line (the check
+   box is one dense control high, the text's first line ctl-h-dense minus 2·s1) ---- */
+.ui-list[data-aid-checklist]>.ui-row{align-items:start}
+.ui-list[data-aid-checklist] .ui-row-cell[data-ui-cell=text]{line-height:var(--ctl-h-dense)}
+.ui-bar[data-ui-bar=head]+.aid-entry-line{margin-block-start:calc(var(--s3) - (var(--ctl-h-dense) - 1lh) / 2)}   /* the line under an entry's head is one control high (Undo may join it); its text, centred there, sits the head's s3 under the head */
+
+/* ---- a JSON file's tools bar (views/file-json.mjs): the message names the first error in the colour of a verdict ---- */
+.ui-bar[data-ui-bar]>[data-ui-slot=message][data-json-error]{color:var(--bad)}
+
+/* ---- rules the legacy sheets held for contract classes, moved here so the contract is their only owner ---- */
+.ui-list[data-picker]>.ui-row:has([data-pick][aria-pressed=true]){background:var(--panel-3)}   /* the chosen row of a picker is a fill, like a chosen row anywhere */
+.ui-bar[data-ui-bar].ev-word-foot:last-child{position:sticky;bottom:0;z-index:4;background:var(--panel);padding-block:var(--s3)}   /* Word tables: Cancel and Save stay in view under the grid */
+.ui-bar[data-ui-bar].insp-foot{position:sticky;bottom:calc(-1 * var(--s4));z-index:1;background:var(--panel);padding-block:var(--s2);border-top:1px solid var(--line-2)}   /* the inspector's foot (lib/study.mjs): Close and the one primary stay in view at the pane's bottom (Component review 2026-10-21, item 20) */
+.ui-list.start-list .ui-row-cell{padding-inline-start:var(--s4)}   /* a long name ends a clear gap before the time */
+.ui-list.pf-rows .ui-row-check input{margin-inline-start:0}
+.ui-row-main .ms-wc-name{overflow-wrap:anywhere}
+
+
+.ui-list:is([data-hist-list],[data-dep-list])>.ui-row{position:relative}
+.ui-list:is([data-hist-list],[data-dep-list])>.ui-row>[data-ui-slot=end]{position:relative;z-index:1}
