@@ -1,0 +1,257 @@
+{
+  "_comment": "Pinned artifacts. Regenerate with `npm run relock` only when deliberately moving a version.",
+  "generated": "2026-09-17",
+  "rVersion": "4.6",
+  "webr": {
+    "version": "0.6.0",
+    "url": "https://registry.npmjs.org/webr/-/webr-0.6.0.tgz",
+    "sha256": "5821c8bd87484add59064fa13fa62a65f686032f3f64dacf4b0aa34c4325e959",
+    "bytes": 37802792
+  },
+  "rPackages": {
+    "base64enc": {
+      "version": "0.1-6",
+      "url": "https://repo.r-wasm.org/bin/emscripten/contrib/4.6/base64enc_0.1-6.tgz",
+      "sha256": "653b7f3d1b17d33e5a502cf28a64a70e1a19a8784ca021e1d4a493ad28c5751a",
+      "bytes": 23760
+    },
+    "boot": {
+      "version": "1.3-32",
+      "url": "https://repo.r-wasm.org/bin/emscripten/contrib/4.6/boot_1.3-32.tgz",
+      "sha256": "8ffe8cb4b051ae4d1d01753b25b84e0133cc2311bf68c42afe172e2482d851dd",
+      "bytes": 510819
+    },
+    "cli": {
+      "version": "3.6.6",
+      "url": "https://repo.r-wasm.org/bin/emscripten/contrib/4.6/cli_3.6.6.tgz",
+      "sha256": "efa9c2b12c2da09cccb0a27d2e7a079ebd4c38fc1d03560d599f7634eb7f9932",
+      "bytes": 967089
+    },
+    "cpp11": {
+      "version": "0.5.5",
+      "url": "https://repo.r-wasm.org/bin/emscripten/contrib/4.6/cpp11_0.5.5.tgz",
+      "sha256": "101b838c116c78bb0f8fe9a8aafb38a74ecd7eef8645212ea6968de275509c6e",
+      "bytes": 289635
+    },
+    "digest": {
+      "version": "0.6.39",
+      "url": "https://repo.r-wasm.org/bin/emscripten/contrib/4.6/digest_0.6.39.tgz",
+      "sha256": "0531577e58efa9e61aeb4505c31766c53507d7bb59db9c4ce0ed2e7e9e862d07",
+      "bytes": 163663
+    },
+    "jsonlite": {
+      "version": "2.0.0",
+      "url": "https://repo.r-wasm.org/bin/emscripten/contrib/4.6/jsonlite_2.0.0.tgz",
+      "sha256": "35df0622339690661adc69521caab76a7b54e3a2f39b4b0d53832d2be3ccd5ea",
+      "bytes": 1033131
+    },
+    "lattice": {
+      "version": "0.22-9",
+      "url": "https://repo.r-wasm.org/bin/emscripten/contrib/4.6/lattice_0.22-9.tgz",
+      "sha256": "2797c655d7bd06c7bd212a6dd6eeb1b3c672a8bac43d09a406e1a2190264f79b",
+      "bytes": 1002014
+    },
+    "lifecycle": {
+      "version": "1.0.5",
+      "url": "https://repo.r-wasm.org/bin/emscripten/contrib/4.6/lifecycle_1.0.5.tgz",
+      "sha256": "c2f8c5905f58b4526c3b68c6163f891b9a12f81d7e50347ad49a70b1f6592527",
+      "bytes": 102893
+    },
+    "lme4": {
+      "version": "2.0-1",
+      "url": "https://repo.r-wasm.org/bin/emscripten/contrib/4.6/lme4_2.0-1.tgz",
+      "sha256": "edf8b6a90baede4d266688723dcf978e30acaa28bc44ac6f17087b4421ef021b",
+      "bytes": 3982643
+    },
+    "MASS": {
+      "version": "7.3-65",
+      "url": "https://repo.r-wasm.org/bin/emscripten/contrib/4.6/MASS_7.3-65.tgz",
+      "sha256": "9cb66dfbaf017f74e4408117128c04a859697ad8ff49cffad0537b2b15f0d846",
+      "bytes": 874568
+    },
+    "mathjaxr": {
+      "version": "2.0-0",
+      "url": "https://repo.r-wasm.org/bin/emscripten/contrib/4.6/mathjaxr_2.0-0.tgz",
+      "sha256": "4cb80450f11284e6ac3c1e40a64c1854f4fd967e17c0ab8cc8219ec58ff027b2",
+      "bytes": 2973528
+    },
+    "Matrix": {
+      "version": "1.7-5",
+      "url": "https://repo.r-wasm.org/bin/emscripten/contrib/4.6/Matrix_1.7-5.tgz",
+      "sha256": "52f76ce63e3421b0a0381d8983e7f18bebf492ddf5dde71f57a50ee4d27782d8",
+      "bytes": 2937115
+    },
+    "metadat": {
+      "version": "1.6-0",
+      "url": "https://repo.r-wasm.org/bin/emscripten/contrib/4.6/metadat_1.6-0.tgz",
+      "sha256": "ce63dc1a4c9fffb7f83e7c2bba78bfa122b0ce2efbb87d5c06b66e3620cd9c29",
+      "bytes": 1087271
+    },
+    "metafor": {
+      "version": "5.0-1",
+      "url": "https://repo.r-wasm.org/bin/emscripten/contrib/4.6/metafor_5.0-1.tgz",
+      "sha256": "33e5d9d3f50633910fdd07a12b7fc3b5799671016cffa3f10353bc8abd7ccf50",
+      "bytes": 3669823
+    },
+    "minqa": {
+      "version": "1.2.8",
+      "url": "https://repo.r-wasm.org/bin/emscripten/contrib/4.6/minqa_1.2.8.tgz",
+      "sha256": "717a589602cd8600369631ed65de78421b693df66ace2dc1af8ed99607ee4639",
+      "bytes": 85538
+    },
+    "nlme": {
+      "version": "3.1-169",
+      "url": "https://repo.r-wasm.org/bin/emscripten/contrib/4.6/nlme_3.1-169.tgz",
+      "sha256": "7918af1e887b98d1162cf7a2afe63936a54ad4e87cb2f0bead665bbe101194da",
+      "bytes": 1751404
+    },
+    "nloptr": {
+      "version": "2.2.1.9000",
+      "url": "https://repo.r-wasm.org/bin/emscripten/contrib/4.6/nloptr_2.2.1.9000.tgz",
+      "sha256": "ff7eef53f2ae539a878b12b54ab06f01345b0313297284185c579d4fdb30efa3",
+      "bytes": 364263
+    },
+    "numDeriv": {
+      "version": "2016.8-1.1",
+      "url": "https://repo.r-wasm.org/bin/emscripten/contrib/4.6/numDeriv_2016.8-1.1.tgz",
+      "sha256": "f5161c0658fcd60e45e70ffe83e2976b182128dcd5c9e4d0fb2a1466bf38a5c6",
+      "bytes": 103011
+    },
+    "pbapply": {
+      "version": "1.7-4",
+      "url": "https://repo.r-wasm.org/bin/emscripten/contrib/4.6/pbapply_1.7-4.tgz",
+      "sha256": "8c242e8c6c96a2663aa2de171bddbc1cd4405be04fe8d5c916ac0f3f0da4bd4d",
+      "bytes": 65149
+    },
+    "rbibutils": {
+      "version": "2.4.1",
+      "url": "https://repo.r-wasm.org/bin/emscripten/contrib/4.6/rbibutils_2.4.1.tgz",
+      "sha256": "f9be998342d3075d87254c78c968a45ea018bbf9c7d7c9de8b57d4554f0f0143",
+      "bytes": 1070443
+    },
+    "Rcpp": {
+      "version": "1.1.1-1.1",
+      "url": "https://repo.r-wasm.org/bin/emscripten/contrib/4.6/Rcpp_1.1.1-1.1.tgz",
+      "sha256": "5f9c1ad21212c6621cf6a24fb71bcef03a97ca86ce76da1304bab51d1a3a0fa3",
+      "bytes": 2078437
+    },
+    "Rdpack": {
+      "version": "2.6.6",
+      "url": "https://repo.r-wasm.org/bin/emscripten/contrib/4.6/Rdpack_2.6.6.tgz",
+      "sha256": "98a070922d7ffc9036152a73f8a0e5feb0915105b3384eb6f777eb2235f7baf0",
+      "bytes": 525340
+    },
+    "reformulas": {
+      "version": "0.4.4",
+      "url": "https://repo.r-wasm.org/bin/emscripten/contrib/4.6/reformulas_0.4.4.tgz",
+      "sha256": "aec634511cc48030c90777fa5f04a1cb879a65f73a09f5f0d799fb9d907412dc",
+      "bytes": 120851
+    },
+    "rlang": {
+      "version": "1.2.0",
+      "url": "https://repo.r-wasm.org/bin/emscripten/contrib/4.6/rlang_1.2.0.tgz",
+      "sha256": "6e8cf0cfedf6238f14dd588f44aabb0654da0883dc2dbb7f96e4a718170a1eb4",
+      "bytes": 1139868
+    },
+    "stringi": {
+      "version": "1.8.7",
+      "url": "https://repo.r-wasm.org/bin/emscripten/contrib/4.6/stringi_1.8.7.tgz",
+      "sha256": "689311a42b413a58e912bea584b8f24cfed41c4831ad638a721c1c7b596e4e1a",
+      "bytes": 14081982
+    },
+    "survival": {
+      "version": "3.8-6",
+      "url": "https://repo.r-wasm.org/bin/emscripten/contrib/4.6/survival_3.8-6.tgz",
+      "sha256": "925e35820900c4c0f1762dee8b0fac59d69dee33e597d2de8bc7724d075507ba",
+      "bytes": 7760573
+    },
+    "svglite": {
+      "version": "2.2.2",
+      "url": "https://repo.r-wasm.org/bin/emscripten/contrib/4.6/svglite_2.2.2.tgz",
+      "sha256": "4dfbc7d4f82a3ea318befc020be81b61ce0482ffcb77bdde2829d0d21a0ff9e1",
+      "bytes": 265269
+    },
+    "systemfonts": {
+      "version": "1.3.2",
+      "url": "https://repo.r-wasm.org/bin/emscripten/contrib/4.6/systemfonts_1.3.2.tgz",
+      "sha256": "1bcd9d5253dcc82638201ed877f5a3aad6cb93a39dd7b357ca99e42cba25c730",
+      "bytes": 1092354
+    },
+    "textshaping": {
+      "version": "1.0.5",
+      "url": "https://repo.r-wasm.org/bin/emscripten/contrib/4.6/textshaping_1.0.5.tgz",
+      "sha256": "1b8e1f7a64e6482fa247640de4c0c7100bbaf873a1aa44c889291fb2e66e0610",
+      "bytes": 578930
+    }
+  },
+  "targets": {
+    "MASS": [
+      "MASS"
+    ],
+    "nlme": [
+      "lattice",
+      "nlme"
+    ],
+    "jsonlite": [
+      "jsonlite"
+    ],
+    "metafor": [
+      "Matrix",
+      "digest",
+      "lattice",
+      "mathjaxr",
+      "metadat",
+      "metafor",
+      "nlme",
+      "numDeriv",
+      "pbapply"
+    ],
+    "svglite": [
+      "base64enc",
+      "cli",
+      "cpp11",
+      "jsonlite",
+      "lifecycle",
+      "rlang",
+      "stringi",
+      "svglite",
+      "systemfonts",
+      "textshaping"
+    ],
+    "survival": [
+      "Matrix",
+      "lattice",
+      "survival"
+    ],
+    "lme4": [
+      "MASS",
+      "Matrix",
+      "Rcpp",
+      "Rdpack",
+      "boot",
+      "lattice",
+      "lme4",
+      "minqa",
+      "nlme",
+      "nloptr",
+      "rbibutils",
+      "reformulas",
+      "rlang"
+    ]
+  },
+  "pdfjs": {
+    "version": "6.3.289",
+    "url": "https://registry.npmjs.org/pdfjs-dist/-/pdfjs-dist-6.3.289.tgz",
+    "sha256": "06f25e887adc6489f04c9fcb14198c77e4e5623a59a0bba5c4cea5838a4f1241",
+    "bytes": 8503425
+  },
+  "addons": {
+    "repo": "basarnoyan1/lykos-addons",
+    "commit": "bf19bee046aafb086d6127680dbbd420c403ca46",
+    "files": {
+      "catalog.json": "3a1d13142d0c66cea92574070f391500b28f4ee118b19c81ba8f608d46381003",
+      "neuro/index.mjs": "2ac442906d46200d7b7bb72a85189776c11aa90049f0f24da5b1e4797bb7b240",
+      "neuro/art.mjs": "34eb44215d13324a4d51c0df82f0cab0342f6bd7d683649489eec63e5d644b21"
+    }
+  }
+}

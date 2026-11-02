@@ -1,0 +1,26 @@
+/* The one stylesheet entry. index.html, ui-library.html, the isolated fixture and the width harness
+   (through index.html) all use this file, so every page that is measured has the cascade the app ships
+   (spec 0, "Cascade"; spec 4, "Layers"). Unlayered rules beat every layer, so no page links another
+   stylesheet or adds an unlayered rule that targets a shared component (css-reachability.test.mjs).
+   Later layers beat earlier ones whatever the specificity: contract > shared > legacy.
+
+   ui-components.css is in legacy, not yet in shared. Measured (style-snapshot.mjs, Chromium and WebKit):
+   as layer(shared) it changes 167 of 1596 pages, because six of its rules were beaten by a legacy rule of
+   higher specificity and win once layered:
+     .an-settings label.field :is(input, select, textarea)   max-width
+     .ui-disclosure > summary                                padding
+     .ui-metadata-line                                       overflow
+     .aid-label                                              gap, align-items, colour
+     [data-ui-help], p.meta                                  max-width
+     label.field.ui-field > span:first-child                 line-height
+   Move the import to layer(shared) in the change that decides each of those six, with the snapshot diff
+   as its evidence.
+
+   ui-actions.css is the contract layer: the only file where control placement is written.
+   css-reachability.test.mjs fails while a stylesheet in this folder is not imported below. */
+@layer legacy, shared, contract;
+@import url("./tokens.css") layer(legacy);
+@import url("./workspace.css") layer(legacy);
+@import url("./research-views.css") layer(legacy);
+@import url("./ui-components.css") layer(legacy);
+@import url("./ui-actions.css") layer(contract);

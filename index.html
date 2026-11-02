@@ -1,0 +1,60 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lykos</title>
+<link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./assets/app/icon.svg" type="image/svg+xml"><link rel="icon" href="./assets/app/icon-32.png" type="image/png" sizes="32x32"><link rel="apple-touch-icon" href="./assets/app/apple-touch-icon.png">
+<script src="./project-prefetch.js"></script>
+<link rel="stylesheet" href="./styles.css">
+<script src="./theme-boot.js"></script><meta name="lykos-build" content="e29cefcc802eac84"></head>
+<body>
+<aside>
+  <div class="chrome" data-tauri-drag-region></div>
+  <div class="brand" data-tauri-drag-region>
+    <button class="proj" id="proj" aria-haspopup="menu"><span class="word" id="proj-name">Lykos</span>
+      <svg class="ico" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+    <button class="icon side-toggle" id="side-toggle" title="Collapse sidebar (⌘\)" aria-label="Collapse sidebar">
+      <svg class="ico" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M4 5h16v14H4z M9 5v14"/></svg></button></div>
+  <button id="global-search" class="global-search" aria-label="Search workspace"><svg class="ico" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M21 21l-5-5 M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0"/></svg><span>Search</span><kbd>⌘K</kbd></button>
+  <div class="side-tabs" id="side-tabs" role="tablist" aria-label="Sidebar">
+    <button role="tab" class="side-tab-workspace" data-side-mode="review" aria-selected="true"><span>Workspace</span></button>
+    <button role="tab" class="side-tab-files" data-side-mode="files" aria-selected="false" title="Files (⌘⇧E)" aria-label="Files"><span>Files</span></button></div>
+  <nav id="nav"></nav>
+  <div class="tree" id="tree" hidden></div>
+  <div class="side-base">
+    <nav id="foot"></nav>
+  </div>
+</aside>
+<div class="side-grip" id="side-grip" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Resize sidebar"></div>
+<main>
+  <div class="topbar" id="topbar-slot"></div>
+  <div class="split" id="split">
+    <section class="plist" id="plist" hidden aria-label="Items">
+      <div class="plist-head" id="plist-head"></div>
+      <div class="plist-filter" id="plist-filter"></div>
+      <div class="plist-body" id="plist-body" role="listbox" tabindex="0" aria-label="Items"><div class="plist-space" id="plist-space"></div></div>
+    </section>
+    <div class="plist-grip" id="plist-grip" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Resize list" hidden></div>
+    <div class="view" id="view"></div>
+    <div class="divider" id="divider" role="separator" aria-orientation="vertical"
+         tabindex="0" aria-label="Resize document pane" hidden></div>
+    <aside class="docpane" id="docpane" hidden></aside>
+    <aside class="assist" id="assist" hidden aria-label="Inspector">
+      <div class="assist-head"><span class="segmented" id="assist-tabs" role="tablist" aria-label="Inspector"><button role="tab" data-tab="details">Details</button><button role="tab" data-tab="proposals">Proposals <span class="meta" id="aid-count"></span></button><button role="tab" data-tab="chat">Chat</button></span>
+        <button type="button" class="icon" id="assist-expand" title="Expand" aria-label="Expand chat" aria-expanded="false"><svg class="ico" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+        <button class="icon" id="assist-close" title="Close (⌘J)" aria-label="Close"><svg class="ico" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+      <div class="assist-body"><div id="assist-history-dock" hidden></div><div class="assist-conversation">
+      <div id="assist-find-host"></div>
+      <div class="assist-log" id="assist-log"></div>
+      <div class="assist-foot">
+        <div id="assist-composer-host"></div>
+        <div class="meta assist-note" id="assist-note" role="status"></div>
+      </div>
+      <div class="assist-home" id="assist-home" hidden></div></div></div>
+    </aside>
+  </div>
+  <footer class="statusbar" id="status"></footer>
+</main>
+<script type="module" src="./boot.mjs"></script>
+<link rel="modulepreload" href="./app.mjs">
+<link rel="modulepreload" href="./boot.mjs">
+<script type="module" src="./app.mjs"></script>
+</body></html>
