@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Query visualizer</title>
+<meta name="description" content="Draw a database search query, or a strategy of numbered lines, as Scratch-style blocks, in the browser.">
+<link rel="icon" href="./assets/app/icon.svg" type="image/svg+xml">
+<!-- styles.css imports these: asked for at once, so they arrive side by side instead of one after another -->
+<link rel="preload" href="./tokens.css" as="style"><link rel="preload" href="./workspace.css" as="style"><link rel="preload" href="./research-views.css" as="style">
+<link rel="preload" href="./ui-components.css" as="style"><link rel="preload" href="./ui-actions.css" as="style"><link rel="preload" href="./query-blocks.css" as="style">
+<link rel="preload" href="./assets/fonts/geist-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
+<script src="./theme-boot.js"></script><script src="./page-fresh.js" defer></script><link rel="stylesheet" href="./styles.css">
+<style>
+body{display:block;overflow:auto;--qv-head-h:44px}
+/* One page: the brand row, then the query's text beside its blocks (Scratch's editor: what you build from on the left, the scripts on
+   the right). Below 900px of its own width the two stack, the text first (lib/split-fit.mjs measures it). */
+.qv-brand{position:sticky;inset-block-start:0;z-index:2;display:flex;gap:var(--s2);align-items:center;block-size:44px;box-sizing:border-box;padding-inline:var(--s4);border-block-end:1px solid var(--line);background:var(--bg)}
+.qv-brand>img{flex:none;inline-size:22px;block-size:22px;border-radius:5px}
+.qv-brand>a{flex:none;color:var(--ink);text-decoration:none;font-weight:var(--fw-head)}
+.qv-brand>span{color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-inline-size:0}
+.qv-brand>span:first-of-type{flex:none}
+/* the text's column never narrower than its head bar's narrowest form, even in the frame before a narrowing window stacks the two */
+#qv-body{display:grid;grid-template-columns:minmax(13rem,min(30rem,38%)) minmax(0,1fr);block-size:calc(100dvh - var(--qv-head-h));overflow:hidden}
+#qv-body[data-stack=true]{grid-template-columns:minmax(0,1fr);block-size:auto;overflow:visible}
+.qv-edit{display:flex;flex-direction:column;gap:var(--s2);min-block-size:0;min-inline-size:0;box-sizing:border-box;padding:var(--s2) var(--s4) var(--s4);border-inline-end:1px solid var(--line);background:var(--panel)}
+#qv-body[data-stack=true]>.qv-edit{border-inline-end:0;border-block-end:1px solid var(--line)}
+.qv-detect{display:flex;gap:var(--s2);align-items:center;margin:0;font-size:var(--fs-sm);color:var(--ink-2)}
+.qv-detect:empty{display:none}
+.qv-detect>span{min-inline-size:0}
+/* the text, and under it the same text in its blocks' colours: one box, one font, one wrap, the field's own letters transparent */
+.qv-field{flex:1 1 auto;display:grid;min-block-size:12rem}
+.qv-field>*{grid-area:1/1;box-sizing:border-box;inline-size:100%;block-size:100%;min-block-size:0;margin:0;padding:var(--s2) var(--s3);font:400 var(--fs) var(--font);line-height:var(--lh);
+  white-space:pre-wrap;overflow-wrap:anywhere;border:1px solid var(--line-strong);border-radius:var(--radius-sm);overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+.qv-marks{overflow:hidden;color:var(--ink);background:var(--field);pointer-events:none}
+.qv-text{resize:none;color:transparent;caret-color:var(--ink);background:transparent}
+.qv-text::placeholder{color:var(--ink-3)}
+.qv-text::selection{color:transparent;background:color-mix(in srgb,var(--accent) 28%,transparent)}
+#qv-body[data-stack=true] .qv-field{flex:none;block-size:14rem}
+/* Text or Build: one of the two editors, the blocks of what it holds beside it */
+#qv-body[data-editor=build] :is(.qv-field,.qv-detect),#qv-body:not([data-editor=build]) .qv-build{display:none}
+.qv-build{flex:1 1 auto;display:grid;align-content:start;gap:var(--s3);min-block-size:0;overflow:auto;overscroll-behavior:contain}
+#qv-body[data-stack=true] .qv-build{overflow:visible}
+/* Saved: the queries kept in this browser, listed in place of the editor (query/saved.mjs); the blocks of what is open stay beside it */
+#qv-body[data-list] :is(.qv-field,.qv-detect,.qv-build),#qv-body:not([data-list]) .qv-saved{display:none}
+.qv-saved{flex:1 1 auto;min-block-size:0;overflow:auto;overscroll-behavior:contain}
+#qv-body[data-stack=true] .qv-saved{overflow:visible}
+.qv-saved-note,.qv-saved-empty{margin:0 0 var(--s2);color:var(--ink-2)}
+.qv-saved .tk-text>.qv-src{margin-inline-end:var(--s2)}
+#qv-saved-list{margin-block-end:var(--s4)}
+.qv-view{min-block-size:0;min-inline-size:0;overflow:auto;overscroll-behavior:contain;box-sizing:border-box;padding:var(--s2) var(--s4) var(--s5);background:var(--bg)}
+/* side by side, each pane scrolls under its own head: the blocks pane's head stays */
+#qv-body:not([data-stack=true]) #qv-view-top{position:sticky;inset-block-start:calc(-1 * var(--s2));z-index:3;margin-block-start:calc(-1 * var(--s2));padding-block-start:var(--s2);background:var(--bg)}
+#qv-body[data-stack=true]>.qv-view{overflow:visible}
+#qv-body:not([data-empty]) .qv-empty,#qv-body[data-empty] :is(#qv-blocks,#qv-checks),#qv-body[data-editor=build] :is(.qv-empty,#qv-blocks,#qv-checks),#qv-body:not([data-editor=build]) .qv-cards{display:none}
+/* the first screen: what the page does, shown on one small query (the Examples menu holds the real ones) */
+.qv-empty{display:grid;gap:var(--s2);max-inline-size:40rem;padding-block:var(--s3)}
+.qv-title{margin:0;font-size:var(--fs-lg);font-weight:var(--fw-head);line-height:var(--lh-lg)}
+.qv-lead{margin:0;color:var(--ink-2);max-inline-size:60ch}
+.qv-demo{display:grid;gap:var(--s3);margin:var(--s3) 0 0;min-inline-size:0}
+.qv-demo-q{margin:0;padding:var(--s2) var(--s3);white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;background:var(--field);border:1px solid var(--line);border-radius:var(--radius-sm)}
+.qv-demo .qv-blocks{padding:0}
+/* a database's icon: the favicons the Search view shows */
+.qv-src{flex:none;box-sizing:border-box;inline-size:18px;block-size:18px;padding:2px;object-fit:contain;background:#fff;border-radius:4px;box-shadow:0 0 0 1px var(--line-2);vertical-align:middle}
+.qv-detect .qv-src{inline-size:16px;block-size:16px;padding:1px}
+/* Build: the query for every database, one after another under hairlines, in the blocks' colours */
+.qv-cards{display:grid;padding-block:0 var(--s4);align-content:start}
+.qv-card{display:grid;gap:var(--s1);padding-block:var(--s3);border-block-start:1px solid var(--line-2)}
+.qv-card:first-of-type{border-block-start:0}
+.qv-card[hidden]{display:none}
+.qv-card h3{display:inline-flex;gap:var(--s2);align-items:center}
+.qv-q{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font:inherit}
+.qv-notes{margin:0;padding-inline-start:1.1em;font-size:var(--fs-sm);color:var(--ink-2)}
+.qv-notes:empty{display:none}
+/* what the check says of the text, under the blocks */
+.qv-checks{margin-block-start:var(--s4);border-block-start:1px solid var(--line-2);padding-block-start:var(--s3)}
+.qv-checks>summary{color:var(--ink);font-weight:var(--fw-ctl)}
+.qv-checks>summary>span{color:var(--ink-3);font-weight:var(--fw-text);margin-inline-start:var(--s2)}
+.qv-checks>ul{margin:var(--s2) 0 0;padding:0;list-style:none;display:grid;gap:var(--s2)}
+.qv-check{display:flex;gap:var(--s2);align-items:baseline;max-inline-size:80ch}
+.qv-check>.ico{flex:none;transform:translateY(2px);color:var(--warn)}
+.qv-check[data-level=error]>.ico{color:var(--bad)}
+
+/* editing: a block dragged follows the pointer as a ghost, its place dims; a bar shows where a drop will go; the text pane takes a drop to remove */
+.qb-ghost.qb-ghost[class]{position:fixed;inset:0 auto auto 0;z-index:10;margin:0;pointer-events:none;filter:drop-shadow(0 6px 12px rgb(0 0 0 / .35))}
+[data-dragging]{opacity:.35}
+.qb-place{position:fixed;inset:0 auto auto 0;z-index:9;inline-size:8rem;block-size:3px;pointer-events:none;background:var(--ink);border-radius:2px}
+.qv-edit[data-drop]{outline:2px dashed var(--ink);outline-offset:-4px}
+body[data-qv-drag],.qb-script,.qv-gallery{user-select:none;-webkit-user-select:none}
+.qb-script input{user-select:text;-webkit-user-select:text}
+/* Build: Scratch's palette and script. The gallery's blocks are dragged (or clicked) into the search; one dropped back on it goes. */
+.qv-gallery{display:grid;justify-items:start;align-content:start;gap:var(--s2);padding-block-end:var(--s4)}
+.qv-gallery[data-drop]{outline:2px dashed var(--ink);outline-offset:2px}
+.qv-gal-h{margin:var(--s2) 0 0;font-size:var(--fs-sm);font-weight:var(--fw-head);line-height:var(--lh-sm);color:var(--ink-2)}
+.qv-gallery [data-new]{cursor:grab;touch-action:none}
+.qv-gallery .qb-c{min-inline-size:var(--qb-wmin)}
+.qv-ph{color:light-dark(#9097a5,#a5a5a5)}
+.qv-work{padding-block:var(--s2) var(--s4);min-inline-size:0}
+.qv-work [data-path],.qv-work [data-paths]{touch-action:none}
+.qv-written{display:grid;align-content:start;border-block-start:1px solid var(--line-2)}
+/* an input as wide as its words: the hidden copy (data-v) sizes the slot, and the input, contained, adds no width of its own (an input's
+   own is about three characters wide, so every short word sat in the same wide pill) and fills the cell over the copy; its end padding
+   is 2px short of the copy's, WebKit's room for the caret, so the words never scroll in it */
+.qb-grow{display:inline-grid;align-items:center;padding:0;overflow:visible}
+.qb-grow::after{content:attr(data-v);grid-area:1/1;visibility:hidden;white-space:pre;padding-inline:9px}
+.qb-grow>input{grid-area:1/1;contain:inline-size;block-size:24px;margin:0;padding:0 7px 0 9px;border:0;border-radius:12px;font:inherit;line-height:var(--lh);color:inherit;background:transparent;white-space:pre}
+.qb-grow>input::placeholder{color:light-dark(#9097a5,#a5a5a5)}
+.qb-grow>input:focus-visible{outline:0}
+.qb-drop{display:inline-flex;gap:2px;align-items:center;block-size:24px;margin:1px 6px 1px 0;padding:0 4px 0 9px;border:0;border-radius:var(--qb-r);vertical-align:top;
+  background:light-dark(var(--ke),color-mix(in oklab,var(--kb) 45%,#141619));color:#fff;font-weight:var(--fw-ctl)}
+.qb-drop:hover{filter:brightness(1.08)}
+.qb-drop:focus-visible{outline:0;box-shadow:inset 0 0 0 2px var(--qb-glow)}
+</style></head>
+<body><header class="qv-brand"><img src="./assets/app/icon.svg" alt=""><a href="./">Lykos</a><span>/</span><span>Query visualizer</span></header>
+<main id="qv-body" data-empty>
+<section class="qv-edit" aria-labelledby="qv-query-title"><div id="qv-edit-top"></div><p id="qv-detect" class="qv-detect" aria-live="polite"></p>
+<div class="qv-field"><pre id="qv-marks" class="qv-marks" aria-hidden="true"></pre><textarea id="qv-text" class="qv-text" spellcheck="false" autocomplete="off" autocapitalize="off" aria-labelledby="qv-query-title" placeholder="Paste a search query, or a strategy of numbered lines"></textarea></div>
+<div id="qv-build" class="qv-build"></div><div id="qv-saved" class="qv-saved"></div><p class="visually-hidden" id="qv-saved-said" aria-live="polite"></p></section>
+<section class="qv-view" aria-labelledby="qv-blocks-title"><div id="qv-view-top"></div>
+<div class="qv-empty"><h1 class="qv-title">Search queries as blocks</h1><p class="qv-lead">PubMed, Scopus, Web of Science, Cochrane CENTRAL, Europe PMC and ClinicalTrials.gov queries, read as each database reads them.</p>
+<figure id="qv-demo" class="qv-demo" aria-label="A query and its blocks"></figure></div>
+<div id="qv-blocks" class="qv-blocks"></div><div id="qv-checks"></div><div id="qv-cards" class="qv-cards"></div></section>
+</main>
+<link rel="modulepreload" href="./unbundled/query/query.mjs">
+<link rel="modulepreload" href="./unbundled/lib/ui-actions.mjs">
+<link rel="modulepreload" href="./unbundled/lib/icons.mjs">
+<link rel="modulepreload" href="./unbundled/lib/menu.mjs">
+<link rel="modulepreload" href="./unbundled/lib/split-fit.mjs">
+<link rel="modulepreload" href="./unbundled/lib/dates.mjs">
+<link rel="modulepreload" href="./unbundled/lib/query-syntax.mjs">
+<link rel="modulepreload" href="./unbundled/lib/query-build.mjs">
+<link rel="modulepreload" href="./unbundled/lib/query-blocks.mjs">
+<link rel="modulepreload" href="./unbundled/lib/query-examples.mjs">
+<link rel="modulepreload" href="./unbundled/lib/query-edit.mjs">
+<link rel="modulepreload" href="./unbundled/query/edit.mjs">
+<link rel="modulepreload" href="./unbundled/query/slot-edit.mjs">
+<link rel="modulepreload" href="./unbundled/query/saved.mjs">
+<link rel="modulepreload" href="./unbundled/lib/responsive-switches.mjs">
+<link rel="modulepreload" href="./unbundled/lib/bar-boot.mjs">
+<link rel="modulepreload" href="./unbundled/lib/html.mjs">
+<link rel="modulepreload" href="./unbundled/lib/date-picker.mjs">
+<link rel="modulepreload" href="./unbundled/lib/record-picker.mjs">
+<link rel="modulepreload" href="./unbundled/lib/bar-modes.mjs">
+<link rel="modulepreload" href="./unbundled/lib/bar-fit.mjs">
+<link rel="modulepreload" href="./unbundled/lib/query-translate.mjs">
+<link rel="modulepreload" href="./unbundled/lib/query-text.mjs">
+<link rel="modulepreload" href="./unbundled/lib/query-check.mjs">
+<link rel="modulepreload" href="./unbundled/lib/query-view.mjs">
+<link rel="modulepreload" href="./unbundled/lib/query-outline.mjs">
+<link rel="modulepreload" href="./unbundled/lib/chat-math.mjs">
+<link rel="modulepreload" href="./unbundled/lib/dialog.mjs">
+<link rel="modulepreload" href="./unbundled/lib/paging.mjs">
+<link rel="modulepreload" href="./unbundled/lib/boolean.mjs">
+<link rel="modulepreload" href="./unbundled/lib/databases.mjs">
+<link rel="modulepreload" href="./unbundled/lib/mesh-check.mjs">
+<link rel="modulepreload" href="./unbundled/lib/bib-names.mjs">
+<link rel="modulepreload" href="./unbundled/lib/native.mjs">
+<link rel="modulepreload" href="./unbundled/lib/app-menu.mjs">
+<script type="module" src="./unbundled/query/query.mjs"></script>
+</body></html>

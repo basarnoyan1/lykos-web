@@ -1,0 +1,51 @@
+@import url('fonts.css');
+/* Lykos journal styles (Manuscript › View › Journal). Each journal's measured values arrive as --nj-* properties on its sheet (index.mjs:
+   the trim and margins, the faces, the body size and leading, the accent); these rules are the families' layouts on top of the app's
+   base sheet (app/src/journal-preview.css). Document typography, not interface. No journal's logo, wordmark or mark. */
+.nj-sheet[data-journal-style] { font-family:var(--nj-body-font,var(--nj-serif)); }
+.nj-sheet[data-journal-style] .nj-article-type { font-family:var(--nj-sans); font-size:var(--nj-small); line-height:1.4; font-weight:700; text-transform:uppercase; color:var(--nj-accent); margin:0 0 8px; }
+.nj-sheet[data-journal-style] .nj-title { font-family:var(--nj-title-font,var(--nj-head-font)); color:var(--nj-ink,#231f20); margin:0 0 12px; }
+.nj-sheet[data-journal-style] .nj-byline { font-family:var(--nj-sans); font-size:calc(var(--nj-body) * 0.95); line-height:1.35; margin:0 0 6px; }
+.nj-sheet[data-journal-style] :is(.nj-byline,.nj-correspondence,.nj-affiliation-list,.nj-info) p { text-align:left; margin:0 0 3px; }
+.nj-sheet[data-journal-style] .nj-correspondence { font-family:var(--nj-sans); font-size:var(--nj-small); line-height:1.3; margin:0 0 8px; }
+.nj-sheet[data-journal-style] .nj-citation { font-family:var(--nj-sans); font-size:var(--nj-small); line-height:1.3; color:#555; margin:0 0 12px; }
+.nj-sheet[data-journal-style] .nj-abstract-head { font-family:var(--nj-head-font); font-weight:700; color:var(--nj-accent); margin:0 0 4px; }
+.nj-sheet[data-journal-style] .nj-abstract-label { font-family:var(--nj-head-font); color:var(--nj-accent); }
+.nj-sheet[data-journal-style] .nj-abstract { padding-bottom:6px; }
+.nj-sheet[data-journal-style] .nj-affiliation-list { font-family:var(--nj-sans); font-size:var(--nj-small); line-height:1.3; font-style:italic; margin:0 0 10px; }
+.nj-sheet[data-journal-style] .msd-ref { font-family:var(--nj-body-font,var(--nj-serif)); }
+.nj-sheet[data-journal-style] .msd-cap { border-top:1px solid var(--nj-accent); }
+/* boxed: JNS, OUP */
+.nj-sheet .nj-abstract-box { background:color-mix(in srgb,var(--nj-accent) 7%,white); padding:10px 12px 0; margin:0 0 12px; }
+/* ruled: Springer Nature, SAGE, Wiley, Wolters Kluwer, the open publishers */
+.nj-sheet .nj-abstract-rule { border-top:1px solid var(--nj-accent); border-bottom:1px solid var(--nj-accent); padding:8px 0 0; margin:0 0 12px; }
+/* info: Elsevier */
+.nj-sheet .nj-info-grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,2.6fr); gap:18px; border-top:1px solid var(--nj-ink,#231f20); padding-top:8px; margin-bottom:12px; }
+.nj-sheet .nj-info { font-family:var(--nj-sans); font-size:var(--nj-small); line-height:1.3; border-bottom:1px solid var(--nj-ink,#231f20); }
+.nj-sheet[data-journal-family="elsevier"] .nj-abstract-head { text-transform:uppercase; font-size:var(--nj-small); letter-spacing:0.06em; border-bottom:1px solid var(--nj-ink,#231f20); padding-bottom:3px; }
+/* indent: MDPI */
+.nj-sheet .nj-abstract-indent { margin:0 0 12px 22%; }
+.nj-sheet[data-journal-family="mdpi"] :is(.nj-byline,.nj-correspondence,.nj-citation) { margin-left:22%; }
+.nj-sheet[data-journal-family="mdpi"] .nj-columns { margin-left:22%; }
+/* JNS Publishing Group: condensed sans heads in capitals */
+.nj-sheet[data-journal-family="jns"] :is(h2,.nj-abstract-label) { text-transform:uppercase; }
+/* Springer Nature: sans heads, the title large and light */
+.nj-sheet[data-journal-family="springer-nature"] .nj-title { font-weight:600; }
+
+/* Neurology (aside layout): measured from Neurology 2025;104:e210281 (the app's first preview, moved here) */
+.nj-sheet[data-journal-style="neurology"] .nj-article-type { align-self:flex-start; background:var(--nj-accent); color:white; font-size:10px; padding:2px 8px; margin:0 0 13px; text-transform:none; }
+.nj-sheet[data-journal-style="neurology"] .nj-title { line-height:1.04; margin-bottom:22px; }
+.nj-sheet[data-journal-style="neurology"] .nj-byline { display:grid; grid-template-columns:3fr 0.85fr; gap:24px; font-size:10px; }
+.nj-sheet[data-journal-style="neurology"] .nj-citation { font-family:inherit; font-size:10px; color:inherit; margin:0 0 16px; }
+.nj-sheet[data-journal-style="neurology"] .nj-abstract-grid { display:grid; grid-template-columns:3fr 0.85fr; gap:24px; }
+.nj-sheet[data-journal-style="neurology"] .nj-abstract-label { display:block; font-size:15px; line-height:1.2; margin:0 0 3px; }
+.nj-sheet[data-journal-style="neurology"] .nj-online { padding-top:14px; font-size:11px; }
+.nj-sheet[data-journal-style="neurology"] .nj-online div { background:var(--nj-accent); color:white; padding:3px 6px; font-family:var(--nj-sans); font-size:10px; font-weight:700; clip-path:polygon(0 0,95% 0,100% 50%,95% 100%,0 100%); margin-bottom:8px; }
+.nj-sheet[data-journal-style="neurology"] .nj-online p { text-align:left; }
+.nj-sheet[data-journal-style="neurology"] .nj-glossary { border-bottom:2px solid var(--nj-accent); }
+.nj-sheet[data-journal-style="neurology"] h2 { font-family:inherit; font-size:21px; line-height:1.1; margin:12px 0 10px; }
+.nj-sheet[data-journal-style="neurology"] :is(h3,h4) { font-size:15px; line-height:1.15; margin:12px 0 3px; }
+.nj-sheet[data-journal-style="neurology"] .msd-ref { font-family:var(--nj-sans); font-size:10px; line-height:1.25; margin-bottom:5px; }
+.nj-sheet[data-journal-style="neurology"] :is(th,table:not(:has(thead)) tr:first-child td) { background:#eaf2ef; border-top:2px solid var(--nj-accent); }
+.nj-sheet[data-journal-style="neurology"] :is(th,td) { border-bottom-color:#d6dfdb; padding:6px 5px; }
+.nj-sheet[data-journal-style="neurology"] .msd-cap { border-top:2px solid var(--nj-accent); padding-top:8px; }

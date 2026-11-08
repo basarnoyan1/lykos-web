@@ -1,0 +1,32 @@
+[
+  {
+    "file": "cornerstone.min.js",
+    "sha256": "a694f5b35b8ddddc5e8e535f45fdf7b752eefb3f10b5b8069605073302c582b2",
+    "bytes": 92142
+  },
+  {
+    "file": "cornerstoneTools.min.js",
+    "sha256": "244d957428ee5693af5bbfcbc11f03d6149c9cdc9560ea7fa3d066ef06f6a65b",
+    "bytes": 310294
+  },
+  {
+    "file": "cornerstoneMath.min.js",
+    "sha256": "3a652ce7b949bf3c0f4c934a6eac847cf8b2ef48662f32d9f2d1237572808a16",
+    "bytes": 25101
+  },
+  {
+    "file": "dicomParser.min.js",
+    "sha256": "2b990e92de021a9c0d58f7dca693c95fa76be6398648b68441df9423de284a2b",
+    "bytes": 32147
+  },
+  {
+    "file": "hammer.min.js",
+    "sha256": "7953631f0e54794d2352a3cfa591c0914d73e14f90141058e3cf16bee7939bcf",
+    "bytes": 20765
+  },
+  {
+    "file": "cornerstoneWADOImageLoader.bundle.min.js",
+    "sha256": "2694c503889bb05b46cfeade5211a853d41d1eaa8707aa454dd9f60b40f34cee",
+    "bytes": 1393195
+  }
+]

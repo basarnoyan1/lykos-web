@@ -1,0 +1,94 @@
+{
+  "format": 1,
+  "addons": [
+    {
+      "id": "neuro",
+      "name": "Neurosurgery figures",
+      "version": "0.4.2",
+      "entry": "neuro/index.mjs",
+      "gives": [
+        "charts"
+      ],
+      "about": "Spine level map, sagittal alignment (SRS-Schwab), cranial location map, outcome scales",
+      "files": [
+        "neuro/index.mjs",
+        "neuro/art.mjs"
+      ],
+      "credits": [
+        "Spine: Servier Medical Art (smart.servier.com), CC BY 4.0, recoloured",
+        "Brain: \"Mid-sagittal plane of the brain\", DataBase Center for Life Science (DBCLS), CC BY 4.0"
+      ]
+    },
+    {
+      "id": "journals",
+      "name": "Journal styles",
+      "version": "0.1.0",
+      "entry": "journals/index.mjs",
+      "gives": [
+        "journalStyles"
+      ],
+      "about": "Manuscript › View › Journal for 77 journals the group has published in: each publisher family’s first page, with the trim, columns and type measured from one of the journal’s own articles",
+      "files": [
+        "journals/index.mjs",
+        "journals/data.mjs",
+        "journals/journals.css",
+        "journals/fonts.css",
+        "journals/fonts/archivo-narrow-OFL.txt",
+        "journals/fonts/archivo-narrow-normal-400-700-latin-ext.woff2",
+        "journals/fonts/archivo-narrow-normal-400-700-latin.woff2",
+        "journals/fonts/bitter-OFL.txt",
+        "journals/fonts/bitter-italic-400-700-latin-ext.woff2",
+        "journals/fonts/bitter-italic-400-700-latin.woff2",
+        "journals/fonts/bitter-normal-400-700-latin-ext.woff2",
+        "journals/fonts/bitter-normal-400-700-latin.woff2",
+        "journals/fonts/charis-sil-OFL.txt",
+        "journals/fonts/charis-sil-italic-400-latin-ext.woff2",
+        "journals/fonts/charis-sil-italic-400-latin.woff2",
+        "journals/fonts/charis-sil-normal-400-latin-ext.woff2",
+        "journals/fonts/charis-sil-normal-400-latin.woff2",
+        "journals/fonts/charis-sil-normal-700-latin-ext.woff2",
+        "journals/fonts/charis-sil-normal-700-latin.woff2",
+        "journals/fonts/crimson-pro-OFL.txt",
+        "journals/fonts/crimson-pro-italic-400-700-latin-ext.woff2",
+        "journals/fonts/crimson-pro-italic-400-700-latin.woff2",
+        "journals/fonts/crimson-pro-normal-400-700-latin-ext.woff2",
+        "journals/fonts/crimson-pro-normal-400-700-latin.woff2",
+        "journals/fonts/eb-garamond-OFL.txt",
+        "journals/fonts/eb-garamond-italic-400-700-latin-ext.woff2",
+        "journals/fonts/eb-garamond-italic-400-700-latin.woff2",
+        "journals/fonts/eb-garamond-normal-400-700-latin-ext.woff2",
+        "journals/fonts/eb-garamond-normal-400-700-latin.woff2",
+        "journals/fonts/inter-OFL.txt",
+        "journals/fonts/inter-normal-400-700-latin-ext.woff2",
+        "journals/fonts/inter-normal-400-700-latin.woff2",
+        "journals/fonts/open-sans-OFL.txt",
+        "journals/fonts/open-sans-normal-400-700-latin-ext.woff2",
+        "journals/fonts/open-sans-normal-400-700-latin.woff2",
+        "journals/fonts/pt-serif-OFL.txt",
+        "journals/fonts/pt-serif-italic-400-latin-ext.woff2",
+        "journals/fonts/pt-serif-italic-400-latin.woff2",
+        "journals/fonts/pt-serif-normal-400-latin-ext.woff2",
+        "journals/fonts/pt-serif-normal-400-latin.woff2",
+        "journals/fonts/pt-serif-normal-700-latin-ext.woff2",
+        "journals/fonts/pt-serif-normal-700-latin.woff2",
+        "journals/fonts/source-sans-3-OFL.txt",
+        "journals/fonts/source-sans-3-normal-400-700-latin-ext.woff2",
+        "journals/fonts/source-sans-3-normal-400-700-latin.woff2",
+        "journals/fonts/source-serif-4-OFL.txt",
+        "journals/fonts/source-serif-4-italic-400-700-latin-ext.woff2",
+        "journals/fonts/source-serif-4-italic-400-700-latin.woff2",
+        "journals/fonts/source-serif-4-normal-400-700-latin-ext.woff2",
+        "journals/fonts/source-serif-4-normal-400-700-latin.woff2",
+        "journals/fonts/stix-two-text-OFL.txt",
+        "journals/fonts/stix-two-text-italic-400-700-latin-ext.woff2",
+        "journals/fonts/stix-two-text-italic-400-700-latin.woff2",
+        "journals/fonts/stix-two-text-normal-400-700-latin-ext.woff2",
+        "journals/fonts/stix-two-text-normal-400-700-latin.woff2"
+      ],
+      "credits": [
+        "Faces under the SIL Open Font License 1.1, from Google Fonts, each with its licence in journals/fonts: EB Garamond, Open Sans, STIX Two Text, Charis SIL, Crimson Pro, Source Serif 4, Bitter, PT Serif, Source Sans 3, Archivo Narrow, Inter",
+        "No journal logo, wordmark or other mark is used"
+      ]
+    }
+  ]
+}

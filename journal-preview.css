@@ -1,0 +1,57 @@
+/* Manuscript › View › Journal (views/journal-preview.mjs): the viewer's frame and the sheet's base layout. A journal style (the
+   journal-styles addon, journals/journals.css) sets the trim and margins (--nj-w, --nj-h, --nj-mt…, from its page box), the faces,
+   sizes and colours through the other --nj-* properties, and adds its family's and journal's rules. The values here hold for a
+   style that sets none. Document content, not app typography. */
+/* The same edge-to-edge frame and document strip as Lykos's PDF reader. */
+:is(.view,#view):has(> .msd-journal) { display:flex; flex-direction:column; padding:0; overflow:hidden; scrollbar-gutter:auto; }
+.nj-viewer { display:flex; flex-direction:column; flex:1 1 auto; block-size:100%; min-height:0; min-width:0; overflow:hidden; }
+.nj-navigation { flex:none; padding:var(--s1) var(--s3); background:var(--panel); border-bottom:1px solid var(--line); }
+.nj-scroll { overflow:auto; flex:1 1 0; min-height:0; background:var(--viewer-bg); position:relative; overscroll-behavior:contain; outline:none; }
+.nj-scroll:focus-visible { box-shadow:inset 0 0 0 1px var(--ink-3); }
+.nj-pages { position:relative; display:flex; flex-direction:column; align-items:center; gap:var(--s5); padding:var(--s5); min-width:100%; width:max-content; }
+.nj-page-wrap { position:relative; flex:none; width:var(--nj-page-width,792px); height:var(--nj-page-height,1044px); box-shadow:0 2px 10px #0002; }
+.nj-sheet { position:absolute; inset:0 auto auto 0; width:var(--nj-w,792px); height:var(--nj-h,1044px); background:white; color:var(--nj-ink,#231f20); transform-origin:top left; padding:var(--nj-mt,48px) var(--nj-mr,54px) 0 var(--nj-ml,54px); overflow:hidden; font-family:var(--nj-body-font,var(--nj-serif,'Times New Roman',serif)); font-size:var(--nj-body,13px); line-height:var(--nj-lead,1.3); text-align:left; }
+.nj-sheet * { box-sizing:border-box; color:inherit; }
+.nj-sheet p,.nj-sheet figure,.nj-sheet h1,.nj-sheet h2,.nj-sheet h3,.nj-sheet h4 { margin:0 0 var(--nj-para,10px); padding:0; max-width:none; font-family:inherit; font-size:inherit; line-height:inherit; font-weight:400; letter-spacing:normal; }
+.nj-sheet p { text-align:var(--nj-align,justify); overflow-wrap:break-word; }
+.nj-sheet strong,.nj-sheet b { font-weight:700; }
+.nj-sheet i,.nj-sheet em { font-style:italic; }
+.nj-sheet sup { font-size:0.65em; line-height:0; vertical-align:super; }
+.nj-sheet a { color:inherit; text-decoration:none; pointer-events:none; }
+.nj-sheet h2,.nj-sheet h3,.nj-sheet h4 { color:var(--nj-head-ink,var(--nj-accent,inherit)); font-family:var(--nj-head-font,var(--nj-sans,Arial,sans-serif)); font-weight:700; text-align:left; }
+.nj-sheet h2 { font-size:var(--nj-h2,15px); line-height:1.2; margin:12px 0 6px; }
+.nj-sheet h3,.nj-sheet h4 { font-size:var(--nj-h3,13px); line-height:1.2; margin:10px 0 3px; }
+.nj-paper-content { height:var(--nj-content-h,928px); flex:none; min-width:0; display:flex; flex-direction:column; }
+.nj-sheet .nj-footer { position:absolute; left:var(--nj-ml,54px); right:var(--nj-mr,54px); bottom:var(--nj-foot-y,24px); display:grid; grid-template-columns:1fr auto 1fr; gap:12px; font-family:var(--nj-sans,Arial,sans-serif); font-size:var(--nj-foot,9px); line-height:1.2; color:#666; }
+.nj-sheet .nj-footer span:last-child { text-align:right; }
+.nj-sheet .nj-title { font-size:var(--nj-title,24px); line-height:1.12; font-weight:700; margin-bottom:16px; text-align:left; }
+.nj-sheet .nj-affiliations { position:absolute; left:var(--nj-ml,54px); right:var(--nj-mr,54px); bottom:var(--nj-affil-y,48px); padding-top:6px; border-top:1px solid currentColor; font-family:var(--nj-sans,Arial,sans-serif); font-size:var(--nj-small,8px); line-height:1.25; }
+.nj-sheet .nj-affiliations p { margin:0; text-align:left; }
+.nj-abstract { min-height:0; overflow:visible; }
+.nj-sheet .nj-abstract-label { font-weight:700; }
+.nj-sheet .nj-glossary { border-bottom:1px solid currentColor; margin-bottom:16px; padding-bottom:4px; }
+.nj-sheet .nj-glossary h2 { margin-top:0; }
+.nj-sheet .nj-glossary p { font-size:0.85em; }
+.nj-columns { display:grid; grid-template-columns:repeat(var(--nj-columns,2),minmax(0,1fr)); grid-template-rows:minmax(0,1fr); gap:var(--nj-gap,24px); flex:1; min-height:0; }
+.nj-column { min-width:0; min-height:0; display:flow-root; overflow:visible; }
+.nj-sheet .msd-ref { font-size:var(--nj-ref,0.85em); line-height:1.3; margin-bottom:4px; text-align:left; }
+.nj-sheet .msd-ref-n { display:inline; margin-right:4px; }
+.nj-sheet .msd-table { overflow:visible; width:100%; margin:0; }
+.nj-sheet table { border-collapse:collapse; width:100%; min-width:0; max-width:100%; table-layout:fixed; white-space:normal; font-family:var(--nj-table-font,var(--nj-sans,Arial,sans-serif)); font-size:var(--nj-table,10px); line-height:1.25; }
+.nj-sheet th,.nj-sheet td { font-family:inherit; font-size:inherit; line-height:inherit; border:0; border-bottom:1px solid var(--nj-rule,#d6d6d6); padding:5px; text-align:left; vertical-align:top; white-space:normal; min-width:0; overflow-wrap:break-word; hyphens:auto; }
+.nj-sheet th,.nj-sheet table:not(:has(thead)) tr:first-child td { border-top:var(--nj-table-top,1px solid currentColor); background:var(--nj-table-head-fill,transparent); font-weight:700; }
+.nj-sheet .msd-cap { font-family:var(--nj-cap-font,var(--nj-sans,Arial,sans-serif)); font-size:var(--nj-cap,11px); line-height:1.3; padding-top:6px; text-align:left; }
+.nj-sheet .msd-note { font-family:var(--nj-cap-font,var(--nj-sans,Arial,sans-serif)); font-size:var(--nj-table,10px); line-height:1.25; margin-top:8px; }
+.nj-sheet img { display:block; width:auto; max-width:100%; height:auto; object-fit:contain; margin:0 0 12px; }
+.nj-display-content img { max-width:min(100%,var(--nj-figure-w,100%)); }
+.nj-sheet .nj-chart { margin:0 0 12px; }
+.nj-sheet .nj-chart svg { display:block; width:auto; height:auto; max-width:min(100%,var(--nj-figure-w,100%)); max-height:var(--nj-figure-h,none); }
+.nj-sheet .msd-num,.nj-sheet .msd-cite { background:none; border:0; box-shadow:none; cursor:text; color:inherit; }
+.nj-display-content { width:100%; min-width:0; flex:none; }
+.nj-loading,.nj-error { padding:24px; max-width:60ch; }
+.nj-sheet mark { background:transparent; color:inherit; }
+.nj-sheet .nj-split-end { text-align-last:justify; }
+.nj-sheet .nj-table-continuation { font-family:var(--nj-sans,Arial,sans-serif); font-size:var(--nj-cap,11px); color:var(--nj-accent,inherit); font-weight:700; margin-bottom:8px; }
+.nj-sheet .nj-table-note { display:flow-root; flex:none; font-family:var(--nj-sans,Arial,sans-serif); font-size:var(--nj-table,10px); line-height:1.25; }
+.nj-sheet .nj-table-note p { font-size:inherit; }
+.nj-sheet col { width:var(--nj-column-width); }
