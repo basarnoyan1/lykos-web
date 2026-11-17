@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DOI to Mendeley</title>
+<meta name="description" content="Turn DOI markers in a Word document into Mendeley Cite citations, in the browser.">
+<link rel="icon" href="./assets/app/icon.svg" type="image/svg+xml">
+<!-- styles.css imports these: asked for at once, so they arrive side by side instead of one after another -->
+<link rel="preload" href="./tokens.css" as="style"><link rel="preload" href="./workspace.css" as="style"><link rel="preload" href="./research-views.css" as="style">
+<link rel="preload" href="./ui-components.css" as="style"><link rel="preload" href="./ui-actions.css" as="style">
+<link rel="preload" href="./assets/fonts/geist-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
+<script src="./theme-boot.js"></script><script src="./page-fresh.js" defer></script><link rel="stylesheet" href="./styles.css">
+<style>
+body{display:block;overflow:auto;--dc-head-h:44px}
+/* One page: a head bar, then the document and a settings column (Mistral's Document AI: the file left, ruled settings right). Below
+   960px of its own width the settings become a sheet (fitSplit measures it, lib/split-fit.mjs); a pair of paragraphs stacks below 560px. */
+/* the brand line is in the page itself, so it paints with the first byte of CSS; the file's head bar comes under it once a file is open */
+/* one row of chrome: the brand and the tool's name, then (with a file open) the file's head bar in the same row */
+.dc-brand{position:sticky;inset-block-start:0;z-index:2;display:flex;gap:var(--s2);align-items:center;block-size:44px;box-sizing:border-box;padding-inline:var(--s4);border-block-end:1px solid var(--line);background:var(--bg)}
+.dc-brand>img{flex:none;inline-size:22px;block-size:22px;border-radius:5px}
+.dc-brand>a{flex:none;color:var(--ink);text-decoration:none;font-weight:var(--fw-head)}
+.dc-brand>span{color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-inline-size:0;flex:0 1000 auto}
+.dc-brand>span:first-of-type{flex:none}
+#dc-head{flex:1 1 auto;min-inline-size:0}
+/* the open file is the crumb's last part: the same size as the others, the one in ink */
+#dc-head .ui-bar-title{font-size:var(--fs);font-weight:var(--fw-head);color:var(--ink);line-height:var(--lh);padding:calc((var(--ctl-h-dense) - var(--lh)) / 2) 0}
+#dc-head .ui-bar-title::before{content:"/";color:var(--ink-3);font-weight:var(--fw-text);margin-inline-end:var(--s2)}
+#dc-head:empty{display:none}
+.dc-brand[data-crumb=short]:has(#dc-head:not(:empty))>span{display:none}
+#dc-body{display:grid;grid-template-columns:minmax(0,1fr) min(20rem,40%);align-items:start}
+#dc-body[data-empty]{min-block-size:calc(100vh - 45px);align-content:start;justify-content:center;grid-template-columns:minmax(0,46rem);padding:var(--s5) var(--s4);box-sizing:border-box;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 13%,var(--bg)) 0,var(--bg) 28rem)}
+.dc-main{min-inline-size:0;padding:var(--s3) var(--s4) var(--s5);display:grid;grid-template-columns:minmax(0,84rem);grid-auto-rows:max-content;justify-content:center;align-content:start}   /* a reading width on a wide screen, centred in the column; each row as tall as
+   its content, or a long view squeezed the view switch's row to its minimum and the switch sat 8px higher than over the pages */
+#dc-body[data-stack=true]{grid-template-columns:minmax(0,1fr)}
+/* the settings' column: hidden on a wide window when Settings closes it; on a narrow one a sheet over the foot of the window, closed until opened */
+#dc-body[data-panel=closed]:not([data-stack=true]){grid-template-columns:minmax(0,1fr)}
+#dc-body[data-panel=closed]:not([data-stack=true])>.dc-side,#dc-body[data-stack=true]:not([data-panel=open])>.dc-side{display:none}
+#dc-body[data-stack=true][data-panel=open]>.dc-side{position:fixed;z-index:5;inset:auto 0 0 0;max-block-size:72dvh;overflow:auto;overscroll-behavior:contain;background:var(--bg);border-inline-start:0;border-block-start:1px solid var(--line);border-radius:12px 12px 0 0;box-shadow:var(--shadow-pop)}
+.dc-side{box-sizing:border-box;border-inline-start:1px solid var(--line);padding:var(--s3) var(--s4)}
+/* With a file open and room for both, the window is the tool's: the head stays, and the document and the settings each scroll on their
+   own, full height under it, the rule between them running the whole way (Mistral's Document AI). Stacked, the page scrolls as one. */
+#dc-body:not([data-empty]):not([data-stack=true]){block-size:calc(100dvh - var(--dc-head-h));align-items:stretch;overflow:hidden}
+#dc-body:not([data-empty]):not([data-stack=true])>:is(.dc-main,.dc-side){min-block-size:0;overflow:auto;overscroll-behavior:contain}
+.dc-group{display:grid;gap:var(--s3);padding-block:var(--s3);border-block-end:1px solid var(--line-2)}
+.dc-group:first-child{padding-block-start:0}
+.dc-group:last-child{border-block-end:0}
+.dc-group>h2{margin:0}
+/* the first screen: a title, one line, one drop target in the accent, and a real citation before and after */
+.dc-home{display:grid;gap:var(--s4);padding-block-start:var(--s5)}
+.dc-intro{display:grid;gap:var(--s2)}
+.dc-title{margin:0;font-size:var(--fs-lg);font-weight:var(--fw-head)}
+.dc-lead{margin:0;color:var(--ink-2)}
+.dc-drop{display:grid;justify-items:center;gap:var(--s2);text-align:center;padding:var(--s5) var(--s4);border:1.5px dashed color-mix(in srgb,var(--accent) 70%,transparent);border-radius:12px;background:color-mix(in srgb,var(--accent) 9%,var(--panel));box-shadow:var(--shadow)}
+.dc-drop:hover,body[data-drop] .dc-drop{background:color-mix(in srgb,var(--accent) 15%,var(--panel));border-style:solid}
+.dc-drop>p{margin:0}
+.dc-drop-mark{display:grid;place-items:center;inline-size:48px;block-size:48px;border-radius:50%;color:var(--accent);background:color-mix(in srgb,var(--accent) 22%,transparent)}
+.dc-drop-title{font-weight:var(--fw-head)}
+.dc-drop-meta{font-size:var(--fs-sm);color:var(--ink-2)}
+.dc-drop-error{display:flex;gap:var(--s1);align-items:baseline;color:var(--ink)}
+.dc-drop-error>.ico{color:var(--bad);transform:translateY(2px)}
+.dc-example{margin:0;display:grid;border:1px solid var(--line);border-radius:12px;background:var(--panel);box-shadow:var(--shadow);overflow:hidden}
+.dc-example>figcaption{padding:var(--s2) var(--s3);font-size:var(--fs-sm);font-weight:var(--fw-head);color:var(--ink-2);background:var(--panel-2);border-block-end:1px solid var(--line-2)}
+.dc-choose{min-inline-size:10rem}
+.dc-ex-line{display:grid;grid-template-columns:10ch minmax(0,1fr);column-gap:var(--s3);padding:var(--s3);border-block-start:1px solid var(--line-2)}
+.dc-ex-line:first-child{border-block-start:0}
+.dc-ex-line>p{margin:0}
+.dc-ex-label{font-size:var(--fs-sm);color:var(--ink-3);padding-block-start:1px}
+.dc-ex-ref{color:var(--ink-2)}
+body[data-drop] .dc-main{background:var(--hl)}
+/* the result's summary: the state's glyph in its colour, the facts in ink */
+/* the result's one line: plain words, a glyph only where something needs a look */
+.dc-line{margin:0 0 var(--s3);color:var(--ink-2)}
+.dc-line:empty{display:none}
+.dc-line>.ico{color:var(--warn);vertical-align:-2px;margin-inline-end:var(--s1)}
+.dc-notice{display:block;font-size:var(--fs-sm);color:var(--ink-2);margin-inline-start:calc(14px + var(--s1))}
+/* what can be done about a check (use the suggested DOI, cite as one, undo), under it as the notice link is */
+.dc-fix.link{display:flex;margin:2px 0 0 calc(14px + var(--s1));padding:0;font-size:var(--fs-sm);white-space:normal;overflow-wrap:anywhere;text-align:start}
+.dc-uncited td{color:var(--ink-2)}
+.dc-group>h2{color:var(--ink)}
+.dc-field{display:grid;gap:var(--s1)}
+.dc-field-label{color:var(--ink-2)}
+/* the journal: a search with its results under it, or the chosen one as a line with Change */
+.dc-jcombo{position:relative;display:grid}
+.dc-jcombo>.ico{position:absolute;inset-inline-start:10px;inset-block-start:50%;transform:translateY(-50%);color:var(--ink-3);pointer-events:none}
+.dc-jcombo>input{box-sizing:border-box;padding-inline-start:32px}
+.dc-jlist{position:absolute;z-index:5;inset-inline:0;inset-block-start:calc(100% + 4px);max-block-size:20rem;overflow:auto;padding:4px;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow-pop)}
+.dc-jlist[hidden]{display:none}
+.dc-jgroup,.dc-jempty{margin:0;padding:6px 8px 2px;font-size:var(--fs-sm);color:var(--ink-3)}
+.dc-jgroup{font-weight:var(--fw-head)}
+.dc-jopt{display:grid;padding:6px 8px;border-radius:6px}
+.dc-jopt[aria-selected=true],.dc-jopt:hover{background:var(--panel-2)}
+.dc-jopt-name{color:var(--ink)}
+.dc-jopt-meta{font-size:var(--fs-sm);color:var(--ink-2)}
+.dc-jsel{display:flex;gap:var(--s3);align-items:flex-start;padding:var(--s2) var(--s3);border:1px solid var(--line);border-radius:8px;background:var(--panel)}
+.dc-jsel>div{flex:1 1 auto;min-inline-size:0}
+.dc-jsel p{margin:0}
+.dc-jsel-name{font-weight:var(--fw-head);color:var(--ink)}
+.dc-jsel-meta{font-size:var(--fs-sm);color:var(--ink-2)}
+.dc-field-note{margin:0;font-size:var(--fs-sm);color:var(--ink-2)}
+.dc-field-note>button{font-size:var(--fs-sm)}
+.dc-more{padding-block:var(--s3)}
+.dc-more>summary{color:var(--ink);font-weight:var(--fw-ctl)}
+.dc-more>summary>span{color:var(--ink-3);font-weight:var(--fw-text);margin-inline-start:var(--s2)}
+.dc-more[open]>.dc-group{padding-block-end:0}
+/* the document as read, at a reading measure */
+.dc-read{display:grid;grid-template-columns:minmax(0,72ch);justify-content:center}
+.dc-doc p,.dc-pair p{margin:0 0 var(--s2);overflow-wrap:anywhere}
+.dc-h{font-weight:var(--fw-head)}
+.dc-bibp{color:var(--ink-2)}
+.dc-cite{border-radius:var(--radius-sm);padding-inline:1px}
+/* a marker that goes and the citation that replaces it: coloured words, as a review of changes shows them, no boxes */
+.dc-cite[data-side=old]{color:color-mix(in srgb,var(--bad) 85%,var(--ink));text-decoration:line-through;text-decoration-color:color-mix(in srgb,var(--bad) 45%,transparent)}
+.dc-cite[data-side=new]{color:var(--good);font-weight:var(--fw-head)}
+/* the view switch stays at the top of the document's column while the document scrolls under it */
+.dc-main>.dc-views{position:sticky;inset-block-start:calc(var(--s3) * -1);z-index:3;background:var(--bg);padding-block:var(--s2)}
+.dc-inline-cite{color:var(--good)}
+/* Original and Converted: the pages on a grey desk, as Word and the Files viewer show them */
+.dc-paper{position:relative;z-index:0;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:start;min-block-size:16rem}
+/* only the pages lie on the grey desk; the strip of miniatures stands beside it on the page's own ground (Preview's sidebar) */
+.dc-desk{grid-column:2;display:grid;justify-items:center;padding:var(--s4) var(--s3) var(--s5);min-inline-size:0;background:var(--viewer-bg,var(--panel-2));border-radius:8px}
+.dc-paper-stage{position:relative;inline-size:var(--dc-stage-w,0);block-size:var(--dc-stage-h,0)}
+.dc-paper-stage>.fv-doc-layout{position:absolute;inset-block-start:0;inset-inline-start:0}
+.dc-paper-wait{position:absolute;inset-block-start:var(--s5);inset-inline:0;text-align:center;margin:0;color:var(--ink-2)}
+.dc-paper:not([aria-busy])>.dc-paper-wait{display:none}
+/* a page off screen is not painted until it comes near (its size is its own, set by the layout) */
+.dc-paper .pg{content-visibility:auto}
+/* the strip of pages: miniatures in a column of their own, the current one ringed in the accent */
+.dc-thumbs{grid-column:1;position:sticky;inset-block-start:3rem;display:grid;gap:var(--s3);justify-items:center;padding:var(--s1) var(--s3) var(--s4) 2px;margin-inline-end:var(--s2);max-block-size:calc(100dvh - var(--dc-head-h) - 4rem);overflow:auto;overscroll-behavior:contain}
+.dc-paper[data-thumbs=off]>.dc-thumbs{display:none}
+.dc-thumbs:empty{display:none}
+.dc-thumb{display:grid;gap:var(--s1);justify-items:center;block-size:auto;min-block-size:0;padding:0;border:0;background:none;color:var(--ink-2);font-size:var(--fs-sm)}
+.dc-thumb-sheet{position:relative;display:block;overflow:hidden;inline-size:96px;block-size:var(--dc-sheet-h,124px);background:#fff;border-radius:2px;box-shadow:0 0 0 1px var(--line-strong);pointer-events:none}
+.dc-thumb-sheet>.pg{position:absolute;inset-block-start:0;inset-inline-start:0;transform-origin:0 0;box-shadow:none;content-visibility:visible;text-align:start;font-weight:var(--fw-text);font-size:var(--fs);line-height:var(--lh);white-space:normal}
+.dc-thumb:hover>.dc-thumb-sheet{box-shadow:0 0 0 2px var(--line-strong)}
+.dc-thumb[aria-current]>.dc-thumb-sheet{box-shadow:0 0 0 2px var(--accent)}
+.dc-thumb[aria-current]>.dc-thumb-n{color:var(--ink);font-weight:var(--fw-head)}
+.dc-paper .pg{box-shadow:0 1px 3px rgb(0 0 0 / .18),0 0 0 1px rgb(0 0 0 / .06)}
+/* Changes: each citing paragraph, original beside converted (Semrush's review) */
+.dc-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:var(--s4);padding-block:var(--s2);border-block-end:1px solid var(--line-2)}
+.dc-pairs[data-stack=true]>.dc-pair{grid-template-columns:minmax(0,1fr)}
+.dc-pairs[data-stack=true]>.dc-legend{display:none}
+.dc-legend{font-size:var(--fs-sm);font-weight:var(--fw-head);color:var(--ink-2);padding-block:0 var(--s1)}
+/* a citation's card: the works it cites, on hover or focus, beside the citation */
+.dc-cite[data-dois]{border-radius:var(--radius-sm)}
+.dc-cite[data-dois]:hover,.dc-cite[data-dois]:focus-visible{background:var(--panel-2);outline:none}
+.dc-card{position:fixed;z-index:20;box-sizing:border-box;inline-size:max-content;max-inline-size:min(20rem,100vw - 16px);display:grid;gap:var(--s2);padding:var(--s2) var(--s3);font-size:var(--fs-sm);background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow-pop);pointer-events:none}
+.dc-card[hidden]{display:none}
+.dc-card-work{display:grid;grid-template-columns:2ch minmax(0,1fr);column-gap:var(--s2)}
+.dc-card-work+.dc-card-work{padding-block-start:var(--s2);border-block-start:1px solid var(--line-2)}
+.dc-card-work p{margin:0}
+.dc-card-n{font-weight:var(--fw-head);color:var(--good);font-variant-numeric:tabular-nums}
+.dc-card-title{font-weight:var(--fw-ctl);color:var(--ink);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.dc-card-meta{color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dc-card-work .dc-state{margin-block-start:var(--s1)}
+/* a work's details in the settings' column: its facts as a label column and values, the check, the copies */
+.dc-work{padding-block:var(--s3);border-block-start:1px solid var(--line-2)}
+.dc-work:first-of-type{border-block-start:0;padding-block-start:var(--s2)}
+.dc-work-n{margin:0 0 var(--s1);color:var(--good);font-weight:var(--fw-head)}
+.dc-work-title{margin:0 0 var(--s2);font-size:var(--fs);font-weight:var(--fw-head)}
+.dc-facts{display:grid;grid-template-columns:auto minmax(0,1fr);gap:var(--s1) var(--s3);margin:0 0 var(--s2)}
+.dc-facts>dt{font-size:var(--fs-sm);color:var(--ink-3);padding-block-start:1px}
+.dc-facts>dd{margin:0;overflow-wrap:anywhere}
+.dc-quiet{color:var(--ink-2)}
+.dc-diffs{margin:var(--s1) 0 0;padding-inline-start:1.1em;font-size:var(--fs-sm);color:var(--ink-2)}
+.dc-refs tr[data-work]:hover>td{background:var(--panel-2)}
+.dc-refs tr[aria-current]>td{background:var(--panel-3)}
+.dc-cite[data-dois]:not(.dc-example *){cursor:default}
+.dc-bib-entry{border-radius:3px}
+/* on the white page a hover is the paper's own tint in both themes (the app's dark panel colour lay over the page as a dark bar) */
+.pg .dc-cite[data-dois]:is(:hover,:focus-visible){background:rgb(0 0 0 / .06);outline:none}
+.pg .dc-bib-entry[aria-current]{background:rgb(0 0 0 / .08)}
+.dc-done{color:var(--good)}
+.dc-more-facts{margin:0 0 var(--s2)}
+.dc-more-facts>summary,.dc-abstract>summary{color:var(--ink);font-weight:var(--fw-ctl)}
+.dc-more-facts>.dc-facts{margin-block-start:var(--s2)}
+.dc-abstract{margin:0 0 var(--s3)}
+.dc-abstract>summary{color:var(--ink);font-weight:var(--fw-ctl)}
+.dc-abstract>p{margin:var(--s2) 0 0;font-size:var(--fs-sm);color:var(--ink-2)}
+/* References: below 640px of its own width the table keeps the number and the reference, and Source and Check fold under the reference */
+.dc-refs-wrap[data-cols=folded] .dc-refs :is(th,td):nth-child(n+3){display:none}
+.dc-refs-wrap:not([data-cols=folded]) .dc-fold{display:none}
+.dc-fold{display:flex;gap:var(--s3);align-items:baseline;margin-block-start:var(--s1);font-size:var(--fs-sm);color:var(--ink-2)}
+/* References */
+.dc-refs{--cell-min:8.5rem}
+.dc-refs td{vertical-align:top;white-space:normal}
+.dc-refs td:nth-child(2){min-inline-size:24ch}
+.dc-refs td:nth-child(4){min-inline-size:15ch}
+.dc-doc sup,.dc-pair sup{line-height:1}
+.dc-refs .num{text-align:end;font-variant-numeric:tabular-nums;color:var(--ink-3)}
+.dc-state{display:inline-flex;gap:var(--s1);align-items:baseline}
+.dc-state>.ico{flex:none;transform:translateY(2px)}
+.dc-state[data-tone=good]>.ico{color:var(--good)}.dc-state[data-tone=warn]>.ico{color:var(--warn)}.dc-state[data-tone=bad]>.ico{color:var(--bad)}.dc-state[data-tone=quiet]>.ico{color:var(--ink-3)}
+</style></head>
+<body><header class="dc-brand"><img src="./assets/app/icon.svg" alt=""><a href="./">Lykos</a><span>/</span><span>DOI to Mendeley</span><div id="dc-head"></div></header>
+<p id="dc-live" class="visually-hidden" aria-live="polite"></p>
+<main id="dc-body" data-empty><section class="dc-home"><div class="dc-intro"><h1 class="dc-title">DOI markers to Mendeley citations</h1><p class="dc-lead">Cite as (doi:…) while you write. Get a Word file whose citations and reference list Mendeley Cite can refresh and restyle.</p></div><div class="dc-drop" id="dc-drop"><span class="dc-drop-mark"><svg class="ico" data-icon="upload" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path d="M12 14V3 M8 7l4-4 4 4 M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></span><p class="dc-drop-title">Drop a Word document here</p><p class="dc-drop-meta">.docx; it is read in this browser and never uploaded</p><button type="button" class="primary dc-choose" id="dc-open-empty">Choose file</button></div><figure class="dc-example"><figcaption>What changes</figcaption><div class="dc-ex-line"><span class="dc-ex-label">Your draft</span><p>König et al. reported 4 cases after supratentorial craniotomy <span class="dc-cite" data-side="old">(doi:10.1007/BF01404145)</span>.</p></div><div class="dc-ex-line"><span class="dc-ex-label">Converted</span><p>König et al. reported 4 cases after supratentorial craniotomy.<span class="dc-cite" data-side="new"><sup>2</sup></span></p></div><div class="dc-ex-line"><span class="dc-ex-label">References</span><p class="dc-ex-ref">2. König A, Laas R, Herrmann HD. Cerebellar haemorrhage as a complication after supratentorial craniotomy. <i>Acta Neurochir (Wien)</i>. 1987;88(3-4):104-108.</p></div></figure></section></main>
+<link rel="modulepreload" href="./unbundled/cite/cite.mjs">
+<link rel="modulepreload" href="./unbundled/lib/ui-actions.mjs">
+<link rel="modulepreload" href="./unbundled/lib/icons.mjs">
+<link rel="modulepreload" href="./unbundled/lib/menu.mjs">
+<link rel="modulepreload" href="./unbundled/lib/split-fit.mjs">
+<link rel="modulepreload" href="./unbundled/lib/dates.mjs">
+<link rel="modulepreload" href="./unbundled/lib/responsive-switches.mjs">
+<link rel="modulepreload" href="./unbundled/lib/bar-boot.mjs">
+<link rel="modulepreload" href="./unbundled/lib/html.mjs">
+<link rel="modulepreload" href="./unbundled/lib/date-picker.mjs">
+<link rel="modulepreload" href="./unbundled/lib/record-picker.mjs">
+<link rel="modulepreload" href="./unbundled/lib/bar-modes.mjs">
+<link rel="modulepreload" href="./unbundled/lib/bar-fit.mjs">
+<link rel="modulepreload" href="./unbundled/lib/chat-math.mjs">
+<link rel="modulepreload" href="./unbundled/lib/dialog.mjs">
+<link rel="modulepreload" href="./unbundled/lib/paging.mjs">
+<link rel="modulepreload" href="./unbundled/lib/native.mjs">
+<link rel="modulepreload" href="./unbundled/lib/app-menu.mjs">
+<script type="module" src="./unbundled/cite/cite.mjs"></script>
+</body></html>

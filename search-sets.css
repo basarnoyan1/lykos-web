@@ -1,0 +1,27 @@
+/* Literature › Search sets (views/search-sets.mjs; plan §B, "Search sets"): the shared blocks, the strata, a stratum's detail under its
+   row and the overlap between strata; and the query outline both Search pages draw (lib/query-outline.mjs; plan §B, B10). Its own stylesheet, imported by styles.css in the legacy layer beside research-views.css. Neutral
+   throughout: a stratum's state is said in words (records, day, MeSH, gaps), and the overlap table's own counts are carried by weight. */
+.search-sets .sets-key{font-weight:var(--fw-head)}
+/* the lines between and after the lists start where a row's text starts (.ui-row's inline padding) */
+.search-sets .sets-template{margin:0;padding-inline:var(--s3);overflow-wrap:anywhere}
+.search-sets .sets-detail{background:var(--panel-2);padding:var(--s2) var(--s3) var(--s3)}
+.search-sets .sets-detail>.meta{margin:var(--s2) 0 0}
+.search-sets .sets-detail .log-query{margin:var(--s1) 0 0;max-height:240px;overflow:auto;padding:var(--s2);border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--panel);
+  font-family:var(--font);font-size:var(--fs-sm);font-weight:var(--fw-text);line-height:var(--lh-sm);color:var(--ink);white-space:pre-wrap;overflow-wrap:anywhere}
+.search-sets .sets-coverage{display:flex;flex-direction:column;gap:var(--s2);padding-inline:var(--s3)}
+.search-sets .sets-overlap th,.search-sets .sets-overlap td{padding:var(--s1) var(--s2);font-size:var(--fs-sm);font-weight:var(--fw-text);line-height:var(--lh-sm);text-align:end;white-space:nowrap}
+.search-sets .sets-overlap tbody tr+tr>*{border-top:1px solid var(--line-2)}
+.search-sets .sets-overlap thead th{font-weight:var(--fw-head);color:var(--ink-2);border-bottom:1px solid var(--line)}
+.search-sets .sets-overlap thead th:first-child,.search-sets .sets-overlap th[scope="row"]{text-align:start}
+.search-sets .sets-overlap .sets-own{font-weight:var(--fw-head)}
+/* The query outline (lib/query-outline.mjs), drawn in the Search inspector and under a stratum: a strategy's lines, each line's concepts
+   and their alternatives by field. Neutral: a checked MeSH descriptor is carried by weight, every other state is said in words; the
+   words that join (and, not, or) and the field names are quiet. Each alternative's part is its own line; a term never breaks inside. */
+.qo-sum{margin:0 0 var(--s2)}
+.qo-list .qo-name{font-weight:var(--fw-head)}
+.qo-list .qo-part{display:block;overflow-wrap:anywhere}
+.qo-list :is(.qo-join,.qo-field,.qo-note){color:var(--ink-2)}
+.qo-list .qo-term[data-mesh="descriptor"]{font-weight:var(--fw-ctl)}
+.qo-list .qo-text{white-space:pre-wrap;overflow-wrap:anywhere}
+.qo-list :is(.qo-ref,.qo-count){font-variant-numeric:tabular-nums}
+.search-sets .sets-detail .qo-list{margin-block-start:var(--s1)}

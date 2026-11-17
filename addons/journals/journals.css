@@ -1,0 +1,334 @@
+@import url('fonts.css');
+/* Lykos journal styles (Manuscript › View › Journal). Each journal's measured values arrive as --nj-* properties on its sheet (index.mjs:
+   the trim and margins, the faces, the body size and leading, the accent); these rules are the families' layouts on top of the app's
+   base sheet (app/src/journal-preview.css). Document typography, not interface. No journal's logo, wordmark or mark. */
+.nj-sheet[data-journal-style] { font-family:var(--nj-body-font,var(--nj-serif)); }
+.nj-sheet[data-journal-style] .nj-article-type { font-family:var(--nj-sans); font-size:var(--nj-small); line-height:1.4; font-weight:700; text-transform:uppercase; color:var(--nj-accent); margin:0 0 8px; }
+.nj-sheet[data-journal-style] .nj-title { font-family:var(--nj-title-font,var(--nj-head-font)); color:var(--nj-ink,#231f20); margin:0 0 12px; }
+.nj-sheet[data-journal-style] .nj-byline { font-family:var(--nj-sans); font-size:calc(var(--nj-body) * 0.95); line-height:1.35; margin:0 0 6px; }
+.nj-sheet[data-journal-style] :is(.nj-byline,.nj-correspondence,.nj-affiliation-list,.nj-info) p { text-align:left; margin:0 0 3px; }
+.nj-sheet[data-journal-style] .nj-correspondence { font-family:var(--nj-sans); font-size:var(--nj-small); line-height:1.3; margin:0 0 8px; }
+.nj-sheet[data-journal-style] .nj-citation { font-family:var(--nj-sans); font-size:var(--nj-small); line-height:1.3; color:#555; margin:0 0 12px; }
+.nj-sheet[data-journal-style] .nj-abstract-head { font-family:var(--nj-head-font); font-weight:700; color:var(--nj-accent); margin:0 0 4px; }
+.nj-sheet[data-journal-style] .nj-abstract-label { font-family:var(--nj-head-font); color:var(--nj-accent); }
+.nj-sheet[data-journal-style] .nj-abstract { padding-bottom:6px; }
+.nj-sheet[data-journal-style] .nj-affiliation-list { font-family:var(--nj-sans); font-size:var(--nj-small); line-height:1.3; font-style:italic; margin:0 0 10px; }
+.nj-sheet[data-journal-style] .msd-ref { font-family:var(--nj-body-font,var(--nj-serif)); }
+.nj-sheet[data-journal-style] .msd-cap { border-top:1px solid var(--nj-accent); }
+/* boxed: JNS, OUP */
+.nj-sheet .nj-abstract-box { background:color-mix(in srgb,var(--nj-accent) 7%,white); padding:10px 12px 0; margin:0 0 12px; }
+/* ruled: Springer Nature, SAGE, Wiley, Wolters Kluwer, the open publishers */
+.nj-sheet .nj-abstract-rule { border-top:1px solid var(--nj-accent); border-bottom:1px solid var(--nj-accent); padding:8px 0 0; margin:0 0 12px; }
+/* info: Elsevier */
+.nj-sheet .nj-info-grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,2.6fr); gap:18px; border-top:1px solid var(--nj-ink,#231f20); padding:8px 0 10px; margin-bottom:12px; border-bottom:1px solid var(--nj-ink,#231f20); }
+.nj-sheet .nj-info { font-family:var(--nj-sans); font-size:var(--nj-small); line-height:1.3; }
+.nj-sheet[data-journal-family="elsevier"] .nj-abstract-head { text-transform:uppercase; font-family:var(--nj-sans); font-weight:400; font-size:var(--nj-small); letter-spacing:0.18em; border-bottom:1px solid var(--nj-ink,#231f20); padding-bottom:4px; margin-bottom:8px; }
+/* indent: MDPI (measured from Cancers 2026;18:3188, PMC13664034): name and mark over a rule, the title and byline across the page, a 22% left margin for the affiliations,
+   the abstract and the body, the abstract's labels in bold run into one justified paragraph */
+.nj-sheet .nj-abstract-indent { margin:0; }
+/* JNS Publishing Group: condensed sans heads in capitals */
+.nj-sheet[data-journal-family="jns"] :is(h2,.nj-abstract-label) { text-transform:uppercase; }
+/* Springer Nature: sans heads, the title large and light */
+.nj-sheet[data-journal-family="springer-nature"] .nj-title { font-weight:600; }
+
+/* Neurology (aside layout): measured from Neurology 2025;104:e210281 (the app's first preview, moved here) */
+
+/* Elsevier (measured from Brain and Spine 2026;6:106180, PMC13427533): the title in regular weight, the byline in the sans with superscript
+   letters, the abstract in the serif with italic labels, numbered serif section heads, justified indented paragraphs without a gap. */
+.nj-sheet[data-journal-family="elsevier"] .nj-title { font-weight:400; line-height:1.25; }
+.nj-sheet[data-journal-family="elsevier"] .nj-byline { font-family:var(--nj-serif); font-size:calc(var(--nj-body) * 1.15); line-height:1.5; }
+.nj-sheet[data-journal-family="elsevier"] .nj-byline sup { color:#2b6e9e; }
+.nj-sheet[data-journal-family="elsevier"] .nj-byline .nj-orcid { display:inline-block; width:0.95em; height:0.95em; margin-left:0.25em; vertical-align:-0.1em; background:url(logos/orcid.svg) center/contain no-repeat; }
+/* the correspondence: an asterisk footnote under a short rule at the page's foot */
+.nj-sheet[data-journal-family="elsevier"] .nj-affiliations.nj-footnote { border-top:0; padding-top:8px; }
+.nj-sheet[data-journal-family="elsevier"] .nj-affiliations.nj-footnote::before { content:''; position:absolute; left:0; top:0; width:48px; border-top:1px solid currentColor; }
+.nj-sheet[data-journal-family="elsevier"] :is(.nj-byline,.nj-affiliation-list) sup { font-size:0.7em; line-height:0; font-style:normal; }
+.nj-sheet[data-journal-family="elsevier"] .nj-abstract { font-family:var(--nj-serif); font-size:calc(var(--nj-body) * 0.84); line-height:1.3; }
+.nj-sheet[data-journal-family="elsevier"] .nj-abstract p { margin:0; text-align:justify; }
+.nj-sheet[data-journal-family="elsevier"] .nj-abstract .nj-abstract-label { font-family:inherit; font-style:italic; font-weight:400; color:inherit; }
+.nj-sheet[data-journal-family="elsevier"] .nj-abstract .nj-abstract-label::after { content:':'; }
+.nj-sheet[data-journal-family="elsevier"] .nj-info .nj-keywords-label { font-style:italic; }
+.nj-sheet[data-journal-family="elsevier"] .nj-keywords p { margin:0; }
+.nj-sheet[data-journal-family="elsevier"] .nj-keywords:not(:empty) { margin-bottom:8px; }
+.nj-sheet[data-journal-family="elsevier"] :is(h2,h3,h4) { font-family:var(--nj-serif); font-weight:700; font-size:var(--nj-body); color:var(--nj-ink,#231f20); }
+.nj-sheet[data-journal-family="elsevier"] h2 { margin:14px 0 8px; }
+.nj-sheet[data-journal-family="elsevier"] .nj-affiliation-list { font-size:calc(var(--nj-body) * 0.7); }
+.nj-sheet[data-journal-family="elsevier"] .nj-columns p:not(.msd-ref,.msd-cap) { margin:0; text-indent:1.5em; }
+/* the sections count across the sheets: the counter is reset on the parent that holds them */
+:has(> .nj-sheet[data-journal-family="elsevier"]) { counter-reset:nj-sec; }
+.nj-sheet[data-journal-family="elsevier"] .nj-columns h2:not(:has(+ .msd-refs)) { counter-increment:nj-sec; counter-reset:nj-sub; }
+.nj-sheet[data-journal-family="elsevier"] .nj-columns h2:not(:has(+ .msd-refs))::before { content:counter(nj-sec) ".\00a0\00a0"; }
+.nj-sheet[data-journal-family="elsevier"] .nj-columns h3 { counter-increment:nj-sub; }
+.nj-sheet[data-journal-family="elsevier"] .nj-columns h3::before { content:counter(nj-sec) "." counter(nj-sub) ".\00a0\00a0"; }
+
+/* banner (Neuro-Oncology, measured from PMC13731850): the title white on a block in the accent, a slab face, the abstract box rounded */
+.nj-sheet .nj-banner { background:var(--nj-accent); color:#fff; border-radius:0 0 22px 0; padding:14px 18px 18px; margin:0 0 14px; }
+.nj-sheet .nj-banner .nj-title { color:#fff; font-family:'Bitter',var(--nj-serif); font-weight:700; font-size:calc(var(--nj-title) * 0.92); line-height:1.2; margin:10px 0 0; }
+.nj-sheet .nj-banner .nj-citation { color:#fff; font-size:var(--nj-small); margin:0; }
+.nj-sheet .nj-banner .nj-citation i { font-style:normal; font-size:calc(var(--nj-title) * 1.1); display:block; font-weight:700; }
+.nj-sheet[data-journal-style="neuro-onc"] .nj-byline p { font-weight:700; }
+.nj-sheet[data-journal-style="neuro-onc"] .nj-byline { font-weight:700; font-size:calc(var(--nj-body) * 1.05); }
+.nj-sheet[data-journal-style="neuro-onc"] .nj-abstract-box { background:#d3dfe6; border-radius:0 18px 0 18px; padding:12px 16px 4px; }
+.nj-sheet[data-journal-style="neuro-onc"] .nj-abstract-head { color:#000; font-family:var(--nj-sans); }
+.nj-sheet[data-journal-style="neuro-onc"] .nj-abstract .nj-abstract-label { font-style:italic; font-weight:700; color:inherit; font-family:inherit; }
+.nj-sheet[data-journal-style="neuro-onc"] .nj-abstract { text-align:left; font-family:var(--nj-sans); }
+.nj-sheet[data-journal-style="neuro-onc"] .nj-abstract p { margin:0; text-align:justify; }
+.nj-sheet[data-journal-style="neuro-onc"] .nj-abstract .nj-abstract-label::after { content:'.'; }
+/* body: a light slab serif, left-aligned, indented paragraphs without a gap; section heads bold under a grey-blue bar, subheads in blue italic */
+.nj-sheet[data-journal-style="neuro-onc"] .nj-columns p:not(.msd-ref,.msd-cap) { margin:0; text-indent:1em; text-align:left; }
+.nj-sheet[data-journal-style="neuro-onc"] .nj-columns :is(h2,h3,h4) + p { text-indent:0; }
+.nj-sheet[data-journal-style="neuro-onc"] .nj-columns :is(h2,h3,h4) { font-family:'Bitter',var(--nj-serif); color:#000; }
+.nj-sheet[data-journal-style="neuro-onc"] .nj-columns h2 { font-weight:700; font-size:calc(var(--nj-body) * 1.2); margin:16px 0 8px; }
+.nj-sheet[data-journal-style="neuro-onc"] .nj-columns h2::before { content:''; display:block; height:12px; background:#8eadbf; margin-bottom:10px; }
+.nj-sheet[data-journal-style="neuro-onc"] .nj-columns :is(h3,h4) { font-weight:400; font-style:italic; color:#2f6f95; font-size:var(--nj-body); margin:10px 0 6px; }
+/* plain (Journal of Neuro-Oncology, PMC13079548; the Springer journals that print the same first page: Neurosurgical Review, Acta Neurochirurgica, European Spine Journal, Journal of Neurology, Child's Nervous System, Clinical & Experimental Metastasis, Indian Journal of Orthopaedics, Neuroradiology, Pituitary, Spine Deformity): grey type bar, bold sans title, serif abstract with bold sans run-in labels, no rules */
+.nj-sheet:is([data-journal-style="jno"],[data-journal-style="neurosurg-rev"],[data-journal-style="acta-neurochir"],[data-journal-style="eur-spine-j"],[data-journal-style="childs-nerv-syst"],[data-journal-style="neuroradiology"],[data-journal-style="pituitary"],[data-journal-style="spine-deformity"]) .nj-article-type { background:#c8c9cc; color:#222; font-size:var(--nj-small); letter-spacing:0; padding:7px 14px; width:52%; margin:14px 0 22px; }
+.nj-sheet:is([data-journal-style="jno"],[data-journal-style="neurosurg-rev"],[data-journal-style="acta-neurochir"],[data-journal-style="eur-spine-j"],[data-journal-style="childs-nerv-syst"],[data-journal-style="neuroradiology"],[data-journal-style="pituitary"],[data-journal-style="spine-deformity"]) .nj-citation { font-family:var(--nj-sans); color:#222; font-size:calc(var(--nj-body) * 0.85); margin:0; }
+.nj-sheet:is([data-journal-style="jno"],[data-journal-style="neurosurg-rev"],[data-journal-style="acta-neurochir"],[data-journal-style="eur-spine-j"],[data-journal-style="childs-nerv-syst"],[data-journal-style="neuroradiology"],[data-journal-style="pituitary"],[data-journal-style="spine-deformity"]) .nj-title { font-family:var(--nj-sans); font-weight:700; line-height:1.2; margin-bottom:18px; }
+.nj-sheet:is([data-journal-style="jno"],[data-journal-style="neurosurg-rev"],[data-journal-style="acta-neurochir"],[data-journal-style="eur-spine-j"],[data-journal-style="childs-nerv-syst"],[data-journal-style="neuroradiology"],[data-journal-style="pituitary"],[data-journal-style="spine-deformity"]) .nj-byline { font-weight:700; font-size:var(--nj-body); margin-bottom:16px; }
+.nj-sheet:is([data-journal-style="jno"],[data-journal-style="neurosurg-rev"],[data-journal-style="acta-neurochir"],[data-journal-style="eur-spine-j"],[data-journal-style="childs-nerv-syst"],[data-journal-style="neuroradiology"],[data-journal-style="pituitary"],[data-journal-style="spine-deformity"]) .nj-abstract-head { color:#000; font-family:var(--nj-sans); }
+.nj-sheet:is([data-journal-style="jno"],[data-journal-style="neurosurg-rev"],[data-journal-style="acta-neurochir"],[data-journal-style="eur-spine-j"],[data-journal-style="childs-nerv-syst"],[data-journal-style="neuroradiology"],[data-journal-style="pituitary"],[data-journal-style="spine-deformity"]) .nj-abstract .nj-abstract-label { color:inherit; font-family:var(--nj-sans); font-weight:700; }
+.nj-sheet:is([data-journal-style="jno"],[data-journal-style="neurosurg-rev"],[data-journal-style="acta-neurochir"],[data-journal-style="eur-spine-j"],[data-journal-style="childs-nerv-syst"],[data-journal-style="neuroradiology"],[data-journal-style="pituitary"],[data-journal-style="spine-deformity"]) .nj-abstract p { margin:0; text-align:justify; }
+.nj-sheet:is([data-journal-style="jno"],[data-journal-style="neurosurg-rev"],[data-journal-style="acta-neurochir"],[data-journal-style="eur-spine-j"],[data-journal-style="childs-nerv-syst"],[data-journal-style="neuroradiology"],[data-journal-style="pituitary"],[data-journal-style="spine-deformity"]) .nj-byline p { font-weight:700; }
+/* keywords run in after the abstract: a bold sans label, the words in the serif separated by middle dots; paragraphs indented, no gap, the first after a head flush */
+.nj-sheet:is([data-journal-style="jno"],[data-journal-style="neurosurg-rev"],[data-journal-style="acta-neurochir"],[data-journal-style="eur-spine-j"],[data-journal-style="childs-nerv-syst"],[data-journal-style="neuroradiology"],[data-journal-style="pituitary"],[data-journal-style="spine-deformity"]) .nj-keywords { font-size:calc(var(--nj-body) * 1.0); line-height:1.35; margin:0 0 20px; text-align:left; }
+.nj-sheet:is([data-journal-style="jno"],[data-journal-style="neurosurg-rev"],[data-journal-style="acta-neurochir"],[data-journal-style="eur-spine-j"],[data-journal-style="childs-nerv-syst"],[data-journal-style="neuroradiology"],[data-journal-style="pituitary"],[data-journal-style="spine-deformity"]) .nj-keywords p { display:inline; margin:0; }
+.nj-sheet:is([data-journal-style="jno"],[data-journal-style="neurosurg-rev"],[data-journal-style="acta-neurochir"],[data-journal-style="eur-spine-j"],[data-journal-style="childs-nerv-syst"],[data-journal-style="neuroradiology"],[data-journal-style="pituitary"],[data-journal-style="spine-deformity"]) .nj-keywords .nj-keywords-label { font-family:var(--nj-sans); font-weight:700; margin-right:0.4em; }
+.nj-sheet:is([data-journal-style="jno"],[data-journal-style="neurosurg-rev"],[data-journal-style="acta-neurochir"],[data-journal-style="eur-spine-j"],[data-journal-style="childs-nerv-syst"],[data-journal-style="neuroradiology"],[data-journal-style="pituitary"],[data-journal-style="spine-deformity"]) .nj-keywords .nj-keywords-label::after { content:''; }
+.nj-sheet.nj-first:is([data-journal-style="jno"],[data-journal-style="neurosurg-rev"],[data-journal-style="acta-neurochir"],[data-journal-style="eur-spine-j"],[data-journal-style="childs-nerv-syst"],[data-journal-style="neuroradiology"],[data-journal-style="pituitary"],[data-journal-style="spine-deformity"]) .nj-keywords p:not(.nj-keywords-label):not(:last-child)::after { content:'\00a0\00b7\00a0'; }
+.nj-sheet:is([data-journal-style="jno"],[data-journal-style="neurosurg-rev"],[data-journal-style="acta-neurochir"],[data-journal-style="eur-spine-j"],[data-journal-style="childs-nerv-syst"],[data-journal-style="neuroradiology"],[data-journal-style="pituitary"],[data-journal-style="spine-deformity"]) .nj-columns p:not(.msd-ref,.msd-cap) { margin:0; text-indent:1em; }
+.nj-sheet:is([data-journal-style="jno"],[data-journal-style="neurosurg-rev"],[data-journal-style="acta-neurochir"],[data-journal-style="eur-spine-j"],[data-journal-style="childs-nerv-syst"],[data-journal-style="neuroradiology"],[data-journal-style="pituitary"],[data-journal-style="spine-deformity"]) .nj-columns :is(h2,h3,h4) + p { text-indent:0; }
+/* affiliations stand at the foot of the first column, as the journal prints them */
+.nj-sheet:is([data-journal-style="jno"],[data-journal-style="neurosurg-rev"],[data-journal-style="acta-neurochir"],[data-journal-style="eur-spine-j"],[data-journal-style="childs-nerv-syst"],[data-journal-style="neuroradiology"],[data-journal-style="pituitary"],[data-journal-style="spine-deformity"]) .nj-affiliations { right:calc(var(--nj-mr,54px) + (100% - var(--nj-ml,54px) - var(--nj-mr,54px) + var(--nj-gap,22px)) / 2); font-family:var(--nj-serif); }
+.nj-sheet:is([data-journal-style="jno"],[data-journal-style="neurosurg-rev"],[data-journal-style="acta-neurochir"],[data-journal-style="eur-spine-j"],[data-journal-style="childs-nerv-syst"],[data-journal-style="neuroradiology"],[data-journal-style="pituitary"],[data-journal-style="spine-deformity"]) :is(h2,h3,h4) { font-family:var(--nj-sans); font-weight:700; font-size:calc(var(--nj-body) * 1.3); }
+.nj-sheet .nj-abstract-plain { margin:0 0 14px; }
+/* centered (Int J Spine Surg, PMC6724751): a light sans title centered, the byline in capitals, the abstract in the sans */
+.nj-sheet[data-journal-style="ijss"] :is(.nj-citation,.nj-byline,.nj-affiliation-list,.nj-title) { text-align:center; }
+.nj-sheet[data-journal-style="ijss"] .nj-citation { text-align:left; font-family:inherit; font-size:calc(var(--nj-body) * 0.7); line-height:1.35; color:#000; margin-bottom:30px; }
+.nj-sheet[data-journal-style="ijss"] .nj-title { font-family:var(--nj-sans); font-weight:400; line-height:1.3; margin-bottom:18px; }
+.nj-sheet[data-journal-style="ijss"] .nj-byline { font-family:var(--nj-serif); text-transform:uppercase; font-size:calc(var(--nj-body) * 0.75); }
+.nj-sheet[data-journal-style="ijss"] .nj-byline p, .nj-sheet[data-journal-style="ijss"] .nj-affiliation-list p { text-align:center; }
+.nj-sheet[data-journal-style="ijss"] .nj-affiliation-list { font-family:inherit; font-size:calc(var(--nj-body) * 0.62); margin-bottom:16px; }
+.nj-sheet[data-journal-style="ijss"] .nj-abstract-head { color:#000; font-family:var(--nj-sans); font-weight:400; text-align:center; text-transform:uppercase; font-size:calc(var(--nj-body) * 0.85); margin-bottom:6px; }
+.nj-sheet[data-journal-style="ijss"] .nj-abstract { font-family:var(--nj-sans); font-size:calc(var(--nj-body) * 0.82); line-height:1.3; padding:0 3%; }
+.nj-sheet[data-journal-style="ijss"] .nj-abstract p { margin:0; text-align:left; text-indent:1.5em; }
+.nj-sheet[data-journal-style="ijss"] .nj-keywords { padding:0 3%; font-size:calc(var(--nj-body) * 0.82); line-height:1.4; margin:14px 0 22px; }
+.nj-sheet[data-journal-style="ijss"] .nj-keywords p { display:inline; margin:0; text-align:left; }
+.nj-sheet[data-journal-style="ijss"] .nj-keywords p:not(.nj-keywords-label):not(:last-child)::after { content:',\00a0'; }
+.nj-sheet[data-journal-style="ijss"] .nj-keywords .nj-keywords-label { margin-right:0.35em; }
+.nj-sheet[data-journal-style="ijss"] .nj-columns p:not(.msd-ref,.msd-cap) { margin:0; text-indent:1em; }
+.nj-sheet[data-journal-style="ijss"] .nj-abstract .nj-abstract-label { font-family:var(--nj-sans); font-weight:700; color:inherit; }
+.nj-sheet[data-journal-style="ijss"] .nj-abstract .nj-abstract-label::after { content:":"; }
+.nj-sheet[data-journal-style="ijss"] :is(h2,h3,h4) { font-family:var(--nj-sans); font-weight:400; text-transform:uppercase; text-align:center; font-size:calc(var(--nj-body) * 1.15); }
+
+/* Marks drawn from the reference articles (journals/logos, kept in this private repository; the hosted build leaves the folder out, and a missing
+   file draws nothing): the ORCID mark after each author, Springer's mark at the foot and its "Check for updates" badge at the top right of the first page. */
+.nj-sheet:is([data-journal-style="neuro-onc"],[data-journal-style="brain-spine"],:is([data-journal-style="jno"],[data-journal-style="neurosurg-rev"],[data-journal-style="acta-neurochir"],[data-journal-style="eur-spine-j"],[data-journal-style="childs-nerv-syst"],[data-journal-style="neuroradiology"],[data-journal-style="pituitary"],[data-journal-style="spine-deformity"])) .nj-byline .nj-orcid { display:inline-block; width:0.95em; height:0.95em; margin-left:0.25em; vertical-align:-0.1em; background:url(logos/orcid.svg) center/contain no-repeat; }
+.nj-sheet.nj-first:is([data-journal-style="jno"],[data-journal-style="neurosurg-rev"],[data-journal-style="acta-neurochir"],[data-journal-style="eur-spine-j"],[data-journal-style="childs-nerv-syst"],[data-journal-style="neuroradiology"],[data-journal-style="pituitary"],[data-journal-style="spine-deformity"])::before { content:''; position:absolute; right:var(--nj-mr,54px); top:calc(var(--nj-mt,60px) + 22px); width:42px; height:45px; background:url(logos/check-for-updates.png) center/contain no-repeat; }
+.nj-sheet.nj-first:is([data-journal-style="jno"],[data-journal-style="neurosurg-rev"],[data-journal-style="acta-neurochir"],[data-journal-style="eur-spine-j"],[data-journal-style="childs-nerv-syst"],[data-journal-style="neuroradiology"],[data-journal-style="pituitary"],[data-journal-style="spine-deformity"])::after { content:''; position:absolute; right:var(--nj-mr,54px); bottom:38px; width:65px; height:20px; background:url(logos/springer.png) center/contain no-repeat; }
+/* Neuro-Oncology: the masthead as the journal sets it, in place of the typed name */
+.nj-sheet[data-journal-style="neuro-onc"] .nj-banner .nj-citation i { color:transparent; font-size:0; width:279px; height:45px; background:url(logos/neuro-oncology-masthead.png) left center/contain no-repeat; }
+/* Brain and Spine: the masthead (Elsevier mark, journal banner, EANS and EUROSPINE mark, heavy rule) */
+.nj-sheet:is([data-journal-style="brain-spine"],[data-journal-style="j-clin-neurosci"]) .nj-masthead { margin:-15px 0 30px; padding-bottom:7px; border-bottom:4px solid #000; font-family:var(--nj-sans); }
+.nj-sheet:is([data-journal-style="brain-spine"],[data-journal-style="j-clin-neurosci"]) .nj-mast-cite { margin:0 0 18px; text-align:center; font-size:10px; line-height:1.2; color:#1a8cc9; }
+.nj-sheet:is([data-journal-style="brain-spine"],[data-journal-style="j-clin-neurosci"]) .nj-mast-row { display:grid; grid-template-columns:100px 1fr 76px; gap:2px 0; height:93px; }
+.nj-sheet:is([data-journal-style="brain-spine"],[data-journal-style="j-clin-neurosci"]) .nj-mast-elsevier { background:url(logos/elsevier.png) left center/contain no-repeat; }
+.nj-sheet:is([data-journal-style="brain-spine"],[data-journal-style="j-clin-neurosci"]) .nj-mast-society { background:url(logos/eans-eurospine.png) right center/contain no-repeat; margin-left:6px; border:0; border-top:1px solid #000; border-left:1px solid #000; background-origin:content-box; padding:2px 5px; box-sizing:border-box; }
+.nj-sheet:is([data-journal-style="brain-spine"],[data-journal-style="j-clin-neurosci"]) .nj-mast-banner { background:#e6e6e6; display:flex; flex-direction:column; justify-content:space-between; align-items:center; padding:4px 0 6px; font-size:10px; line-height:1.2; color:#000; }
+.nj-sheet:is([data-journal-style="brain-spine"],[data-journal-style="j-clin-neurosci"]) .nj-mast-banner b { font-weight:400; color:#1a8cc9; }
+.nj-sheet:is([data-journal-style="brain-spine"],[data-journal-style="j-clin-neurosci"]) .nj-mast-banner strong { font-family:var(--nj-serif); font-size:17px; font-weight:400; letter-spacing:0; }
+/* Neuro-Oncology: the pointer on page 1 to the affiliations printed at the article's end */
+.nj-sheet .nj-affil-note { margin:2px 0 4px; font-family:var(--nj-sans); font-size:var(--nj-small); line-height:1.35; }
+/* the journal's cover in the society slot (Journal of Clinical Neuroscience), and the Elsevier check-for-updates badge on the article-type line */
+.nj-mast-society[data-logo^="cover-"] { border:0 !important; padding:0 !important; }
+.nj-mast-society[data-logo="cover-j-clin-neurosci"] { background-image:url(logos/cover-j-clin-neurosci.png) !important; }
+.nj-sheet:is([data-journal-style="j-clin-neurosci"]) .nj-article-type { position:relative; font-family:var(--nj-serif); font-size:calc(var(--nj-body) * 1.0); font-weight:400; text-transform:none; letter-spacing:0; margin:0 0 10px; }
+.nj-sheet:is([data-journal-style="j-clin-neurosci"]) .nj-article-type::after { content:''; position:absolute; right:0; top:-4px; width:34px; height:30px; background:url(logos/check-elsevier.png) center/contain no-repeat; }
+
+/* Scientific Reports (measured from PMC11522693): name and address over a rule, "OPEN" beside the title, bold sans title, byline and abstract, the affiliations in the serif */
+
+/* batch b6: BMC, Taylor & Francis, PLOS, OUP Brain first pages (publisher PDFs PMC11841347, PMC12090375, PMC13089703, PMC11292909) */
+.nj-sheet[data-journal-style="br-j-neurosurg"] { --nj-tf:#262a5c; }
+.nj-sheet[data-journal-style="br-j-neurosurg"] .nj-tf-head { display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px solid #231f20; padding-bottom:6px; margin:0 0 10px; font-family:var(--nj-sans); font-size:var(--nj-small); text-transform:uppercase; line-height:1.5; }
+.nj-sheet[data-journal-style="br-j-neurosurg"] .nj-tf-head b { font-weight:400; }
+.nj-sheet[data-journal-style="br-j-neurosurg"] .nj-tf-mark { width:150px; height:34px; background:url(logos/taylor-francis.svg) right center/contain no-repeat; }
+.nj-sheet[data-journal-style="br-j-neurosurg"] .nj-article-type { display:flex; justify-content:space-between; color:#231f20; font-weight:400; font-size:calc(var(--nj-body) * 0.95); margin:0 0 14px; }
+.nj-sheet[data-journal-style="br-j-neurosurg"] .nj-article-type::after { content:"Open access"; text-transform:uppercase; font-size:calc(var(--nj-body) * 0.95); }
+.nj-sheet[data-journal-style="br-j-neurosurg"] .nj-title { color:var(--nj-tf); font-weight:500; font-size:calc(var(--nj-title) * 1.0); line-height:1.25; }
+.nj-sheet[data-journal-style="br-j-neurosurg"] .nj-byline { font-size:calc(var(--nj-body) * 1.1); margin:14px 0 8px; }
+.nj-sheet[data-journal-style="br-j-neurosurg"] .nj-byline sup, .nj-sheet[data-journal-style="br-j-neurosurg"] .nj-affiliation-list sup { color:var(--nj-tf); }
+.nj-sheet[data-journal-style="br-j-neurosurg"] .nj-affiliation-list { font-style:normal; font-size:calc(var(--nj-body) * 0.8); margin-bottom:14px; }
+.nj-sheet[data-journal-style="br-j-neurosurg"] .nj-tf-grid { display:grid; grid-template-columns:3fr 1fr; gap:16px; margin:0 0 14px; }
+.nj-sheet[data-journal-style="br-j-neurosurg"] .nj-abstract-tf { background:#eceef0; padding:10px 14px; font-family:var(--nj-sans); font-size:calc(var(--nj-body) * 0.92); }
+.nj-sheet[data-journal-style="br-j-neurosurg"] .nj-abstract-tf p { text-align:left; margin:0 0 3px; }
+.nj-sheet[data-journal-style="br-j-neurosurg"] :is(.nj-abstract-head) { font-family:var(--nj-sans); font-size:var(--nj-small); font-weight:700; text-transform:uppercase; color:var(--nj-tf); margin:0 0 4px; }
+.nj-sheet[data-journal-style="br-j-neurosurg"] .nj-tf-side { font-family:var(--nj-sans); font-size:calc(var(--nj-body) * 0.8); padding-top:10px; }
+.nj-sheet[data-journal-style="br-j-neurosurg"] .nj-tf-side .nj-keywords p:first-child { display:none; }
+.nj-sheet[data-journal-style="br-j-neurosurg"] .nj-tf-side .nj-keywords p { display:inline; margin:0; }
+.nj-sheet[data-journal-style="br-j-neurosurg"] .nj-tf-side .nj-keywords p:nth-child(n+3)::before { content:'; '; }
+
+/* batch b7: Wiley, Wolters Kluwer (CNS), SAGE, Nature Portfolio and Frontiers first pages (publisher PDFs PMC13686592, PMC10079356, PMC13652121, PMC13525103, PMC13578653, PMC13376501, PMC13083253, PMC13723413, PMC11798948) */
+.nj-sheet:is([data-journal-style="global-spine-j"],[data-journal-style="proc-inst-mech-eng-h"]) .nj-byline .nj-orcid { display:inline-block; width:0.95em; height:0.95em; margin-left:0.25em; vertical-align:-0.1em; background:url(logos/orcid.svg) center/contain no-repeat; }
+/* Wiley */
+/* CNS (Neurosurgery, Operative Neurosurgery) */
+.nj-sheet:is([data-journal-style="neurosurgery"],[data-journal-style="oper-neurosurg"]) .nj-article-type { background:#a61c22; color:#fff; text-align:right; text-transform:uppercase; font-family:var(--nj-serif); font-weight:700; font-size:calc(var(--nj-body) * 1.1); padding:4px 14px; margin:0 0 14px; }
+.nj-sheet:is([data-journal-style="neurosurgery"],[data-journal-style="oper-neurosurg"]) .nj-cns-open { display:inline-block; background:#a61c22; color:#fff; font-family:var(--nj-sans); font-weight:700; font-size:calc(var(--nj-small) * 0.85); padding:1px 6px; margin:0 0 6px; }
+.nj-sheet:is([data-journal-style="neurosurgery"],[data-journal-style="oper-neurosurg"]) .nj-title { font-weight:700; line-height:1.18; font-size:var(--nj-title); margin:0 0 10px; }
+.nj-sheet:is([data-journal-style="neurosurgery"],[data-journal-style="oper-neurosurg"]) .nj-byline { font-weight:700; font-size:calc(var(--nj-body) * 0.82); line-height:1.5; margin-bottom:6px; }
+.nj-sheet:is([data-journal-style="neurosurgery"],[data-journal-style="oper-neurosurg"]) .nj-affiliation-list { font-style:normal; font-size:calc(var(--nj-body) * 0.7); }
+.nj-sheet:is([data-journal-style="neurosurgery"],[data-journal-style="oper-neurosurg"]) .nj-correspondence { font-size:calc(var(--nj-body) * 0.7); }
+.nj-sheet:is([data-journal-style="neurosurgery"],[data-journal-style="oper-neurosurg"]) .nj-abstract-cns { background:#e9e9e9; padding:8px 12px 6px; margin:8px 0 8px; font-family:var(--nj-sans); font-size:calc(var(--nj-body) * 0.88); line-height:1.35; }
+.nj-sheet:is([data-journal-style="neurosurgery"],[data-journal-style="oper-neurosurg"]) .nj-abstract-cns p { text-align:left; margin:0 0 2px; }
+.nj-sheet:is([data-journal-style="neurosurgery"],[data-journal-style="oper-neurosurg"]) .nj-abstract-cns .nj-abstract-label { color:#a61c22; text-transform:uppercase; font-family:var(--nj-sans); }
+.nj-sheet:is([data-journal-style="neurosurgery"],[data-journal-style="oper-neurosurg"]) .nj-abstract-cns .nj-abstract-label::after { content:':'; }
+.nj-sheet:is([data-journal-style="neurosurgery"],[data-journal-style="oper-neurosurg"]) .nj-keywords { font-size:calc(var(--nj-body) * 0.8); margin-top:4px; }
+.nj-sheet:is([data-journal-style="neurosurgery"],[data-journal-style="oper-neurosurg"]) .nj-keywords p { display:inline; margin:0; }
+.nj-sheet:is([data-journal-style="neurosurgery"],[data-journal-style="oper-neurosurg"]) .nj-keywords .nj-keywords-label { color:#a61c22; font-weight:700; text-transform:uppercase; margin-right:0.5em; }
+.nj-sheet:is([data-journal-style="neurosurgery"],[data-journal-style="oper-neurosurg"]) .nj-keywords p + p::before { content:', '; }
+.nj-sheet:is([data-journal-style="neurosurgery"],[data-journal-style="oper-neurosurg"]) .nj-keywords .nj-keywords-label + p::before { content:''; }
+.nj-sheet:is([data-journal-style="neurosurgery"],[data-journal-style="oper-neurosurg"]) .nj-cns-cite { font-family:var(--nj-sans); font-size:calc(var(--nj-body) * 0.7); margin:0 0 12px; }
+.nj-sheet:is([data-journal-style="neurosurgery"],[data-journal-style="oper-neurosurg"]) .nj-columns h2 { font-family:var(--nj-sans); text-transform:uppercase; color:var(--nj-ink,#231f20); font-size:calc(var(--nj-body) * 0.95); }
+/* SAGE */
+.nj-sheet:is([data-journal-style="global-spine-j"],[data-journal-style="interv-neuroradiol"]) .nj-sg-top { display:grid; grid-template-columns:minmax(0,1fr) 26%; gap:20px; margin:0 0 22px; }
+.nj-sheet:is([data-journal-style="global-spine-j"],[data-journal-style="interv-neuroradiol"]) .nj-sg-type { font-family:var(--nj-sans); font-style:italic; font-size:var(--nj-small); margin:0 0 40px; }
+.nj-sheet:is([data-journal-style="global-spine-j"],[data-journal-style="interv-neuroradiol"]) .nj-title { font-family:var(--nj-sans); font-weight:700; line-height:1.25; }
+.nj-sheet:is([data-journal-style="global-spine-j"],[data-journal-style="interv-neuroradiol"]) .nj-sg-cite { display:flex; flex-direction:column; align-items:flex-end; text-align:right; gap:2px; font-family:var(--nj-sans); font-size:calc(var(--nj-body) * 0.7); line-height:1.35; }
+.nj-sheet:is([data-journal-style="global-spine-j"],[data-journal-style="interv-neuroradiol"]) .nj-sg-mark { order:-1; width:78px; height:26px; margin-bottom:10px; background:url(logos/sage.svg) right center/contain no-repeat; }
+.nj-sheet:is([data-journal-style="global-spine-j"],[data-journal-style="interv-neuroradiol"]) .nj-byline { font-family:var(--nj-sans); font-weight:700; font-size:calc(var(--nj-body) * 1.05); line-height:1.45; margin:0 0 18px; }
+.nj-sheet:is([data-journal-style="global-spine-j"],[data-journal-style="interv-neuroradiol"]) .nj-abstract-sg { margin:0 0 14px; font-size:calc(var(--nj-body) * 0.95); line-height:1.35; }
+.nj-sheet:is([data-journal-style="global-spine-j"],[data-journal-style="interv-neuroradiol"]) .nj-abstract-sg .nj-abstract-head { color:#231f20; font-family:var(--nj-sans); margin-bottom:6px; }
+.nj-sheet:is([data-journal-style="global-spine-j"],[data-journal-style="interv-neuroradiol"]) .nj-abstract-sg .nj-abstract { text-align:justify; }
+.nj-sheet:is([data-journal-style="global-spine-j"],[data-journal-style="interv-neuroradiol"]) .nj-abstract-sg p { display:inline; margin:0; }
+.nj-sheet:is([data-journal-style="global-spine-j"],[data-journal-style="interv-neuroradiol"]) .nj-abstract-sg p::after { content:' '; }
+.nj-sheet:is([data-journal-style="global-spine-j"],[data-journal-style="interv-neuroradiol"]) .nj-abstract-sg .nj-abstract-label { color:#231f20; font-family:var(--nj-sans); }
+.nj-sheet:is([data-journal-style="global-spine-j"],[data-journal-style="interv-neuroradiol"]) .nj-abstract-sg .nj-abstract-label::after { content:'.'; }
+.nj-sheet:is([data-journal-style="global-spine-j"],[data-journal-style="interv-neuroradiol"]) .nj-keywords p { display:inline; margin:0 0.5em 0 0; font-size:calc(var(--nj-body) * 0.9); }
+.nj-sheet:is([data-journal-style="global-spine-j"],[data-journal-style="interv-neuroradiol"]) .nj-keywords .nj-keywords-label { font-family:var(--nj-sans); font-weight:700; }
+.nj-sheet:is([data-journal-style="global-spine-j"],[data-journal-style="interv-neuroradiol"]) .nj-affiliation-list { font-style:normal; border-top:1px solid #231f20; padding-top:10px; margin-top:12px; font-size:calc(var(--nj-body) * 0.68); }
+/* Nature Portfolio */
+/* Frontiers */
+.nj-sheet:is([data-journal-style="neurosurgery"],[data-journal-style="oper-neurosurg"]) .nj-abstract-cns :is(h2,h3,.nj-abstract-head) { display:none; }
+.nj-sheet:is([data-journal-style="neurosurgery"],[data-journal-style="oper-neurosurg"]) .nj-cns-open { margin:4px 0 8px; }
+
+/* The Lancet journals, as The Lancet Neurology prints an Article in 2024 and 2025 (measured on 10 Nov 2026 from the publisher PDF of Lancet Neurol 2025;24:1005,
+   doi 10.1016/S1474-4422(25)00402-8: every position, size, face and colour read from the page's own drawing; the same on Lancet Neurol 2024;23:973 and 2024;23:344).
+   Page 210 x 282 mm. Facing pages: the text block (439.4 pt, two columns of 214 pt on an 11.3 pt gap) stands 36.9 pt from the inner edge, and a margin column of 82.2 pt
+   stands 8.5 pt outside it, 28.3 pt from the outer edge (journals/data.mjs gives the outer margin as the block's end to the page edge; Lykos swaps the two margins on an
+   even page and marks the sheet data-side). Head of every page: a bar of the journal's red (#c01e35, 11.3 pt wide) from the top edge down to 47.5 pt at the outer end
+   of the margin column, the section label in bold sans beside it (18 pt on the first page, 12 pt after), and a 1.5 pt red rule across block and margin column at 102.8 pt.
+   Foot: 7 pt sans on a baseline at 779.3 pt, the page number in bold at the outer edge. Ink #2c2e35. Body 9 pt serif on 11 pt (57 lines, first baseline 135.5 pt, last
+   751.5 pt), paragraphs indented 7 pt, none after a heading. Headings: 11 pt bold sans in red after one blank line; 9.5 pt bold sans in ink. First page: title 18 pt bold
+   sans on 22 pt, first baseline 135.5 pt; byline 8.5 pt italic sans in red; "Summary" 11 pt bold sans in red; the Summary across the block in the bold serif, 9 pt on
+   11 pt, each part after a blank line under a 9 pt bold sans label in red; in the margin column beside it, 6.5 pt sans on 8.7 pt: the citation line in bold red, the
+   affiliations, the correspondence. No logo, wordmark or mark; where the journal prints its citation line and its issue the preview says what it is. */
+.nj-sheet[data-journal-family="lancet"] { --nj-ink:#2c2e35; --lc-red:var(--nj-accent,#c01e35); --lc-tint:#fae5e3; --lc-outer:37.73px; --lc-line:14.667px; }
+.nj-sheet[data-journal-family="lancet"] .nj-header { position:absolute; inset:0; pointer-events:none; font-family:var(--nj-sans); }
+.nj-sheet[data-journal-family="lancet"] .nj-lc-bar { position:absolute; top:0; right:var(--lc-outer); width:15.07px; height:63.3px; background:var(--lc-red); }
+.nj-sheet[data-journal-family="lancet"] .nj-lc-section { position:absolute; top:51px; right:calc(var(--lc-outer) + 30.13px); font-weight:700; font-size:16px; line-height:16px; white-space:nowrap; }
+.nj-sheet[data-journal-family="lancet"].nj-first .nj-lc-section { top:44.5px; font-size:24px; line-height:24px; }
+.nj-sheet[data-journal-family="lancet"] .nj-lc-rule { position:absolute; top:136.07px; left:var(--nj-ml); right:var(--lc-outer); height:2px; background:var(--lc-red); }
+.nj-sheet[data-journal-family="lancet"][data-side="verso"] .nj-lc-bar { right:auto; left:var(--lc-outer); }
+.nj-sheet[data-journal-family="lancet"][data-side="verso"] .nj-lc-section { right:auto; left:calc(var(--lc-outer) + 30.13px); }
+.nj-sheet[data-journal-family="lancet"][data-side="verso"] .nj-lc-rule { left:var(--lc-outer); right:var(--nj-mr); }
+.nj-sheet[data-journal-family="lancet"] .nj-footer { display:flex; justify-content:space-between; left:var(--nj-ml); right:var(--lc-outer); bottom:23.7px; font-size:9.33px; line-height:1.2; color:var(--nj-ink); }
+.nj-sheet[data-journal-family="lancet"][data-side="verso"] .nj-footer { left:var(--lc-outer); right:var(--nj-mr); flex-direction:row-reverse; }
+.nj-sheet[data-journal-family="lancet"] .nj-footer b { font-weight:700; }
+.nj-sheet[data-journal-family="lancet"] .nj-title { font-weight:700; line-height:29.33px; margin:-11.3px 0 0; }
+.nj-sheet[data-journal-family="lancet"] .nj-byline { font-style:italic; font-size:11.33px; line-height:var(--lc-line); color:var(--lc-red); margin:12.2px 0 0; }
+.nj-sheet[data-journal-family="lancet"] .nj-byline p { margin:0; }
+.nj-sheet[data-journal-family="lancet"] .nj-byline sup { font-size:0.7em; line-height:0; }
+.nj-sheet[data-journal-family="lancet"] .nj-lc-summary { position:relative; margin:13.6px 0 0; }
+.nj-sheet[data-journal-family="lancet"] .nj-abstract-head { font-family:var(--nj-sans); font-size:14.667px; line-height:var(--lc-line); color:var(--lc-red); margin:0 0 0.4px; }
+.nj-sheet[data-journal-family="lancet"] .nj-abstract { font-size:var(--nj-body); line-height:var(--lc-line); font-weight:600; text-align:justify; hyphens:auto; padding-bottom:0; }
+.nj-sheet[data-journal-family="lancet"] .nj-abstract p { margin:0 0 var(--lc-line); }
+.nj-sheet[data-journal-family="lancet"] .nj-abstract .nj-abstract-label { font-family:var(--nj-sans); font-weight:700; color:var(--lc-red); }
+.nj-sheet[data-journal-family="lancet"] .nj-lc-margin { position:absolute; top:18px; left:calc(100% + 11.33px); width:109.6px; font-family:var(--nj-sans); font-size:8.67px; line-height:11.6px; }
+.nj-sheet[data-journal-family="lancet"] .nj-lc-cite { display:block; font-size:inherit; line-height:inherit; font-weight:700; color:var(--lc-red); margin:0 0 3.87px; text-align:left; }
+.nj-sheet[data-journal-family="lancet"] .nj-lc-margin .nj-affiliation-list { font-style:normal; font-size:inherit; line-height:inherit; margin:0 0 3.87px; }
+.nj-sheet[data-journal-family="lancet"] .nj-lc-margin :is(.nj-affiliation-list,.nj-correspondence) p { margin:0 0 3.87px; hyphens:manual; }
+.nj-sheet[data-journal-family="lancet"] .nj-lc-margin .nj-correspondence { font-size:inherit; line-height:inherit; margin:0; }
+.nj-sheet[data-journal-family="lancet"] :is(h2,h3,h4) { font-family:var(--nj-sans); }
+.nj-sheet[data-journal-family="lancet"] h2 { color:var(--lc-red); font-size:14.667px; line-height:var(--lc-line); margin:var(--lc-line) 0 0; }
+.nj-sheet[data-journal-family="lancet"] :is(h3,h4) { color:var(--nj-ink); font-size:12.667px; font-style:normal; line-height:var(--lc-line); margin:var(--lc-line) 0 0; }
+.nj-sheet[data-journal-family="lancet"] h2 + :is(h3,h4), .nj-sheet[data-journal-family="lancet"] .nj-column > :is(h2,h3,h4):first-child { margin-top:0; }
+.nj-sheet[data-journal-family="lancet"] .nj-columns p:not(.msd-ref,.msd-cap) { margin:0; text-indent:9.33px; text-align:justify; hyphens:auto; }
+.nj-sheet[data-journal-family="lancet"] .nj-columns :is(h2,h3,h4) + p:not(.msd-ref,.msd-cap) { text-indent:0; }
+.nj-sheet[data-journal-family="lancet"] sup { font-size:0.5em; line-height:0; vertical-align:0.72em; font-style:normal; font-weight:400; }
+/* The figures, as printed (read on 11 Nov 2026 from the publisher PDF of Lancet Neurol 2020;19:491-501 at 600 dpi): in the text (Scala Lancet) lining and
+   proportional, a 1 narrower than a 0 ("116 (73%) of 160", "59·9 years"); in the regular sans of a panel and of a table's cells and column heads (Shaker 2 Lancet)
+   old-style and proportional ("Dec 1, 2019", "3·74 (4·79), 118": no column of tabular figures); in the bold sans (the citation in the margin, a caption's label,
+   the folio) and in a drawn figure ("160 randomised") lining and proportional. The stand-in faces set tabular lining figures unless asked (a figure of Source
+   Serif 4 is 0.529 em wide and one of Source Sans 3 0.497 em, whatever it is), which is why a number read wider and looser than the words beside it.
+   The files of the two faces as shipped (fonts/, the latin subsets) hold proportional figures and no old-style ones: a panel and a table show proportional
+   lining figures until a file with old-style figures is shipped, and the rule is ready for it. */
+.nj-sheet[data-journal-family="lancet"] { font-variant-numeric:lining-nums proportional-nums; }
+.nj-sheet[data-journal-family="lancet"] .nj-panel { font-variant-numeric:oldstyle-nums proportional-nums; }
+.nj-sheet[data-journal-family="lancet"] .nj-panel :is(b,strong,h2,h3,h4,svg) { font-variant-numeric:lining-nums proportional-nums; }
+.nj-sheet[data-journal-family="lancet"] .nj-table-box { font-variant-numeric:oldstyle-nums proportional-nums; }
+.nj-sheet[data-journal-family="lancet"] .nj-table-box :is(b,strong,svg) { font-variant-numeric:lining-nums proportional-nums; }
+/* The end matter (Contributors, Declaration of interests, Data sharing, Acknowledgments; Lykos marks it .nj-back from the style's `backFrom`): 7 pt serif on 8.8 pt,
+   ragged, no indent, each under a 7 pt bold sans head in ink. The references: 7 pt serif on 8 pt, the number hung 14.2 pt, 1.4 pt between entries, the journal's name
+   in italic and the volume with its colon in bold (the style's `referenceMarks`). */
+.nj-sheet[data-journal-family="lancet"] .nj-columns p.nj-back { font-size:9.33px; line-height:11.73px; text-indent:0; text-align:left; hyphens:manual; }
+.nj-sheet[data-journal-family="lancet"] .nj-columns :is(h2,h3,h4).nj-back { color:var(--nj-ink); font-size:9.33px; line-height:11.73px; margin:5.87px 0 0; }
+.nj-sheet[data-journal-family="lancet"] .nj-columns :not(.nj-back) + :is(h2,h3,h4).nj-back { margin-top:var(--lc-line); }
+.nj-sheet[data-journal-family="lancet"] .nj-column > :is(h2,h3,h4).nj-back:first-child { margin-top:0; }
+.nj-sheet[data-journal-family="lancet"] .msd-ref { font-size:9.33px; line-height:10.667px; margin:0 0 1.87px; padding-left:18.9px; text-indent:-18.9px; text-align:left; hyphens:manual; }
+.nj-sheet[data-journal-family="lancet"] .msd-ref .msd-ref-n { display:inline-block; min-width:18.9px; margin:0; text-indent:0; }
+/* The "Research in context" panel (the style's `panels` and `panelAt`: Lykos sets it across the text block at the head of the page after the first): a tint of the
+   journal's red (#fae5e3), no line; 8.5 pt sans on 11 pt, ragged, in two columns; the panel's name in bold red, its three heads in bold ink after 5.7 pt. */
+.nj-sheet[data-journal-family="lancet"] .nj-panel { background:var(--lc-tint); font-family:var(--nj-sans); font-size:11.33px; line-height:var(--lc-line); padding:8.4px 10px 8.5px; margin:2.5px 0 10px; }
+.nj-sheet[data-journal-family="lancet"] .nj-panel.nj-page-top { flex:none; column-count:2; column-gap:15.9px; }
+.nj-sheet[data-journal-family="lancet"] .nj-panel :is(h2,h3,h4) { font-size:11.33px; line-height:var(--lc-line); margin:0; }
+.nj-sheet[data-journal-family="lancet"] .nj-panel :is(h3,h4) { margin-top:7.6px; }
+.nj-sheet[data-journal-family="lancet"] .nj-panel p { font-family:inherit; font-size:inherit; line-height:inherit; font-weight:400; margin:0; text-indent:0 !important; text-align:left !important; hyphens:manual !important; }
+.nj-sheet[data-journal-family="lancet"] .nj-panel p:has(> :is(strong,b):only-child) { margin-top:7.6px; break-after:avoid; }
+/* A figure (the style's `floats`: at the head of the page after its first mention, the text going on under it): across the text block and the margin column, in a
+   hairline of the journal's red on white; under it the legend in 7 pt sans on 8.8 pt, "Figure 1:" in bold italic and the title in bold on lines of their own. */
+.nj-sheet[data-journal-family="lancet"] .nj-figure-box { width:calc(100% + var(--nj-mr) - var(--lc-outer)); margin:2.5px 0 0; }
+.nj-sheet[data-journal-family="lancet"][data-side="verso"] .nj-figure-box { width:calc(100% + var(--nj-ml) - var(--lc-outer)); margin-left:calc(var(--lc-outer) - var(--nj-ml)); }
+.nj-sheet[data-journal-family="lancet"] .nj-figure-box.nj-float { margin-bottom:var(--lc-line); }
+.nj-sheet[data-journal-family="lancet"] .nj-figure-box > figure { margin:0; padding:9px; background:linear-gradient(var(--lc-red),var(--lc-red)) top / 100% 0.5px no-repeat, linear-gradient(var(--lc-red),var(--lc-red)) bottom / 100% 0.5px no-repeat, linear-gradient(var(--lc-red),var(--lc-red)) left / 0.5px 100% no-repeat, linear-gradient(var(--lc-red),var(--lc-red)) right / 0.5px 100% no-repeat, #fff; }
+.nj-sheet[data-journal-family="lancet"] .nj-figure-box > figure :is(img,.nj-chart,.nj-chart svg) { margin:0 auto; }
+/* A chart drawn for the style carries the journal's inset in its own drawing (`figure.chart.inset`, 5.9 pt from the panel's outline to the drawing): the outline
+   stands at the drawing's edge, not 9 px outside it, so a drawn panel is as wide and as deep as the journal prints it (a hairline's room is left for the outline). */
+.nj-sheet[data-journal-family="lancet"] .nj-figure-box > figure:has(> .nj-chart) { padding:0.5px; }
+.nj-sheet[data-journal-family="lancet"] .nj-figure-box .msd-cap { font-family:var(--nj-sans); font-size:9.33px; line-height:11.73px; border:0; padding:5.5px 0 0; margin:0; text-align:left; text-indent:0; hyphens:manual; }
+.nj-sheet[data-journal-family="lancet"] .nj-figure-box .msd-cap > :is(strong,b):first-child { display:block; }
+.nj-sheet[data-journal-family="lancet"] .nj-figure-box .msd-cap .nj-figure-label { font-style:italic; }
+.nj-sheet[data-journal-family="lancet"] .nj-columns .msd-cap { font-family:var(--nj-sans); font-size:9.33px; line-height:11.73px; border:0; text-align:left; }
+
+/* The Lancet journals' tables (measured from Lancet Neurol 2020;19:491, tables 1 and 2, publisher PDF; the red and the tint as Lancet Neurol 2025;24:1005 prints them,
+   #c01e35 and #fae5e3; seen the same in Lancet Neurol 2019;18:653, 2018;17:609 and
+   2017;16:610, Lancet Psychiatry 2020;7:851 and Lancet 2020;395:1973). A tinted panel in a hairline of the journal's red holds the table, its legend and, under a
+   rule at the panel's foot, its title ("Table 1:" in bold italic, the title in bold). 7 pt sans on 8.5 pt; the legend 6.5 pt. Rules, 0.25 pt: one under the column
+   heads, one under each spanning head over its own columns (3 pt short of the next head), one over the title; none between rows, which stand on alternating tinted
+   and white bands (a label with the rows indented under it is one band). Heads flush left, bold, set from the top; the heads under a spanning head regular. Row
+   labels flush left, a row of a group indented 5.7 pt, its turned lines with it. Values flush left under their head, aligned on the decimal point. The panel is as
+   wide as a text column with the margin column, or as the text block with the margin column, and stands at the head of its page, on an even page out to the left; a wider
+   table is turned. Which width, the column widths, the order of the parts and the marks come from Lykos (the style's `table` in index.mjs; views/journal-preview.mjs).
+   The rules are drawn 0.5 px high as backgrounds, not as borders: a browser draws no border thinner than a pixel, on the screen or in a PDF. */
+.nj-sheet[data-journal-family="lancet"] .nj-table-box { background:linear-gradient(var(--lc-red),var(--lc-red)) top / 100% 0.5px no-repeat, linear-gradient(var(--lc-red),var(--lc-red)) bottom / 100% 0.5px no-repeat, linear-gradient(var(--lc-red),var(--lc-red)) left / 0.5px 100% no-repeat, linear-gradient(var(--lc-red),var(--lc-red)) right / 0.5px 100% no-repeat, var(--lc-tint); margin-top:2.5px; padding:6.5px 8.2px 5px; font-family:var(--nj-sans); }
+.nj-sheet[data-journal-family="lancet"] .nj-table-box[data-measure="full"] { width:calc(100% + var(--nj-mr) - var(--lc-outer)); }
+.nj-sheet[data-journal-family="lancet"] .nj-table-box[data-measure="full"]:is([data-side="verso"] *) { width:calc(100% + var(--nj-ml) - var(--lc-outer)); margin-left:calc(var(--lc-outer) - var(--nj-ml)); }
+.nj-sheet[data-journal-family="lancet"] .nj-table-box[data-measure="column"] { width:calc((100% - var(--nj-gap)) / 2 + var(--nj-mr) - var(--lc-outer)); margin-left:calc((100% + var(--nj-gap)) / 2); }
+.nj-sheet[data-journal-family="lancet"] .nj-table-box[data-measure="column"]:is([data-side="verso"] *) { width:calc((100% - var(--nj-gap)) / 2 + var(--nj-ml) - var(--lc-outer)); margin-left:calc(var(--lc-outer) - var(--nj-ml)); }
+.nj-sheet[data-journal-family="lancet"] .nj-table-box.nj-float { margin-bottom:var(--lc-line); }
+.nj-sheet[data-journal-family="lancet"] .nj-table-box table { font-family:inherit; font-size:9.33px; line-height:11.33px; }
+.nj-sheet[data-journal-family="lancet"] .nj-table-box :is(th,td) { border:0; padding:1.87px 3.73px; hyphens:manual; }
+.nj-sheet[data-journal-family="lancet"] .nj-table-box th { background:none; padding-bottom:2.7px; }
+.nj-sheet[data-journal-family="lancet"] .nj-table-box thead tr + tr th { padding-top:3.9px; }
+.nj-sheet[data-journal-family="lancet"] .nj-table-box th[data-sub], .nj-sheet[data-journal-family="lancet"] .nj-table-box th[data-sub] strong { font-weight:400; }
+.nj-sheet[data-journal-family="lancet"] .nj-table-box th[data-spanner] { position:relative; }
+.nj-sheet[data-journal-family="lancet"] .nj-table-box th[data-spanner]::after { content:''; position:absolute; left:0; right:4px; bottom:0; height:0.5px; background:var(--nj-ink,#231f20); }
+.nj-sheet[data-journal-family="lancet"] .nj-table-box th[data-spanner]:last-child::after { right:0; }
+.nj-sheet[data-journal-family="lancet"] .nj-table-box thead + tbody tr:first-child > td { background:linear-gradient(var(--nj-ink,#231f20),var(--nj-ink,#231f20)) top / 100% 0.5px no-repeat; }
+.nj-sheet[data-journal-family="lancet"] .nj-table-box tbody tr[data-band="1"] { background:#fff; }
+.nj-sheet[data-journal-family="lancet"] .nj-table-box tbody tr[data-level="1"] > td:first-child { padding-left:11.33px; }
+.nj-sheet[data-journal-family="lancet"] .nj-table-box tbody tr[data-level="2"] > td:first-child { padding-left:18.93px; }
+.nj-sheet[data-journal-family="lancet"] .nj-table-box tbody tr.nj-table-continued > td { background:linear-gradient(var(--nj-ink,#231f20),var(--nj-ink,#231f20)) top / 100% 0.5px no-repeat, linear-gradient(var(--nj-ink,#231f20),var(--nj-ink,#231f20)) bottom / 100% 0.5px no-repeat; }
+.nj-sheet[data-journal-family="lancet"] .nj-table-box .nj-table-continuation { font-family:inherit; font-size:9.33px; line-height:11.33px; font-weight:400; color:inherit; text-align:right; margin:4px 3.73px 0; }
+.nj-sheet[data-journal-family="lancet"] .nj-table-box .nj-table-note { font-family:inherit; font-size:8.67px; line-height:11.33px; margin-top:5.7px; }
+.nj-sheet[data-journal-family="lancet"] .nj-table-box .nj-table-note p { font-family:inherit; font-size:inherit; line-height:inherit; margin:0; text-align:left; text-indent:0; hyphens:manual; }
+.nj-sheet[data-journal-family="lancet"] .nj-table-box .msd-cap { font-family:inherit; font-size:9.33px; line-height:11.33px; font-weight:700; text-align:left; text-indent:0; hyphens:manual; border:0; background:linear-gradient(var(--nj-ink,#231f20),var(--nj-ink,#231f20)) top / 100% 0.5px no-repeat; margin:6.5px 0 0; padding:3.4px 0 0; }
+.nj-sheet[data-journal-family="lancet"] .nj-table-box .msd-cap .nj-table-label { font-style:italic; }

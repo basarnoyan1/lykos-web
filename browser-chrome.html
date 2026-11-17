@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lykos browser bar</title>
+<!-- The Lykos browser's bar (src-tauri/src/browser.rs): its own webview over the web page, in the app's origin, with only the browser_*
+     commands (capabilities/browser-chrome.json). It shows the page's address and steps the page; it never sees the page's content. -->
+<link rel="preload" href="./assets/fonts/geist-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
+<script src="./theme-boot.js"></script><link rel="stylesheet" href="./styles.css">
+<style>
+/* One 40px row (BAR_H in browser.rs): a dense bar of 28px controls, the address field taking what the controls leave. */
+html,body{block-size:100%;margin:0;overflow:hidden}
+body{display:block;background:var(--bg);color:var(--ink)}
+#bc{box-sizing:border-box;block-size:40px;padding:6px var(--s3);border-block-end:1px solid var(--line)}
+#bc .ui-region,#bc .ui-region-pane{block-size:28px}
+</style>
+</head>
+<body>
+<div id="bc"></div>
+<link rel="modulepreload" href="./unbundled/browser-chrome/chrome.mjs">
+<link rel="modulepreload" href="./unbundled/lib/browser-bar.mjs">
+<link rel="modulepreload" href="./unbundled/lib/ui-actions.mjs">
+<link rel="modulepreload" href="./unbundled/lib/bar-boot.mjs">
+<link rel="modulepreload" href="./unbundled/lib/ui-recipes.mjs">
+<link rel="modulepreload" href="./unbundled/lib/html.mjs">
+<link rel="modulepreload" href="./unbundled/lib/icons.mjs">
+<link rel="modulepreload" href="./unbundled/lib/date-picker.mjs">
+<link rel="modulepreload" href="./unbundled/lib/record-picker.mjs">
+<link rel="modulepreload" href="./unbundled/lib/bar-modes.mjs">
+<link rel="modulepreload" href="./unbundled/lib/bar-fit.mjs">
+<link rel="modulepreload" href="./unbundled/lib/chat-math.mjs">
+<link rel="modulepreload" href="./unbundled/lib/dates.mjs">
+<link rel="modulepreload" href="./unbundled/lib/dialog.mjs">
+<link rel="modulepreload" href="./unbundled/lib/paging.mjs">
+<link rel="modulepreload" href="./unbundled/lib/menu.mjs">
+<link rel="modulepreload" href="./unbundled/lib/native.mjs">
+<link rel="modulepreload" href="./unbundled/lib/app-menu.mjs">
+<script type="module" src="./unbundled/browser-chrome/chrome.mjs"></script>
+</body></html>

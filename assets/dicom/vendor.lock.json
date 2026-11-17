@@ -1,0 +1,50 @@
+[
+  {
+    "name": "cornerstone-core",
+    "version": "2.6.1",
+    "url": "https://registry.npmjs.org/cornerstone-core/-/cornerstone-core-2.6.1.tgz",
+    "integrity": "sha512-LAXjXwNnK2W65ZxpE7phVLjbijkYUrAQIGv5xqKjK8+dmIGlBxqvPHnyGwEqVDyKOWVrpXP6ymUPwrGGRwzgMg==",
+    "bytes": 288114,
+    "license": "MIT"
+  },
+  {
+    "name": "cornerstone-tools",
+    "version": "4.22.1",
+    "url": "https://registry.npmjs.org/cornerstone-tools/-/cornerstone-tools-4.22.1.tgz",
+    "integrity": "sha512-vwZ3ULHcI5EmtOspp1fmuo/zmrHeZZRAcpb2cPJT0gPIjb69L6MjgNOkLkQ6q/zZpXgLrjv1Y3fbr0U3wQV2CQ==",
+    "bytes": 1022142,
+    "license": "MIT"
+  },
+  {
+    "name": "cornerstone-wado-image-loader",
+    "version": "4.13.2",
+    "url": "https://registry.npmjs.org/cornerstone-wado-image-loader/-/cornerstone-wado-image-loader-4.13.2.tgz",
+    "integrity": "sha512-NGqH44bY1VMY8OYuVykkLriNtZQrmoZU/S6f/1t1xX3rMc+WUMNN+yi4Nu3jp6nckLdH/bVGiigoJXrp0dTrAg==",
+    "bytes": 4973313,
+    "license": "MIT"
+  },
+  {
+    "name": "dicom-parser",
+    "version": "1.8.21",
+    "url": "https://registry.npmjs.org/dicom-parser/-/dicom-parser-1.8.21.tgz",
+    "integrity": "sha512-lYCweHQDsC8UFpXErPlg86Px2A8bay0HiUY+wzoG3xv5GzgqVHU3lziwSc/Gzn7VV7y2KeP072SzCviuOoU02w==",
+    "bytes": 107915,
+    "license": "MIT"
+  },
+  {
+    "name": "cornerstone-math",
+    "version": "0.1.10",
+    "url": "https://registry.npmjs.org/cornerstone-math/-/cornerstone-math-0.1.10.tgz",
+    "integrity": "sha512-23XSAyP7t70ANvhFyqwvva+zFd1bQ2d5GL7tg9qKE932WmImjA2Y9tiy5n0iTtnf51W/78Png8Lia2o4dCdJaQ==",
+    "bytes": 144703,
+    "license": "MIT"
+  },
+  {
+    "name": "hammerjs",
+    "version": "2.0.8",
+    "url": "https://registry.npmjs.org/hammerjs/-/hammerjs-2.0.8.tgz",
+    "integrity": "sha512-tSQXBXS/MWQOn/RKckawJ61vvsDpCom87JgxiYdGwHdOa0ht0vzUWDlfioofFCRU0L+6NGDt6XzbgoJvZkMeRQ==",
+    "bytes": 213188,
+    "license": "MIT"
+  }
+]

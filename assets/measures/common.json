@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "about": "Common measures offered by Settings > Measures > Import common measures. Nothing here is used until a person imports it; ranges are plausibility bounds for checking extracted cells, not reference values.",
+  "measures": [
+    { "name": "Cobb", "synonyms": ["Cobb angle", "Coronal Cobb"], "type": "change", "unit": "°", "better": "lower", "range": [0, 150], "group": "Radiographic" },
+    { "name": "SVA", "synonyms": ["Sagittal vertical axis", "C7 SVA", "C7-S1 SVA"], "type": "change", "unit": "mm", "better": "lower", "range": [-150, 350], "group": "Radiographic" },
+    { "name": "PI–LL", "synonyms": ["PI-LL mismatch", "Pelvic incidence minus lumbar lordosis"], "type": "change", "unit": "°", "better": "lower", "range": [-60, 90], "group": "Radiographic" },
+    { "name": "Pelvic tilt", "synonyms": ["PT"], "type": "change", "unit": "°", "better": "lower", "range": [-20, 70], "group": "Radiographic" },
+    { "name": "Lumbar lordosis", "synonyms": ["LL"], "type": "change", "unit": "°", "better": null, "range": [-30, 110], "group": "Radiographic" },
+    { "name": "ODI", "synonyms": ["Oswestry Disability Index", "Oswestry"], "type": "change", "unit": "", "better": "lower", "range": [0, 100], "scale": { "min": 0, "max": 100 }, "group": "Patient-reported" },
+    { "name": "VAS", "synonyms": ["Visual analogue scale", "VAS pain"], "type": "change", "unit": "", "better": "lower", "range": [0, 10], "scale": { "min": 0, "max": 10 }, "group": "Patient-reported", "note": "Some papers report 0 to 100 mm: those cells are flagged to check." },
+    { "name": "VAS back", "synonyms": ["Back pain VAS"], "type": "change", "unit": "", "better": "lower", "range": [0, 10], "scale": { "min": 0, "max": 10 }, "group": "Patient-reported" },
+    { "name": "VAS leg", "synonyms": ["Leg pain VAS"], "type": "change", "unit": "", "better": "lower", "range": [0, 10], "scale": { "min": 0, "max": 10 }, "group": "Patient-reported" },
+    { "name": "NRS", "synonyms": ["Numeric rating scale"], "type": "change", "unit": "", "better": "lower", "range": [0, 10], "scale": { "min": 0, "max": 10 }, "group": "Patient-reported" },
+    { "name": "SRS-22", "synonyms": ["SRS-22r"], "type": "change", "unit": "", "better": "higher", "range": [1, 5], "scale": { "min": 1, "max": 5 }, "group": "Patient-reported" },
+    { "name": "ASD", "synonyms": ["Adjacent segment disease"], "type": "tally", "unit": "", "better": "lower", "range": null, "group": "Complications" },
+    { "name": "PJK", "synonyms": ["Proximal junctional kyphosis"], "type": "tally", "unit": "", "better": "lower", "range": null, "group": "Complications" },
+    { "name": "Age", "synonyms": ["Mean age", "Median age"], "type": "number", "unit": "years", "better": null, "range": [0, 110], "group": "Population" },
+    { "name": "Follow-up", "synonyms": ["Follow up", "Mean follow-up"], "type": "number", "unit": "months", "better": null, "range": [0, 600], "group": "Population" }
+  ]
+}
